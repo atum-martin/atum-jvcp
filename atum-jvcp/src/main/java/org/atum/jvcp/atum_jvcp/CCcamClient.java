@@ -80,10 +80,17 @@ public class CCcamClient {
 		decrypter.decrypt(passHash, 6);
 		
 		String passVerification = new String(passHash);
-		if(!"CCcam\0".equals(passVerification)){
+		final String CCcamHash = "CCcam\0";
+		if(!CCcamHash.equals(passVerification)){
 			logger.info("password could not be verified.");
 			return;
 		}
+		
+		byte[] clientVerification = new byte[20];
+		System.arraycopy(CCcamHash.getBytes(), 0, clientVerification, 0, CCcamHash.length());
+		encrypter.encrypt(clientVerification, 20);
+		out.write(clientVerification);
+		out.flush();
 	}
 	
 	public String toCCcamString(byte[] arr){
