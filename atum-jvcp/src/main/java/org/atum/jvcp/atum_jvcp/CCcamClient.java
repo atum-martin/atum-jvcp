@@ -29,7 +29,6 @@ public class CCcamClient {
 	public CCcamClient(InputStream in, OutputStream out) {
 		this.in = in;
 		this.out = out;
-		
 		try {
 			crypt = MessageDigest.getInstance("SHA-1");
 		} catch (NoSuchAlgorithmException e) {
@@ -66,11 +65,43 @@ public class CCcamClient {
 			return;
 		}
 		decrypter.decrypt(usernameBuf, 20);
-		String username = new String(usernameBuf);
+		String username = toCCcamString(usernameBuf);
 		System.out.println(username);
-
+		
+		byte[] passHash = new byte[6];
+		len = in.read(passHash, 0, 6);
+		if (len != 6) {
+			logger.info("pass less than 6 bytes in buffer");
+			return;
+		}
+		
+		byte[] passLookup = "john589746".getBytes();
+		decrypter.encrypt(passLookup, passLookup.length);
+		decrypter.decrypt(passHash, 6);
+		
+		String passVerification = new String(passHash);
+		if(!"CCcam\0".equals(passVerification)){
+			logger.info("password could not be verified.");
+			return;
+		}
 	}
 	
+	public String toCCcamString(byte[] arr){
+		int len = findVal(arr,0);
+		byte[] newStr = new byte[len];
+		System.arraycopy(arr, 0, newStr, 0, len);
+		return new String(newStr);
+	}
+	
+	private int findVal(byte[] arr, int val) {
+		for(int i = 0; i < arr.length; i++){
+			if(arr[i] == val){
+				return i;
+			}
+		}
+		return arr.length;
+	}
+
 	@SuppressWarnings("unused")
 	private void printArr(byte[] data) {
 		System.out.println("byte arr:");

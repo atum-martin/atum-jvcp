@@ -1,14 +1,13 @@
 package org.atum.jvcp.atum_jvcp;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 /**
@@ -21,12 +20,11 @@ import org.apache.log4j.Logger;
 
 public class CCcamServer {
 
-	private OutputStream out = null;
-	private InputStream in = null;
 	private Logger logger = Logger.getLogger(CCcamServer.class);
 	private Random r = new SecureRandom();
 	
 	public CCcamServer(int port) {
+		BasicConfigurator.configure();
 		try {
 			ServerSocket acceptor = new ServerSocket(port);
 			Socket s = null;
@@ -44,7 +42,7 @@ public class CCcamServer {
 	}
 	
 	private void newCCcamConn(Socket s) throws IOException, NoSuchAlgorithmException {
-		CCcamClient client = new CCcamClient(in,out);
+		CCcamClient client = new CCcamClient(s.getInputStream(),s.getOutputStream());
 		logger.info("new client connected "+client);
 		byte[] secureRandom = new byte[16];
 		getRandomBytes(secureRandom, 16);
