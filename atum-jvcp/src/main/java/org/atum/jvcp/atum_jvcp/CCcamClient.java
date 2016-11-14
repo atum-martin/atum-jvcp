@@ -3,8 +3,6 @@ package org.atum.jvcp.atum_jvcp;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 import org.apache.log4j.Logger;
 
@@ -16,24 +14,12 @@ import org.apache.log4j.Logger;
  *
  */
 
-public class CCcamClient {
+public class CCcamClient extends CCcamSession {
 
-	private OutputStream out = null;
-	private InputStream in = null;
 	private Logger logger = Logger.getLogger(CCcamClient.class);
 	
-	private CCcamCipher encrypter = new CCcamCipher();
-	private CCcamCipher decrypter = new CCcamCipher();
-	private MessageDigest crypt = null;
-	
 	public CCcamClient(InputStream in, OutputStream out) {
-		this.in = in;
-		this.out = out;
-		try {
-			crypt = MessageDigest.getInstance("SHA-1");
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
+		super(in,out);
 	}
 
 	public void loginHandshake(byte[] secureRandom) throws IOException {
