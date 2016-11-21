@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.atum.jvcp.atum_jvcp.account.AccountStore;
 import org.atum.jvcp.net.NettyBootstrap;
 
 /**
@@ -26,6 +27,7 @@ public class CCcamServer {
 	
 	public CCcamServer(int port) {
 		BasicConfigurator.configure();
+		AccountStore.getSingleton();
 		NettyBootstrap.listen(12000);
 		/*try {
 			ServerSocket acceptor = new ServerSocket(port);

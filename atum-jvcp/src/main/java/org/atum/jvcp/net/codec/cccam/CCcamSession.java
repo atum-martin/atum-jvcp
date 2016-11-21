@@ -9,6 +9,8 @@ public class CCcamSession {
 	protected CCcamCipher encrypter;
 	protected CCcamCipher decrypter;
 	
+	private String username;
+	
 	public CCcamSession(CCcamCipher encrypter, CCcamCipher decrypter) {
 		this.encrypter = encrypter;
 		this.decrypter = decrypter;
@@ -20,5 +22,13 @@ public class CCcamSession {
 	
 	public CCcamCipher getEncrypter() {
 		return encrypter;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getUsername() {
+		return username;
 	}
 }

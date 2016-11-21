@@ -12,6 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.atum_jvcp.account.Account;
+import org.atum.jvcp.atum_jvcp.account.AccountStore;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 
@@ -42,10 +44,8 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 	}
 
 	@Override
-	protected void decode(ChannelHandlerContext context, ByteBuf buffer,
-			List<Object> outStream) throws Exception {
-		LoginState state = context.channel().attr(NetworkConstants.LOGIN_STATE)
-				.get();
+	protected void decode(ChannelHandlerContext context, ByteBuf buffer, List<Object> outStream) throws Exception {
+		LoginState state = context.channel().attr(NetworkConstants.LOGIN_STATE).get();
 		logger.info("processing state: " + state);
 		switch (state) {
 
@@ -66,8 +66,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 			// handleLoginBlock(context, buffer);
 			break;
 		default:
-			throw new IllegalStateException(
-					"Invalid state during login decoding.");
+			throw new IllegalStateException("Invalid state during login decoding.");
 		}
 	}
 
@@ -98,8 +97,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		CCcamSession session = new CCcamSession(encrypter, decrypter);
 
-		context.channel().attr(NetworkConstants.LOGIN_STATE)
-				.set(LoginState.HANDSHAKE);
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 		context.channel().attr(NetworkConstants.CCCAM_SESSION).set(session);
 
 	}
@@ -111,8 +109,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		CCcamSession session = context.channel()
-				.attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
 
 		byte[] shaCipher = new byte[20];
 
@@ -120,8 +117,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		session.getDecrypter().decrypt(shaCipher, 20);
 
-		context.channel().attr(NetworkConstants.LOGIN_STATE)
-				.set(LoginState.HEADER);
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HEADER);
 
 	}
 
@@ -153,8 +149,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 			return;
 		}
 
-		CCcamSession session = context.channel()
-				.attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
 
 		byte[] usernameBuf = new byte[20];
 
@@ -162,27 +157,27 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		session.getDecrypter().decrypt(usernameBuf, 20);
 		String username = toCCcamString(usernameBuf);
-		logger.info("Username: "+username);
+		session.setUsername(username);
+		logger.info("Username: " + username);
 
-		context.channel().attr(NetworkConstants.LOGIN_STATE)
-				.set(LoginState.LOGIN_BLOCK_HEADER);
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.LOGIN_BLOCK_HEADER);
 	}
 
-	private void handleLoginBlockHeader(ChannelHandlerContext context,
-			ByteBuf buffer) {
+	private void handleLoginBlockHeader(ChannelHandlerContext context, ByteBuf buffer) {
 
 		if (buffer.readableBytes() < 6) {
 			logger.info("less than 6 bytes in buffer");
 			return;
 		}
 
-		CCcamSession session = context.channel()
-				.attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
 
 		byte[] passHash = new byte[6];
 		readBuffer(buffer, passHash, 6);
 
-		byte[] passLookup = "john589746".getBytes();
+		Account acc = AccountStore.getSingleton().getAccount(session.getUsername());
+		byte[] passLookup = acc.getPassword().getBytes();
+
 		session.getDecrypter().encrypt(passLookup, passLookup.length);
 		session.getDecrypter().decrypt(passHash, 6);
 
@@ -195,16 +190,14 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		logger.info("password verified.");
 		byte[] clientVerification = new byte[20];
-		System.arraycopy(CCcamHash.getBytes(), 0, clientVerification, 0,
-				CCcamHash.length());
+		System.arraycopy(CCcamHash.getBytes(), 0, clientVerification, 0, CCcamHash.length());
 		session.getEncrypter().encrypt(clientVerification, 20);
 
 		ByteBuf buf = Unpooled.buffer(20);
 		buf.writeBytes(clientVerification);
 		context.writeAndFlush(buf);
 
-		context.channel().attr(NetworkConstants.LOGIN_STATE)
-				.set(LoginState.LOGIN_BLOCK);
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.LOGIN_BLOCK);
 	}
 
 }
