@@ -9,6 +9,7 @@ import java.util.Random;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.atum.jvcp.net.NettyBootstrap;
 
 /**
  * A basic socket acceptor which will decode the CCcam handshake and print the username sent.
@@ -25,7 +26,8 @@ public class CCcamServer {
 	
 	public CCcamServer(int port) {
 		BasicConfigurator.configure();
-		try {
+		NettyBootstrap.listen(12000);
+		/*try {
 			ServerSocket acceptor = new ServerSocket(port);
 			Socket s = null;
 			while ((s = acceptor.accept()) != null) {
@@ -38,7 +40,7 @@ public class CCcamServer {
 			acceptor.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 	
 	private void newCCcamConn(Socket s) throws IOException, NoSuchAlgorithmException {

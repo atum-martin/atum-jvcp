@@ -6,6 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
 
 public class CCcamSession {
 
@@ -26,5 +27,6 @@ public class CCcamSession {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+		if(true) return;
 	}
 }

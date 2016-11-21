@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
 
 /**
  * A Client class which contains references to the cipher digests.
