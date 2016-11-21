@@ -1,11 +1,5 @@
 package org.atum.jvcp.net;
 
-import org.atum.jvcp.net.codec.LoginState;
-import org.atum.jvcp.net.codec.cccam.CCcamCipher;
-import org.atum.jvcp.net.codec.cccam.CCcamLoginDecoder;
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
-
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;

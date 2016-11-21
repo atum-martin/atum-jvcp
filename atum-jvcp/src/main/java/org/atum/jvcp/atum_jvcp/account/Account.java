@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Account {
 
 	private String username, password;
+	@SuppressWarnings("unused")
 	private ArrayList<Integer> groups = new ArrayList<Integer>(2);
 	
 	public Account(String username, String password) {

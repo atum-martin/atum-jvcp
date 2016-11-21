@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 public class CCcamSession {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamSession.class);
 	
 	protected CCcamCipher encrypter;
