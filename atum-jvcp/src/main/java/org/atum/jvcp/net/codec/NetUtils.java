@@ -10,6 +10,14 @@ public class NetUtils {
 		}
 	}
 	
+	public static String readCCcamString(ByteBuf buffer, int len) {
+		byte[] buf = new byte[len];
+		for (int i = 0; i < len; i++) {
+			buf[i] = buffer.readByte();
+		}
+		return toCCcamString(buf);
+	}
+	
 	public static String toCCcamString(byte[] arr) {
 		int len = findVal(arr, 0);
 		byte[] newStr = new byte[len];

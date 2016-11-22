@@ -7,6 +7,7 @@ import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
@@ -54,17 +55,23 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		NetUtils.readBuffer(in, payload, payload.length);
 		session.getDecrypter().decrypt(payload, payload.length);
 		
-		handlePacket(session, cmdCode, payload);
+		handlePacket(session, cmdCode, Unpooled.copiedBuffer(payload));
 		
 	}
 
-	private void handlePacket(CCcamSession session, int cmdCode, byte[] payload) {
+	private void handlePacket(CCcamSession session, int cmdCode, ByteBuf payload) {
 		switch (cmdCode) {
 		case MSG_CLI_DATA:
+			String username = NetUtils.readCCcamString(payload,20);
 			
+			long nodeId = payload.readLong();
+			int flag = payload.readByte();
+			String version = NetUtils.readCCcamString(payload,32);
+			String build = NetUtils.readCCcamString(payload,32);
+			logger.info("CLI data: "+version+" "+build+" "+username+" "+nodeId);
 			break;
 		default:
-			logger.info("unhandled packet: "+cmdCode+" "+payload.length);
+			logger.info("unhandled packet: "+cmdCode+" "+payload.capacity());
 			break;
 		}
 	}
