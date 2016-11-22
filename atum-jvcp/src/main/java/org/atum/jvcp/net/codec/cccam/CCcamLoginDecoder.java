@@ -12,8 +12,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.atum_jvcp.account.Account;
-import org.atum.jvcp.atum_jvcp.account.AccountStore;
+import org.atum.jvcp.account.Account;
+import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 

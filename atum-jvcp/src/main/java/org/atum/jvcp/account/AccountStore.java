@@ -1,4 +1,4 @@
-package org.atum.jvcp.atum_jvcp.account;
+package org.atum.jvcp.account;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;

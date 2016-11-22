@@ -1,8 +1,8 @@
-package org.atum.jvcp.atum_jvcp;
+package org.atum.jvcp;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.atum.jvcp.atum_jvcp.account.AccountStore;
+import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.net.NettyBootstrap;
 
 /**
