@@ -119,22 +119,6 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 	}
 
-	public String toCCcamString(byte[] arr) {
-		int len = findVal(arr, 0);
-		byte[] newStr = new byte[len];
-		System.arraycopy(arr, 0, newStr, 0, len);
-		return new String(newStr);
-	}
-
-	private int findVal(byte[] arr, int val) {
-		for (int i = 0; i < arr.length; i++) {
-			if (arr[i] == val) {
-				return i;
-			}
-		}
-		return arr.length;
-	}
-
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {
 		if (buffer.readableBytes() < 20) {
 			logger.info("less than 20 bytes in buffer");
@@ -148,7 +132,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		NetUtils.readBuffer(buffer, usernameBuf, 20);
 
 		session.getDecrypter().decrypt(usernameBuf, 20);
-		String username = toCCcamString(usernameBuf);
+		String username = NetUtils.toCCcamString(usernameBuf);
 		session.setUsername(username);
 		logger.info("Username: " + username);
 

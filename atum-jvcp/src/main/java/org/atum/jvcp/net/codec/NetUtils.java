@@ -9,4 +9,20 @@ public class NetUtils {
 			buf[i] = buffer.readByte();
 		}
 	}
+	
+	public static String toCCcamString(byte[] arr) {
+		int len = findVal(arr, 0);
+		byte[] newStr = new byte[len];
+		System.arraycopy(arr, 0, newStr, 0, len);
+		return new String(newStr);
+	}
+
+	private static int findVal(byte[] arr, int val) {
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i] == val) {
+				return i;
+			}
+		}
+		return arr.length;
+	}
 }
