@@ -16,6 +16,7 @@ import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
+import org.atum.jvcp.net.codec.NetUtils;
 
 /**
  *
@@ -61,9 +62,6 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 			break;
 		case LOGIN_BLOCK_HEADER:
 			handleLoginBlockHeader(context, buffer);
-			break;
-		case LOGIN_BLOCK:
-			// handleLoginBlock(context, buffer);
 			break;
 		default:
 			throw new IllegalStateException("Invalid state during login decoding.");
@@ -113,18 +111,12 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		byte[] shaCipher = new byte[20];
 
-		readBuffer(buffer, shaCipher, 20);
+		NetUtils.readBuffer(buffer, shaCipher, 20);
 
 		session.getDecrypter().decrypt(shaCipher, 20);
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HEADER);
 
-	}
-
-	private void readBuffer(ByteBuf buffer, byte[] buf, int len) {
-		for (int i = 0; i < len; i++) {
-			buf[i] = buffer.readByte();
-		}
 	}
 
 	public String toCCcamString(byte[] arr) {
@@ -153,7 +145,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		byte[] usernameBuf = new byte[20];
 
-		readBuffer(buffer, usernameBuf, 20);
+		NetUtils.readBuffer(buffer, usernameBuf, 20);
 
 		session.getDecrypter().decrypt(usernameBuf, 20);
 		String username = toCCcamString(usernameBuf);
@@ -173,7 +165,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
 
 		byte[] passHash = new byte[6];
-		readBuffer(buffer, passHash, 6);
+		NetUtils.readBuffer(buffer, passHash, 6);
 
 		Account acc = AccountStore.getSingleton().getAccount(session.getUsername());
 		byte[] passLookup = acc.getPassword().getBytes();
@@ -197,7 +189,33 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		buf.writeBytes(clientVerification);
 		context.writeAndFlush(buf);
 
-		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.LOGIN_BLOCK);
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
+		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
 	}
+	
+
+	/*private void handleLoginBlock(ChannelHandlerContext context, ByteBuf buffer) {
+		if (buffer.readableBytes() < 66) {
+			logger.info("less than 66 bytes in buffer");
+			return;
+		}
+		logger.info("buf size: "+buffer.readableBytes());
+		byte[] junk = new byte[24];
+		readBuffer(buffer, junk, junk.length);
+		
+		byte[] nodeId = new byte[8];
+		readBuffer(buffer, nodeId, nodeId.length);
+		
+		byte[] remoteVersionByte = new byte[32];
+		readBuffer(buffer, remoteVersionByte, remoteVersionByte.length);
+		String remoteVersion = toCCcamString(remoteVersionByte);
+		
+		byte[] remoteBuildByte = new byte[32];
+		readBuffer(buffer, remoteBuildByte, remoteBuildByte.length);
+		String remoteBuild = toCCcamString(remoteBuildByte);
+		
+		logger.info(remoteVersion+" "+remoteBuild);
+		
+	}*/
 
 }
