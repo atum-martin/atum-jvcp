@@ -12,7 +12,13 @@ public class CCcamBuilds {
 	}
 
 	public enum CCcamBuild {
-
+		CCCAM_2_0_11("2.0.11", 2892),
+		CCCAM_2_1_1("2.1.1", 2971),
+		CCCAM_2_1_2("2.1.2", 3094),
+		CCCAM_2_1_3("2.1.3", 3165),
+		CCCAM_2_1_4("2.1.4", 3191),
+		CCCAM_2_2_0("2.2.0", 3290),
+		CCCAM_2_2_1("2.2.1", 3316),
 		CCCAM_2_3_0("2.3.0", 3367);
 
 		private String version;
