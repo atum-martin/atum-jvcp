@@ -18,6 +18,12 @@ public class NetUtils {
 		return toCCcamString(buf);
 	}
 	
+	public static void putTriByte(ByteBuf buffer, int val) {
+		buffer.writeByte(val >> 16);
+		buffer.writeByte(val >> 8);
+		buffer.writeByte(val & 0xFF);
+	}
+	
 	public static String toCCcamString(byte[] arr) {
 		int len = findVal(arr, 0);
 		byte[] newStr = new byte[len];

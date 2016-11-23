@@ -93,7 +93,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		decrypter.CipherInit(secureRandom, 16);
 		decrypter.encrypt(buf, 20);
 
-		CCcamSession session = new CCcamSession(encrypter, decrypter);
+		CCcamSession session = new CCcamSession(context, encrypter, decrypter);
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 		context.channel().attr(NetworkConstants.CCCAM_SESSION).set(session);

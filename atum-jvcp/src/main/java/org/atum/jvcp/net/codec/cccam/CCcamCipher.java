@@ -4,16 +4,16 @@ package org.atum.jvcp.net.codec.cccam;
  * A class which represents encrypting and decrypting of a CCcam payload. Based
  * on the work of the Oscam team.
  * 
- * @since: 12/11/2016
+ * @since: 22/11/2016
  * @author atum-martin
  *
  */
 public class CCcamCipher {
 
-	private int[] keytable = new int[256];
 	private int state = 0;
-	private int counter = 0;
 	private int sum = 0;
+	private int counter = 0;
+	private int[] keytable = new int[256];
 
 	enum Mode {
 		DECRYPT, ENCRYPT;

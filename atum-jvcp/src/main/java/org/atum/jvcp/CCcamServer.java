@@ -8,7 +8,7 @@ import org.atum.jvcp.net.NettyBootstrap;
 /**
  * A basic socket acceptor which will decode the CCcam handshake and print the username sent.
  * 
- * @since: 12/11/2016
+ * @since: 22/11/2016
  * @author atum-martin
  *
  */
@@ -22,7 +22,7 @@ public class CCcamServer {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
 		
-		NettyBootstrap.listen(12000);
+		NettyBootstrap.listen(port);
 	}
 
 	public static void main(String[] args) {

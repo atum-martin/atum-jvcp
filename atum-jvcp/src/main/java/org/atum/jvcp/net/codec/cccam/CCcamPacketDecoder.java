@@ -65,11 +65,19 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			String username = NetUtils.readCCcamString(payload,20);
 			
 			long nodeId = payload.readLong();
+			@SuppressWarnings("unused")
 			int flag = payload.readByte();
 			String version = NetUtils.readCCcamString(payload,32);
 			String build = NetUtils.readCCcamString(payload,32);
-			logger.info("CLI data: "+version+" "+build+" "+username+" "+nodeId);
+			logger.info("MSG_CLI_DATA: "+version+" "+build+" "+username+" "+nodeId);
 			break;
+		case MSG_SRV_DATA:
+			nodeId = payload.readLong();
+			version = NetUtils.readCCcamString(payload,32);
+			build = NetUtils.readCCcamString(payload,32);
+			logger.info("MSG_SRV_DATA: "+version+" "+build+" "+nodeId);
+			break;
+		
 		default:
 			logger.info("unhandled packet: "+cmdCode+" "+payload.capacity());
 			break;
