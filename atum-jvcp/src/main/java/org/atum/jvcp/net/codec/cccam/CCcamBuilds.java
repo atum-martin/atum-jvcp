@@ -7,6 +7,12 @@ public class CCcamBuilds {
 	
 	private static Map<String,CCcamBuild> builds = new HashMap<String,CCcamBuild>();
 	
+	static {
+		//This call is added to initialize all enumerated values into the builds map.
+		CCcamBuild.CCCAM_2_0_11.getBuildNum();
+	}
+	
+	
 	public static CCcamBuild getBuild(String ver) {
 		return builds.get(ver);
 	}
@@ -27,6 +33,7 @@ public class CCcamBuilds {
 		CCcamBuild(String version, int buildNum) {
 			this.setVersion(version);
 			this.setBuildNum(buildNum);
+			
 			CCcamBuilds.builds.put(version, this);
 		}
 		

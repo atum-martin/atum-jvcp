@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -45,13 +46,17 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			@SuppressWarnings("unused")
 			int flag = payload.readByte();
 			String version = NetUtils.readCCcamString(payload,32);
-			String build = NetUtils.readCCcamString(payload,32);
+			int build = Integer.parseInt(NetUtils.readCCcamString(payload,32));
 			logger.info("MSG_CLI_DATA: "+version+" "+build+" "+username+" "+nodeId);
+			CCcamBuild ccBuild = CCcamBuilds.getBuild(version);
+			if(ccBuild != null && ccBuild.getBuildNum() == build){
+				logger.info("CCcam build verified: "+build);
+			}
 			break;
 		case CCcamConstants.MSG_SRV_DATA:
 			nodeId = payload.readLong();
 			version = NetUtils.readCCcamString(payload,32);
-			build = NetUtils.readCCcamString(payload,32);
+			build = Integer.parseInt(NetUtils.readCCcamString(payload,32));
 			logger.info("MSG_SRV_DATA: "+version+" "+build+" "+nodeId);
 			break;
 		
