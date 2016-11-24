@@ -181,6 +181,7 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		CCcamPacketSender sender = new CCcamPacketSender(session);
 		sender.writeCliData();
 		sender.writeSrvData();
+		sender.writeCard(new Card());
 	}
 	
 

@@ -25,7 +25,8 @@ public class CCcamBuilds {
 		CCCAM_2_1_4("2.1.4", 3191),
 		CCCAM_2_2_0("2.2.0", 3290),
 		CCCAM_2_2_1("2.2.1", 3316),
-		CCCAM_2_3_0("2.3.0", 3367);
+		CCCAM_2_3_0("2.3.0", 3367),
+		CCCAM_2_5_0("2.5.0", 3692);
 
 		private String version;
 		private int buildNum;
