@@ -2,8 +2,7 @@ package org.atum.jvcp.net.codec.cccam;
 
 public class CCcamConstants {
 
-	//Taken from Oscam CCcam implementation.
-	@SuppressWarnings("unused")
+	//Taken from Oscam CCcam implementation.s
 	public static final int MSG_CLI_DATA = 0,
 			MSG_CW_ECM = 1,
 			MSG_EMM_ACK = 2,

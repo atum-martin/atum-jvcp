@@ -7,7 +7,7 @@ public class Card {
 	}
 
 	public int getHops() {
-		return 1;
+		return 0;
 	}
 
 	public long getNodeId() {
@@ -24,6 +24,10 @@ public class Card {
 
 	public long getSerial() {
 		return 0;
+	}
+
+	public int getReshare() {
+		return 1;
 	}
 
 }

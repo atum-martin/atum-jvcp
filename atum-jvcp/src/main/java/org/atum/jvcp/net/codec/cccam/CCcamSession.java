@@ -1,6 +1,5 @@
 package org.atum.jvcp.net.codec.cccam;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
@@ -38,7 +37,7 @@ public class CCcamSession {
 		return username;
 	}
 	
-	public void write(ByteBuf buf){
-		context.writeAndFlush(buf);
+	public void write(CCcamPacket cCcamPacket){
+		context.channel().writeAndFlush(cCcamPacket);
 	}
 }

@@ -5,8 +5,12 @@ import io.netty.buffer.ByteBuf;
 public class NetUtils {
 
 	public static void readBuffer(ByteBuf buffer, byte[] buf, int len) {
+		readBuffer(buffer,buf,len,0);
+	}
+
+	public static void readBuffer(ByteBuf buffer, byte[] buf, int len, int offset) {
 		for (int i = 0; i < len; i++) {
-			buf[i] = buffer.readByte();
+			buf[i+offset] = buffer.readByte();
 		}
 	}
 	
@@ -22,6 +26,12 @@ public class NetUtils {
 		buffer.writeByte(val >> 16);
 		buffer.writeByte(val >> 8);
 		buffer.writeByte(val & 0xFF);
+	}
+	
+	public static void writeCCcamStr(ByteBuf buffer,String val,int len){
+		buffer.writeBytes(val.getBytes());
+		if(val.length() != len)
+			buffer.writeBytes(new byte[len-val.length()]);
 	}
 	
 	public static String toCCcamString(byte[] arr) {

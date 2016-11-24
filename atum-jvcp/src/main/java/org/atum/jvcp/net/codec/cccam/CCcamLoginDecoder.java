@@ -14,6 +14,7 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
+import org.atum.jvcp.model.Card;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.NetUtils;
@@ -175,6 +176,11 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
+		context.pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
+		
+		CCcamPacketSender sender = new CCcamPacketSender(session);
+		sender.writeCliData();
+		sender.writeSrvData();
 	}
 	
 
