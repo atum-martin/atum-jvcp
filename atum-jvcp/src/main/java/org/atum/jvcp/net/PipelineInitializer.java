@@ -2,7 +2,6 @@ package org.atum.jvcp.net;
 
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.cccam.CCcamLoginDecoder;
-import org.atum.jvcp.net.codec.cccam.CCcamPacketEncoder;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
@@ -22,6 +21,8 @@ public class PipelineInitializer extends ChannelInitializer<SocketChannel> {
 	
 	public PipelineInitializer(){
 	}
+	
+	private ChannelFilter filter = new ChannelFilter();
 
 	@Override
 	protected void initChannel(SocketChannel channel) throws Exception {
@@ -31,6 +32,7 @@ public class PipelineInitializer extends ChannelInitializer<SocketChannel> {
 		
 		CCcamLoginDecoder decoder = new CCcamLoginDecoder();
 
+		pipeline.addLast("filter", filter);
 		pipeline.addLast("timeout", new IdleStateHandler(10000, 0, 0));
 		pipeline.addLast("login-header-decoder", decoder);
 
