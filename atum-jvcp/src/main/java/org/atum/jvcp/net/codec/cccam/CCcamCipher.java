@@ -1,5 +1,8 @@
 package org.atum.jvcp.net.codec.cccam;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 /**
  * A class which represents encrypting and decrypting of a CCcam payload. Based
  * on the work of the Oscam team.
@@ -53,6 +56,14 @@ public class CCcamCipher {
 	public void encrypt(byte[] data, int len) {
 		cipher(data, len, Mode.ENCRYPT);
 	}
+	
+	public void decrypt(ByteBuf in) {
+		cipher(in, Mode.DECRYPT);
+	}
+
+	public void encrypt(ByteBuf in) {
+		cipher(in, Mode.ENCRYPT);
+	}
 
 	public void cipher(byte[] data, int len, Mode mode) {
 		for (int i = 0; i < len; i++) {
@@ -69,6 +80,27 @@ public class CCcamCipher {
 				z = data[i];
 			state = (state ^ z) & 0xFF;
 		}
+	}
+	
+	public void cipher(ByteBuf in,Mode mode){
+		int length = in.readableBytes();
+		for (int i = 0; i < length; i++) {
+			counter = ++counter & 0xFF;
+			sum = (sum + keytable[counter]) & 0xFF;
+
+			byte temp = (byte) keytable[counter];
+			keytable[counter] = keytable[sum];
+			keytable[sum] = temp;
+
+			byte z = in.readByte();
+			byte write = (byte) (z ^ keytable[keytable[counter & 0xFF] + keytable[sum] & 0xFF] ^ state);
+			in.setByte(i, write);
+			if (mode == Mode.DECRYPT)
+				z = write;
+			
+			state = (state ^ z) & 0xFF;
+		}
+		in.resetReaderIndex();
 	}
 
 }

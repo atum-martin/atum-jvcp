@@ -20,20 +20,26 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		//cc_crypt(&cc->block[DECRYPT], buf, 4, DECRYPT);
 		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
-		byte[] command = new byte[4];
+		
+		ByteBuf command = in.readBytes(4);
+		session.getDecrypter().decrypt(command);
+		command.readByte();
+		int cmdCode = command.readByte();
+		int size = ((command.readByte() << 8) + command.readByte());
+		
+		/*byte[] command = new byte[4];
 		NetUtils.readBuffer(in, command, command.length);
 		session.getDecrypter().decrypt(command, command.length);
-		
 		int cmdCode = command[1];
-		int size = (command[2] << 8) + command[3];
+		int size = ((command[2] << 8) + command[3]);*/
 		
 		logger.info("packet recieved: "+cmdCode+" "+size);
+		ByteBuf payload = in.readBytes(size);
+		//byte[] payload = new byte[size];
+		//NetUtils.readBuffer(in, payload, payload.length);
+		session.getDecrypter().decrypt(payload);
 		
-		byte[] payload = new byte[size];
-		NetUtils.readBuffer(in, payload, payload.length);
-		session.getDecrypter().decrypt(payload, payload.length);
-		
-		handlePacket(session, cmdCode, Unpooled.copiedBuffer(payload));
+		handlePacket(session, cmdCode, payload);
 		
 	}
 
