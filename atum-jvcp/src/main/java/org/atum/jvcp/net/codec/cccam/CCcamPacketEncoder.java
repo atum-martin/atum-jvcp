@@ -5,6 +5,7 @@ import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
@@ -19,16 +20,15 @@ public class CCcamPacketEncoder extends MessageToByteEncoder<CCcamPacket> {
 		if(msg.getOut() != null){
 			packetLength = msg.getOut().readableBytes();
 		}
-		byte[] buf = new byte[4+packetLength];
-		logger.info("Encoding packet: "+msg.getCommand()+" "+buf.length);
-		buf[0] = 0;
-		buf[1] = (byte) msg.getCommand();
-		buf[2] = (byte) (packetLength >> 8);
-		buf[3] = (byte) (packetLength & 0xFF);
+		
+		ByteBuf unencBuf = Unpooled.buffer(4+packetLength);
+		unencBuf.writeByte(0);
+		unencBuf.writeByte(msg.getCommand());
+		unencBuf.writeShort(packetLength);
 		if(packetLength != 0)
-			NetUtils.readBuffer(msg.getOut(), buf, packetLength, 4);
-		session.getEncrypter().encrypt(buf, buf.length);
-		out.writeBytes(buf);
+			unencBuf.writeBytes(msg.getOut());
+		session.getEncrypter().encrypt(unencBuf);
+		out.writeBytes(unencBuf);
 		
 	}
 
