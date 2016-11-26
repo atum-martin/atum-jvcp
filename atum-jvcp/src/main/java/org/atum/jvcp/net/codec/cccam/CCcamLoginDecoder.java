@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.Card;
@@ -26,6 +27,7 @@ import org.atum.jvcp.net.codec.NetUtils;
 public class CCcamLoginDecoder extends ByteToMessageDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamLoginDecoder.class);
+	private CCcamServer cCcamServer;
 	private static Random r = new SecureRandom();
 	private static MessageDigest crypt = null;
 
@@ -35,8 +37,9 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		}
 	}
 
-	public CCcamLoginDecoder() {
+	public CCcamLoginDecoder(CCcamServer cCcamServer) {
 		try {
+			this.cCcamServer = cCcamServer;
 			if (crypt == null) {
 				crypt = MessageDigest.getInstance("SHA-1");
 			}
@@ -179,9 +182,16 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		context.pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
 		
 		CCcamPacketSender sender = new CCcamPacketSender(session);
+		session.setPacketSender(sender);
 		sender.writeCliData();
 		sender.writeSrvData();
-		sender.writeCard(new Card());
+		Random ra = new Random();
+		for (int i = 0 ; i < 100; i++)
+			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
+		
+		
+		
+		cCcamServer.registerSession(session);
 	}
 	
 

@@ -12,8 +12,11 @@ public class CCcamSession {
 	private ChannelHandlerContext context;
 	private CCcamCipher encrypter;
 	private CCcamCipher decrypter;
-	
+
 	private String username;
+	private CCcamPacketSender packetSender;
+
+	private long lastPing = System.currentTimeMillis();
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamCipher encrypter, CCcamCipher decrypter) {
 		this.context = context;
@@ -39,5 +42,18 @@ public class CCcamSession {
 	
 	public void write(CCcamPacket cCcamPacket){
 		context.channel().writeAndFlush(cCcamPacket);
+	}
+
+	public void setPacketSender(CCcamPacketSender packetSender) {
+		this.packetSender = packetSender;
+	}
+	
+	public long getLastKeepalive(){
+		return System.currentTimeMillis() - lastPing ;
+	}
+	
+	public void keepAlive(){
+		packetSender.writeKeepAlive();
+		lastPing = System.currentTimeMillis();
 	}
 }

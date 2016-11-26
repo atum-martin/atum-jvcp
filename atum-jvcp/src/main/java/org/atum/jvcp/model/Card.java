@@ -1,9 +1,17 @@
 package org.atum.jvcp.model;
 
 public class Card {
+	
+	private int shareId, remoteId, cardId;
+
+	public Card(int cardId, int shareId, int remoteId) {
+		this.cardId = cardId;
+		this.shareId = shareId;
+		this.remoteId = remoteId;
+	}
 
 	public int getShare() {
-		return 4234596;
+		return shareId;
 	}
 
 	public int getHops() {
@@ -11,11 +19,11 @@ public class Card {
 	}
 
 	public long getNodeId() {
-		return 4234596L;
+		return remoteId;
 	}
 
 	public int getCardId() {
-		return 0x963;
+		return cardId;
 	}
 
 	public Provider[] getProviders() {

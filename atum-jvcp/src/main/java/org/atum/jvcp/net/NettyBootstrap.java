@@ -1,6 +1,7 @@
 package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.CCcamServer;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.EventLoopGroup;
@@ -9,7 +10,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class NettyBootstrap {
 
-	public static void listen(int port) {
+	public static void listen(CCcamServer cCcamServer, int port) {
 		
 		Logger logger = Logger.getLogger(NettyBootstrap.class);
 		
@@ -17,7 +18,7 @@ public class NettyBootstrap {
 
 		ServerBootstrap bootstrap = new ServerBootstrap();
 
-		bootstrap.group(loopGroup).channel(NioServerSocketChannel.class).childHandler(new PipelineInitializer()).bind(port).syncUninterruptibly();
+		bootstrap.group(loopGroup).channel(NioServerSocketChannel.class).childHandler(new PipelineInitializer(cCcamServer)).bind(port).syncUninterruptibly();
 		
 		logger.info("Server listening on port: "+port);
 	}
