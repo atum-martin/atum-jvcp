@@ -33,7 +33,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			int cmdCode = command.readByte() & 0xFF;
 			int size = command.readShort();
 
-			logger.info("packet recieved: " + cmdCode + " " + size);
+			//logger.info("packet recieved: " + cmdCode + " " + size);
 			session.setCurrentPacket(cmdCode, size);
 
 			if (in.readableBytes() < size) {
@@ -45,6 +45,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			if (state == PacketState.PAYLOAD) {
 				logger.info("reconstructing fragmented packet: " + session.getPacketCode() + " " + session.getPacketSize());
 			}
+			
 			if (in.readableBytes() < session.getPacketSize()) {
 				return;
 			}
@@ -80,12 +81,43 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			build = Integer.parseInt(NetUtils.readCCcamString(payload, 32));
 			logger.info("MSG_SRV_DATA: " + version + " " + build + " " + nodeId);
 			break;
+		
+		case CCcamConstants.MSG_CACHE_PUSH:
+			decodeCCcamCachePush(session, payload);
+			break;
 
 		default:
 			logger.info("unhandled packet: " + cmdCode + " " + size);
-			// payload.readBytes(size);
+			//payload.readBytes(size);
 			break;
 		}
+	}
+
+	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
+		int cardId = payload.readShort();
+		int provider = payload.readInt();
+		payload.readInt();
+		int serviceId = payload.readShort();
+		int ecmSize = payload.readShort();
+		int returnCode = payload.readByte();
+		payload.readByte();
+		payload.readByte();
+		payload.readByte();
+		int cycleTime = payload.readByte(); 
+		int ecm0 = payload.readByte();
+		
+		byte[] ecmd5 = new byte[16];
+		payload.readBytes(ecmd5);
+		int cspHash = payload.readInt();
+		
+		byte[] cw = new byte[16];
+		payload.readBytes(cw);
+		int nodeCount = payload.readByte()-1;
+		long nodeId = payload.readLong();
+		for(int i = 0; i < nodeCount; i++){
+			long cacheNodeId = payload.readLong();
+		}
+		
 	}
 
 }
