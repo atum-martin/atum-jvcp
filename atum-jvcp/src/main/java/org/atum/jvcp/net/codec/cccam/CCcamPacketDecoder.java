@@ -5,52 +5,56 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.PacketState;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
 public class CCcamPacketDecoder extends ByteToMessageDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamPacketDecoder.class);
-	private static int index = 0;
-	private static long dataSent = 0L;
-	private static long packetsRecieved = 0;
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
-		synchronized (session) {
-			packetsRecieved++;
-			
+		PacketState state = ctx.channel().attr(NetworkConstants.PACKET_STATE).get();
+		if (state == null)
+			state = PacketState.HEADER;
+		switch (state) {
+		case HEADER:
+
 			ByteBuf command = in.readBytes(4);
-
-			session.getDecrypter().decrypt(command);
-
+			synchronized (session) {
+				session.getDecrypter().decrypt(command);
+			}
 			command.readByte();
 			int cmdCode = command.readByte() & 0xFF;
 			int size = command.readShort();
-			
-			dataSent += 4;
-			dataSent += size;
 
 			logger.info("packet recieved: " + cmdCode + " " + size);
-			if(cmdCode == 99){
-				session.getDecrypter().printValues();
-				logger.info("packet: " + packetsRecieved + " " + dataSent);
+			session.setCurrentPacket(cmdCode, size);
+
+			if (in.readableBytes() < size) {
+				logger.info("packet payload too small: " + cmdCode + " " + size);
+				ctx.channel().attr(NetworkConstants.PACKET_STATE).set(PacketState.PAYLOAD);
+				return;
 			}
-			
-			try {
-				ByteBuf payload = in.readBytes(size);
+		case PAYLOAD:
+			if (state == PacketState.PAYLOAD) {
+				logger.info("reconstructing fragmented packet: " + session.getPacketCode() + " " + session.getPacketSize());
+			}
+			if (in.readableBytes() < session.getPacketSize()) {
+				return;
+			}
+			ctx.channel().attr(NetworkConstants.PACKET_STATE).set(PacketState.HEADER);
+			ByteBuf payload = in.readBytes(session.getPacketSize());
+			synchronized (session) {
 				session.getDecrypter().decrypt(payload);
-				handlePacket(session, cmdCode, size, payload);
-			} catch (Exception e) {
-				if (index++ < 1)
-					e.printStackTrace();
-				ctx.channel().close();
 			}
+			handlePacket(session, session.getPacketCode(), session.getPacketSize(), payload);
+			break;
 		}
 	}
 
@@ -79,7 +83,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 
 		default:
 			logger.info("unhandled packet: " + cmdCode + " " + size);
-			//payload.readBytes(size);
+			// payload.readBytes(size);
 			break;
 		}
 	}

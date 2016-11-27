@@ -17,6 +17,9 @@ public class CCcamSession {
 	private CCcamPacketSender packetSender;
 
 	private long lastPing = System.currentTimeMillis();
+
+	private int packetCommandCode;
+	private int packetSize;
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamCipher encrypter, CCcamCipher decrypter) {
 		this.context = context;
@@ -55,5 +58,18 @@ public class CCcamSession {
 	public void keepAlive(){
 		packetSender.writeKeepAlive();
 		lastPing = System.currentTimeMillis();
+	}
+
+	public void setCurrentPacket(int cmdCode, int size) {
+		this.packetCommandCode = cmdCode;
+		this.packetSize = size;
+	}
+	
+	public int getPacketCode(){
+		return packetCommandCode;
+	}
+	
+	public int getPacketSize(){
+		return packetSize;
 	}
 }
