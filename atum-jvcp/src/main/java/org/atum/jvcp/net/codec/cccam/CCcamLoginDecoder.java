@@ -186,8 +186,8 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		sender.writeCliData();
 		sender.writeSrvData();
 		Random ra = new Random();
-		for (int i = 0 ; i < 100; i++)
-			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
+		//for (int i = 0 ; i < 100; i++)
+		//	sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
 		
 		
 		

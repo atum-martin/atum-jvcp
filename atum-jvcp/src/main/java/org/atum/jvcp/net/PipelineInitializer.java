@@ -18,14 +18,13 @@ import io.netty.handler.timeout.IdleStateHandler;
 public class PipelineInitializer extends ChannelInitializer<SocketChannel> {
 
 
-	private final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
+	private static final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
+	private static final ChannelFilter filter = new ChannelFilter();
 	private CCcamServer cCcamServer;
 	
 	public PipelineInitializer(CCcamServer cCcamServer){
 		this.cCcamServer = cCcamServer;
 	}
-	
-	private ChannelFilter filter = new ChannelFilter();
 
 	@Override
 	protected void initChannel(SocketChannel channel) throws Exception {

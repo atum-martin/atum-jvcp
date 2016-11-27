@@ -44,6 +44,8 @@ public class CCcamPacketSender {
 		NetUtils.writeCCcamStr(out,""+build.getBuildNum(),32);
 		session.write(new CCcamPacket(CCcamConstants.MSG_SRV_DATA,out));
 		logger.info("MSG_SRV_DATA: "+build.getVersion()+" "+build.getBuildNum());
+		
+		session.write(new CCcamPacket(CCcamConstants.MSG_CACHE_FILTER,Unpooled.buffer(482)));
 	}
 	
 	public void writeCliData(){
