@@ -93,6 +93,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		case CCcamConstants.MSG_CARD_REMOVED:
 			int cardId = payload.readInt();
 			break;	
+			
+		case CCcamConstants.MSG_KEEPALIVE:
+			session.setLastKeepAlive(System.currentTimeMillis());
+			break;
 
 		default:
 			logger.info("unhandled packet: " + cmdCode + " " + size);

@@ -72,4 +72,8 @@ public class CCcamSession {
 	public int getPacketSize(){
 		return packetSize;
 	}
+
+	public void setLastKeepAlive(long currentTimeMillis) {
+		lastPing = currentTimeMillis;
+	}
 }
