@@ -15,7 +15,6 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
-import org.atum.jvcp.model.Card;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.NetUtils;

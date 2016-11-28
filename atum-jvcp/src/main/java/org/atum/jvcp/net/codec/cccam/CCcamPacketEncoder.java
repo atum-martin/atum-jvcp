@@ -2,7 +2,6 @@ package org.atum.jvcp.net.codec.cccam;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.net.NetworkConstants;
-import org.atum.jvcp.net.codec.NetUtils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -11,6 +10,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class CCcamPacketEncoder extends MessageToByteEncoder<CCcamPacket> {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamPacketEncoder.class);
 
 	@Override

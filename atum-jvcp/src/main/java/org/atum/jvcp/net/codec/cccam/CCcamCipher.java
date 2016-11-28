@@ -1,7 +1,6 @@
 package org.atum.jvcp.net.codec.cccam;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 /**
  * A class which represents encrypting and decrypting of a CCcam payload. Based

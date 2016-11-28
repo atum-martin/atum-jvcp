@@ -85,12 +85,26 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		case CCcamConstants.MSG_CACHE_PUSH:
 			decodeCCcamCachePush(session, payload);
 			break;
+			
+		case CCcamConstants.MSG_CW_ECM:
+			decodeCCcamEcm(session, payload);
+			break;
 
 		default:
 			logger.info("unhandled packet: " + cmdCode + " " + size);
 			//payload.readBytes(size);
 			break;
 		}
+	}
+
+	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload) {
+		int cardId = payload.readShort();
+		int provider = payload.readInt();
+		int id = payload.readInt();
+		int serviceId = payload.readShort();
+		int ecmLength = payload.readableBytes();
+		byte[] ecm = new byte[ecmLength];
+		payload.readBytes(ecm);
 	}
 
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
