@@ -89,6 +89,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		case CCcamConstants.MSG_CW_ECM:
 			decodeCCcamEcm(session, payload);
 			break;
+			
+		case CCcamConstants.MSG_CARD_REMOVED:
+			int cardId = payload.readInt();
+			break;	
 
 		default:
 			logger.info("unhandled packet: " + cmdCode + " " + size);
