@@ -106,8 +106,16 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	}
 
 	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload) {
+		if(session.isReader()){
+			byte[] dcw = new byte[16];
+			payload.readBytes(dcw);
+			logger.info("Recieved DCW");
+			return;
+		}
+		//REQUEST ECM
 		int cardId = payload.readShort();
 		int provider = payload.readInt();
+		//shareId
 		int id = payload.readInt();
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readableBytes();

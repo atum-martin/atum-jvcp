@@ -76,4 +76,8 @@ public class CCcamSession {
 	public void setLastKeepAlive(long currentTimeMillis) {
 		lastPing = currentTimeMillis;
 	}
+
+	public boolean isReader() {
+		return true;
+	}
 }
