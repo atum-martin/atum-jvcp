@@ -118,7 +118,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		//shareId
 		int id = payload.readInt();
 		int serviceId = payload.readShort();
-		int ecmLength = payload.readableBytes();
+		int ecmLength = payload.readByte();
 		byte[] ecm = new byte[ecmLength];
 		payload.readBytes(ecm);
 	}

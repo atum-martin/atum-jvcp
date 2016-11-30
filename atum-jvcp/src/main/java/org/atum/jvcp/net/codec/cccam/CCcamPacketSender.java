@@ -58,11 +58,12 @@ public class CCcamPacketSender {
 	}
 	
 	public void writeEcmRequest(EcmRequest req){
-		ByteBuf out = Unpooled.buffer(req.getEcm().length+12);
+		ByteBuf out = Unpooled.buffer(req.getEcm().length+13);
 		out.writeShort(req.getCardId());
 		out.writeInt(req.getProv().getProviderId());
 		out.writeInt(req.getShareId());
 		out.writeShort(req.getServiceId());
+		out.writeByte(req.getEcm().length);
 		out.writeBytes(req.getEcm());
 		
 		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM,out));
