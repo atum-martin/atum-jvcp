@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.Card;
+import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
@@ -54,6 +55,23 @@ public class CCcamPacketSender {
 	
 	public void writeKeepAlive(){
 		session.write(new CCcamPacket(CCcamConstants.MSG_KEEPALIVE,null));
+	}
+	
+	public void writeEcmRequest(EcmRequest req){
+		ByteBuf out = Unpooled.buffer(req.getEcm().length+12);
+		out.writeShort(req.getCardId());
+		out.writeInt(req.getProv().getProviderId());
+		out.writeInt(req.getShareId());
+		out.writeShort(req.getServiceId());
+		out.writeBytes(req.getEcm());
+		
+		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM,out));
+	}
+	
+	public void writeEcmAnswer(byte[] dcw){
+		ByteBuf out = Unpooled.buffer(16);
+		out.writeBytes(dcw);
+		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM,out));
 	}
 	
 }
