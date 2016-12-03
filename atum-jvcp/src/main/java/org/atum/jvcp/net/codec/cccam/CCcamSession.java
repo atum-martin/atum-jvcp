@@ -51,6 +51,11 @@ public class CCcamSession {
 		this.packetSender = packetSender;
 	}
 	
+
+	public CCcamPacketSender getPacketSender() {
+		return this.packetSender;
+	}
+	
 	public long getLastKeepalive(){
 		return System.currentTimeMillis() - lastPing ;
 	}

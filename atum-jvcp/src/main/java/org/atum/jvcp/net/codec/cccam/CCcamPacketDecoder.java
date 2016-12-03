@@ -3,6 +3,7 @@ package org.atum.jvcp.net.codec.cccam;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.cache.HashCache;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
@@ -121,6 +122,12 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int ecmLength = payload.readByte();
 		byte[] ecm = new byte[ecmLength];
 		payload.readBytes(ecm);
+		
+		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
+		if(dcw != null){
+			session.getPacketSender().writeEcmAnswer(dcw);
+		}
+		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);
 	}
 
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
@@ -147,6 +154,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		for(int i = 0; i < nodeCount; i++){
 			long cacheNodeId = payload.readLong();
 		}
+		HashCache.getSingleton().pushCache(cardId, serviceId, ecmd5, cw);
 		
 	}
 
