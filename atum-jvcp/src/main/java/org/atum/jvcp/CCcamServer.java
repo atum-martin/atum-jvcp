@@ -16,7 +16,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
  *
  */
 
-public class CCcamServer extends Thread {
+public class CCcamServer extends CamServer {
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamServer.class);

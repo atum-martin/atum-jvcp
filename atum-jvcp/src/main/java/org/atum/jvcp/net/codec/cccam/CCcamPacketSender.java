@@ -40,7 +40,7 @@ public class CCcamPacketSender {
 	public void writeSrvData(){
 		ByteBuf out = Unpooled.buffer(72);
 		out.writeLong(837493L);
-		CCcamBuild build = CCcamBuilds.getBuild("2.5.0");
+		CCcamBuild build = CCcamBuilds.getBuild("2.0.11");
 		NetUtils.writeCCcamStr(out,build.getVersion(),32);
 		NetUtils.writeCCcamStr(out,""+build.getBuildNum(),32);
 		session.write(new CCcamPacket(CCcamConstants.MSG_SRV_DATA,out));

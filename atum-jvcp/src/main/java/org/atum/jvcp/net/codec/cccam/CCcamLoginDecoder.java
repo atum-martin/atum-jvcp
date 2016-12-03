@@ -9,12 +9,13 @@ import java.util.Random;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.ByteToMessageDecoder;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
+import org.atum.jvcp.model.Card;
+import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.NetUtils;
@@ -23,10 +24,9 @@ import org.atum.jvcp.net.codec.NetUtils;
  *
  * @author Martin
  */
-public class CCcamLoginDecoder extends ByteToMessageDecoder {
+public class CCcamLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamLoginDecoder.class);
-	private CCcamServer cCcamServer;
 	private static Random r = new SecureRandom();
 	private static MessageDigest crypt = null;
 
@@ -37,8 +37,8 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 	}
 
 	public CCcamLoginDecoder(CCcamServer cCcamServer) {
+		super(cCcamServer);
 		try {
-			this.cCcamServer = cCcamServer;
 			if (crypt == null) {
 				crypt = MessageDigest.getInstance("SHA-1");
 			}
@@ -185,8 +185,8 @@ public class CCcamLoginDecoder extends ByteToMessageDecoder {
 		sender.writeCliData();
 		sender.writeSrvData();
 		Random ra = new Random();
-		//for (int i = 0 ; i < 100; i++)
-		//	sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
+		for (int i = 0 ; i < 5; i++)
+			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
 		
 		
 		

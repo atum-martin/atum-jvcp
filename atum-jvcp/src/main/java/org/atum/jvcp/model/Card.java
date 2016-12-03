@@ -1,5 +1,7 @@
 package org.atum.jvcp.model;
 
+import org.atum.jvcp.cache.HashCache;
+
 public class Card {
 	
 	private int shareId, remoteId, cardId;
@@ -8,6 +10,7 @@ public class Card {
 		this.cardId = cardId;
 		this.shareId = shareId;
 		this.remoteId = remoteId;
+		HashCache.getSingleton().setupCache(cardId);
 	}
 
 	public int getShare() {
