@@ -2,7 +2,7 @@ package org.atum.jvcp.net;
 
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.net.codec.LoginState;
-import org.atum.jvcp.net.codec.cccam.CCcamLoginDecoder;
+import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelInitializer;
@@ -32,7 +32,7 @@ public class PipelineInitializer extends ChannelInitializer<SocketChannel> {
 
 		channel.attr(NetworkConstants.LOGIN_STATE).set(LoginState.SHA);
 		
-		CCcamLoginDecoder decoder = new CCcamLoginDecoder(cCcamServer);
+		CCcamServerLoginDecoder decoder = new CCcamServerLoginDecoder(cCcamServer);
 
 		pipeline.addLast("filter", filter);
 		pipeline.addLast("timeout", new IdleStateHandler(10000, 0, 0));

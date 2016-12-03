@@ -1,4 +1,4 @@
-package org.atum.jvcp.net.codec.cccam;
+package org.atum.jvcp.net.codec.cccam.io;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -19,14 +19,16 @@ import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
  *
  * @author Martin
  */
-public class CCcamLoginDecoder extends LoginDecoder {
+public class CCcamServerLoginDecoder extends LoginDecoder {
 
-	private Logger logger = Logger.getLogger(CCcamLoginDecoder.class);
+	private Logger logger = Logger.getLogger(CCcamServerLoginDecoder.class);
 	private static Random r = new SecureRandom();
 	private static MessageDigest crypt = null;
 
@@ -36,7 +38,7 @@ public class CCcamLoginDecoder extends LoginDecoder {
 		}
 	}
 
-	public CCcamLoginDecoder(CCcamServer cCcamServer) {
+	public CCcamServerLoginDecoder(CCcamServer cCcamServer) {
 		super(cCcamServer);
 		try {
 			if (crypt == null) {

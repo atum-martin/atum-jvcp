@@ -1,7 +1,9 @@
-package org.atum.jvcp.net.codec.cccam;
+package org.atum.jvcp.net.codec.cccam.io;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.net.NetworkConstants;
+import org.atum.jvcp.net.codec.cccam.CCcamPacket;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

@@ -3,6 +3,7 @@ package org.atum.jvcp.net.codec.cccam;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.net.codec.cccam.io.CCcamPacketSender;
 
 public class CCcamSession {
 

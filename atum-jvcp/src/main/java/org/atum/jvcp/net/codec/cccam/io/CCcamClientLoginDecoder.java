@@ -1,4 +1,4 @@
-package org.atum.jvcp.net.codec.cccam;
+package org.atum.jvcp.net.codec.cccam.io;
 
 import java.util.List;
 

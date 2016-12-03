@@ -1,4 +1,4 @@
-package org.atum.jvcp.net.codec.cccam;
+package org.atum.jvcp.net.codec.cccam.io;
 
 import java.util.List;
 
@@ -7,6 +7,9 @@ import org.atum.jvcp.cache.HashCache;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
+import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
+import org.atum.jvcp.net.codec.cccam.CCcamConstants;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
 
 import io.netty.buffer.ByteBuf;

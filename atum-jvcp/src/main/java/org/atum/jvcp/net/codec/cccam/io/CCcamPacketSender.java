@@ -1,4 +1,4 @@
-package org.atum.jvcp.net.codec.cccam;
+package org.atum.jvcp.net.codec.cccam.io;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -8,6 +8,10 @@ import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
+import org.atum.jvcp.net.codec.cccam.CCcamConstants;
+import org.atum.jvcp.net.codec.cccam.CCcamPacket;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
 
 public class CCcamPacketSender {
