@@ -1,5 +1,6 @@
 package org.atum.jvcp.net.codec.cccam;
 
+import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.net.ChannelAcceptorHandler;
 import org.atum.jvcp.net.ChannelFilter;
@@ -16,8 +17,9 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 
 	private Class<? extends LoginDecoder> decoder;
 	private CCcamServer cCcamServer;
-	private static final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
-	private static final ChannelFilter filter = new ChannelFilter();
+	private final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
+	private final ChannelFilter filter = new ChannelFilter();
+	private Logger logger = Logger.getLogger(CCcamPipeline.class);
 	
 	public CCcamPipeline(CCcamServer cCcamServer, Class<? extends LoginDecoder> decoder) {
 		this.decoder = decoder;
@@ -32,11 +34,11 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 
 		pipeline.addLast("filter", filter);
 		pipeline.addLast("timeout", new IdleStateHandler(10000, 0, 0));
+		pipeline.addLast("channel-handler", ACCECPTOR_HANDLER);
 		LoginDecoder instance = decoder.getConstructor(CCcamServer.class).newInstance(cCcamServer);
 		pipeline.addLast("login-header-decoder", instance);
+		logger.info("login decoder assigned: "+instance.getClass().getName());
 
-		pipeline.addLast("channel-handler", ACCECPTOR_HANDLER);
-		
 		instance.init(pipeline.firstContext());
 	}
 

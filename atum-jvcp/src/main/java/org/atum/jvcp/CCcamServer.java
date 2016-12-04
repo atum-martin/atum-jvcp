@@ -29,6 +29,8 @@ public class CCcamServer extends CamServer {
 		
 		NettyBootstrap.listen(this,port);
 		this.start();
+		
+	
 	}
 	
 	public void run(){

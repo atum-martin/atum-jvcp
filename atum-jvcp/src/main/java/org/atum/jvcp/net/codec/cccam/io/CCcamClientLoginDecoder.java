@@ -13,9 +13,9 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class CCcamClientLoginDecoder extends LoginDecoder {
 
-	private Logger logger = Logger.getLogger(CCcamServerLoginDecoder.class);
+	private Logger logger = Logger.getLogger(CCcamClientLoginDecoder.class);
 	
-	public CCcamClientLoginDecoder(CCcamServer server, String username, String password) {
+	public CCcamClientLoginDecoder(CCcamServer server) {
 		super(server);
 	}
 
@@ -43,7 +43,8 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		}
 	}
 
-	private void handleLoginBlockHeader(ChannelHandlerContext ctx, ByteBuf in) {
+
+	private void handleHandshake(ChannelHandlerContext ctx, ByteBuf in) {
 		if (in.readableBytes() < 16) {
 			logger.info("less than 16 bytes in client buffer");
 			return;
@@ -52,9 +53,24 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		in.readBytes(secureRandom);
 		
 		boolean isOscam = testOscamSha(secureRandom);
-		boolean isMultiCs = false;
+		boolean isMultiCs = testMultiCsSha(secureRandom);
 		
+		logger.info("Client sha tests: "+isOscam+" "+isMultiCs);
+	}
+	
+	private void handleLoginHeader(ChannelHandlerContext ctx, ByteBuf in) {
 		
+	}
+	
+	private void handleLoginBlockHeader(ChannelHandlerContext ctx, ByteBuf in) {
+		
+	}
+
+	private boolean testMultiCsSha(byte[] secureRandom) {
+		int a = ((secureRandom[0] ^ 'M') + secureRandom[1] + secureRandom[2]) & 0xFF;
+		int b = (secureRandom[4] + (secureRandom[5] ^ 'C') + secureRandom[6]) & 0xFF;
+		int c = (secureRandom[8] + secureRandom[9] + (secureRandom[10] ^ 'S')) & 0xFF;
+		return (a == secureRandom[3]) && (b == secureRandom[7]) && (c == secureRandom[11]);
 	}
 
 	private boolean testOscamSha(byte[] secureRandom) {
@@ -67,12 +83,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		return recv_sum == sum;
 	}
 
-	private void handleLoginHeader(ChannelHandlerContext ctx, ByteBuf in) {
-		
-	}
 
-	private void handleHandshake(ChannelHandlerContext ctx, ByteBuf in) {
-		
-	}
+
 
 }
