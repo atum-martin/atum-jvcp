@@ -19,6 +19,7 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 	private CCcamServer cCcamServer;
 	private final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
 	private final ChannelFilter filter = new ChannelFilter();
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamPipeline.class);
 	
 	public CCcamPipeline(CCcamServer cCcamServer, Class<? extends LoginDecoder> decoder) {
@@ -37,7 +38,6 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 		pipeline.addLast("channel-handler", ACCECPTOR_HANDLER);
 		LoginDecoder instance = decoder.getConstructor(CCcamServer.class).newInstance(cCcamServer);
 		pipeline.addLast("login-header-decoder", instance);
-		logger.info("login decoder assigned: "+instance.getClass().getName());
 
 		instance.init(pipeline.firstContext());
 	}

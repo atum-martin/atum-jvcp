@@ -12,6 +12,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 public class ClientConnector {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(ClientConnector.class);
 	
 	public Channel connect(String host, int port, ChannelInitializer<SocketChannel> clazz) {
@@ -21,10 +22,7 @@ public class ClientConnector {
 			b.group(group).channel(NioSocketChannel.class).handler(clazz);
 
 			try {
-				logger.debug("connceting netty: "+host+" "+clazz.getClass().getName());
 				Channel channel = b.connect(host, port).sync().channel();
-				logger.debug("connceted netty: "+host+" "+clazz.getClass().getName()+" "+channel.isActive()+" "+channel.pipeline().last());
-				
 				return channel;
 			} catch (InterruptedException e) {
 				e.printStackTrace();
