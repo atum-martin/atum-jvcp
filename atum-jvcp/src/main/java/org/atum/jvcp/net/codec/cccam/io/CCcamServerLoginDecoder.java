@@ -88,6 +88,8 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		out.writeBytes(secureRandom);
 		context.writeAndFlush(out);
 
+		logger.info("flushing SHA bytes.");
+		
 		CCcamCipher.ccCamXOR(secureRandom);
 		crypt.update(secureRandom);
 		byte[] buf = crypt.digest();

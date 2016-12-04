@@ -15,11 +15,11 @@ public class ClientConnector {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(ClientConnector.class);
 	
-	public Channel connect(String host, int port, ChannelInitializer<SocketChannel> clazz) {
+	public Channel connect(String host, int port, ChannelInitializer<SocketChannel> pipeline) {
 		EventLoopGroup group = new NioEventLoopGroup();
 		try {
 			Bootstrap b = new Bootstrap();
-			b.group(group).channel(NioSocketChannel.class).handler(clazz);
+			b.group(group).channel(NioSocketChannel.class).handler(pipeline);
 
 			try {
 				Channel channel = b.connect(host, port).sync().channel();

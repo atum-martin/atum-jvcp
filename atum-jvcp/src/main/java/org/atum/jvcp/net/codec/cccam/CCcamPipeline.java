@@ -38,7 +38,7 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 		pipeline.addLast("channel-handler", ACCECPTOR_HANDLER);
 		LoginDecoder instance = decoder.getConstructor(CCcamServer.class).newInstance(cCcamServer);
 		pipeline.addLast("login-header-decoder", instance);
-
+		logger.info("Registereding decoder: "+instance.getClass().getName());
 		instance.init(pipeline.firstContext());
 	}
 

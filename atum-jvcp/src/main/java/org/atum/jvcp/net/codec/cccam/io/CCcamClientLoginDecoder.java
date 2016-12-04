@@ -26,6 +26,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
+		logger.info("decoding client login handshake.");
 		LoginState state = ctx.channel().attr(NetworkConstants.LOGIN_STATE).get();
 		logger.info("processing state: " + state);
 		switch (state) {
