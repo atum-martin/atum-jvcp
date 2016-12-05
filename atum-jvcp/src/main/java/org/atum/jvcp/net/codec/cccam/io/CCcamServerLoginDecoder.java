@@ -30,7 +30,6 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamServerLoginDecoder.class);
 	private static Random r = new SecureRandom();
-	private static MessageDigest crypt = null;
 
 	private void getRandomBytes(byte[] data, int len) {
 		for (int i = 0; i < len; i++) {
@@ -40,13 +39,6 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 
 	public CCcamServerLoginDecoder(CCcamServer cCcamServer) {
 		super(cCcamServer);
-		try {
-			if (crypt == null) {
-				crypt = MessageDigest.getInstance("SHA-1");
-			}
-		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -78,6 +70,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 	}
 
 	private void handleSHA(ChannelHandlerContext context) {
+		
 		byte[] secureRandom = new byte[16];
 		CCcamCipher encrypter = new CCcamCipher();
 		CCcamCipher decrypter = new CCcamCipher();
@@ -92,13 +85,13 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		
 		CCcamCipher.ccCamXOR(secureRandom);
 		crypt.update(secureRandom);
-		byte[] buf = crypt.digest();
+		byte[] sha = crypt.digest();
 
-		encrypter.CipherInit(buf, 20);
-		encrypter.decrypt(secureRandom, 16);
+		encrypter.CipherInit(sha, sha.length);
+		encrypter.decrypt(secureRandom, secureRandom.length);
 
-		decrypter.CipherInit(secureRandom, 16);
-		decrypter.encrypt(buf, 20);
+		decrypter.CipherInit(secureRandom, secureRandom.length);
+		decrypter.encrypt(sha, sha.length);
 
 		CCcamSession session = new CCcamSession(context, encrypter, decrypter);
 

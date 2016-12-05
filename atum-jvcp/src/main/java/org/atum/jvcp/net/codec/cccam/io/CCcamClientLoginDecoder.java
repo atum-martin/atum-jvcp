@@ -7,13 +7,18 @@ import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
+import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
 public class CCcamClientLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamClientLoginDecoder.class);
+	
 	
 	public CCcamClientLoginDecoder(CCcamServer server) {
 		super(server);
@@ -56,10 +61,50 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		boolean isMultiCs = testMultiCsSha(secureRandom);
 		
 		logger.info("Client sha tests: "+isOscam+" "+isMultiCs);
+		
+		CCcamCipher.ccCamXOR(secureRandom);
+		crypt.update(secureRandom);
+		byte[] sha = crypt.digest();
+		logger.debug("SHA cipher buffer len: "+sha.length);
+
+		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		
+		CCcamCipher encrypter = session.getEncrypter();
+		CCcamCipher decrypter = session.getDecrypter();
+		
+		decrypter.CipherInit(sha, sha.length);
+		decrypter.decrypt(secureRandom, secureRandom.length);
+		
+		encrypter.CipherInit(secureRandom, secureRandom.length);
+		encrypter.decrypt(sha, sha.length);
+		
+		ByteBuf out = Unpooled.buffer(20);
+		out.writeBytes(sha);
+		encrypter.encrypt(out);
+		ctx.writeAndFlush(out);
+		
+		out = Unpooled.buffer(20);
+		NetUtils.writeCCcamStr(out, "user99", 20);
+		encrypter.encrypt(out);
+		ctx.writeAndFlush(out);
+		
+		final String CCcamHash = "CCcam\0";
+		byte[] password = "password789".getBytes();
+		encrypter.encrypt(password,password.length);
+		out = Unpooled.buffer(CCcamHash.length());
+		out.writeBytes(CCcamHash.getBytes());
+		encrypter.encrypt(out);
+		ctx.writeAndFlush(out);
+		
+		ctx.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HEADER);
+
 	}
 	
 	private void handleLoginHeader(ChannelHandlerContext ctx, ByteBuf in) {
-		
+		if (in.readableBytes() < 20) {
+			logger.info("less than 16 bytes in client buffer");
+			return;
+		}
 	}
 	
 	private void handleLoginBlockHeader(ChannelHandlerContext ctx, ByteBuf in) {

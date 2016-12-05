@@ -2,6 +2,8 @@ package org.atum.jvcp.net.codec.cccam;
 
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.net.ClientConnector;
+import org.atum.jvcp.net.NetworkConstants;
+import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.cccam.io.CCcamClientLoginDecoder;
 
 import io.netty.channel.Channel;
@@ -17,7 +19,8 @@ public class CCcamClient extends CCcamSession {
 		ClientConnector conn = new ClientConnector();
 		
 		Channel channel = conn.connect(host, port, new CCcamPipeline(server, CCcamClientLoginDecoder.class));
-		CCcamClient client = new CCcamClient(channel.pipeline().firstContext(),null,null);
+		CCcamClient client = new CCcamClient(channel.pipeline().firstContext(),new CCcamCipher(),new CCcamCipher());
+		channel.attr(NetworkConstants.CCCAM_SESSION).set(client);
 		return client;
 	}
 
