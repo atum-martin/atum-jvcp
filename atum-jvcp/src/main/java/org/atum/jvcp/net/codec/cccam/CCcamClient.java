@@ -18,7 +18,7 @@ public class CCcamClient extends CCcamSession {
 		
 		Channel channel = conn.connect(host, port, new CCcamPipeline(server, CCcamClientLoginDecoder.class));
 		CCcamClient client = new CCcamClient(channel.pipeline().firstContext(),null,null);
-		channel.read();
 		return client;
 	}
+
 }

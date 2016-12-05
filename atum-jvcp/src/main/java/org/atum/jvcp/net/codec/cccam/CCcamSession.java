@@ -47,6 +47,11 @@ public class CCcamSession {
 	public void write(CCcamPacket cCcamPacket){
 		context.channel().writeAndFlush(cCcamPacket);
 	}
+	
+
+	public ChannelHandlerContext getCtx() {
+		return context;
+	}
 
 	public void setPacketSender(CCcamPacketSender packetSender) {
 		this.packetSender = packetSender;
