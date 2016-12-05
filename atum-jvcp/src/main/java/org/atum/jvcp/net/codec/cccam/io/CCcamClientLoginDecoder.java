@@ -32,16 +32,13 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		LoginState state = ctx.channel().attr(NetworkConstants.LOGIN_STATE).get();
-		logger.info("processing client state: " + state);
+		logger.debug("processing client state: " + state);
 		switch (state) {
 		case HANDSHAKE:
 			handleHandshake(ctx, in);
 			break;
 		case HEADER:
 			handleLoginHeader(ctx, in);
-			break;
-		case LOGIN_BLOCK_HEADER:
-			handleLoginBlockHeader(ctx, in);
 			break;
 		default:
 			throw new IllegalStateException("Invalid state during login decoding.");
@@ -60,7 +57,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		boolean isOscam = testOscamSha(secureRandom);
 		boolean isMultiCs = testMultiCsSha(secureRandom);
 		
-		logger.info("Client sha tests: "+isOscam+" "+isMultiCs);
+		logger.info("Client SHA tests: "+isOscam+" "+isMultiCs);
 		
 		CCcamCipher.ccCamXOR(secureRandom);
 		crypt.update(secureRandom);
@@ -119,10 +116,6 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		ctx.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
 		ctx.channel().pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
 	}
-	
-	private void handleLoginBlockHeader(ChannelHandlerContext ctx, ByteBuf in) {
-		
-	}
 
 	private boolean testMultiCsSha(byte[] secureRandom) {
 		int a = ((secureRandom[0] ^ 'M') + secureRandom[1] + secureRandom[2]) & 0xFF;
@@ -131,14 +124,12 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		return (a == secureRandom[3]) && (b == secureRandom[7]) && (c == secureRandom[11]);
 	}
 
-	private boolean testOscamSha(byte[] secureRandom) {
-		int recv_sum = (secureRandom[14] << 8) | secureRandom[15];
-		int sum = 0x1234;
-		for(int i = 0; i < 14; i++)
-		{
-			sum += secureRandom[i];
+	private boolean testOscamSha(byte[] data) {
+		for(int i = 0; i < 4; i++){
+			if((data[12+i] & 0xFF) != ((data[i] + data[4 + i] + data[8 + i]) & 0xFF))
+				return false;
 		}
-		return (recv_sum & 0xFF) == (sum & 0xFF);
+		return true;
 	}
 
 
