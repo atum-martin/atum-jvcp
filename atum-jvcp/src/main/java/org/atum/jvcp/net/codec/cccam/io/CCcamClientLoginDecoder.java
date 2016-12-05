@@ -105,6 +105,19 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 			logger.info("less than 16 bytes in client buffer");
 			return;
 		}
+		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		ByteBuf passHash = in.readBytes(20);
+		session.getDecrypter().decrypt(passHash);
+		String passwordVerification = NetUtils.readCCcamString(passHash, 20);
+		final String CCcamHash = "CCcam";
+		if(passwordVerification.equals(CCcamHash)){
+			logger.info("password verified.");
+		} else {
+			logger.info("password verification failed: "+passwordVerification);
+		}
+		ctx.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
+		ctx.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
+		ctx.channel().pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
 	}
 	
 	private void handleLoginBlockHeader(ChannelHandlerContext ctx, ByteBuf in) {

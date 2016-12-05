@@ -80,8 +80,6 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		ByteBuf out = Unpooled.buffer(secureRandom.length);
 		out.writeBytes(secureRandom);
 		context.writeAndFlush(out);
-
-		logger.info("flushing SHA bytes.");
 		
 		CCcamCipher.ccCamXOR(secureRandom);
 		crypt.update(secureRandom);
@@ -175,7 +173,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
-		context.pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
+		context.channel().pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
 		
 		CCcamPacketSender sender = new CCcamPacketSender(session);
 		session.setPacketSender(sender);

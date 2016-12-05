@@ -54,7 +54,7 @@ public class CCcamPacketSender {
 	}
 	
 	public void writeCliData(){
-		session.write(new CCcamPacket(CCcamConstants.MSG_CLI_DATA,null));
+		//session.write(new CCcamPacket(CCcamConstants.MSG_CLI_DATA,null));
 	}
 	
 	public void writeKeepAlive(){
