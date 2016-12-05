@@ -24,9 +24,8 @@ public class CCcamPacketSender {
 	}
 
 	public void writeCard(Card card) {
-		int size = 20 + (3 * card.getProviders().length);
+		int size = 22 + (7 * card.getProviders().length) + ( 8 * 1/*card.getNodeCount()*/);
 		ByteBuf out = Unpooled.buffer(size);
-		// 24+3*prov
 		out.writeInt(card.getShare());
 		out.writeInt((int) card.getNodeId());
 		out.writeShort(card.getCardId());
@@ -36,7 +35,11 @@ public class CCcamPacketSender {
 		out.writeByte(card.getProviders().length);
 		for (Provider prov : card.getProviders()) {
 			NetUtils.putTriByte(out, prov.getProviderId());
+			out.writeInt(0);
 		}
+		//node count
+		out.writeByte(1);
+		out.writeLong(card.getNodeId());
 		session.write(new CCcamPacket(CCcamConstants.MSG_NEW_CARD, out));
 
 	}
