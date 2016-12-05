@@ -66,6 +66,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	private void handlePacket(CCcamSession session, int cmdCode, int size, ByteBuf payload) {
 		switch (cmdCode) {
 		case CCcamConstants.MSG_CLI_DATA:
+			if(size < 93){
+				return;
+			}
 			String username = NetUtils.readCCcamString(payload, 20);
 
 			long nodeId = payload.readLong();
@@ -73,7 +76,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			int flag = payload.readByte();
 			String version = NetUtils.readCCcamString(payload, 32);
 			int build = Integer.parseInt(NetUtils.readCCcamString(payload, 32));
-			logger.info("MSG_CLI_DATA: " + version + " " + build + " " + username + " " + nodeId);
+			logger.info("decoding MSG_CLI_DATA: " + version + " " + build + " " + username + " " + nodeId);
 			CCcamBuild ccBuild = CCcamBuilds.getBuild(version);
 			if (ccBuild != null && ccBuild.getBuildNum() == build) {
 				logger.info("CCcam build verified: " + build);

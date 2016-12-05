@@ -177,7 +177,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		
 		CCcamPacketSender sender = new CCcamPacketSender(session);
 		session.setPacketSender(sender);
-		sender.writeCliData();
+		//sender.writeCliData();
 		sender.writeSrvData();
 		Random ra = new Random();
 		for (int i = 0 ; i < 5; i++)

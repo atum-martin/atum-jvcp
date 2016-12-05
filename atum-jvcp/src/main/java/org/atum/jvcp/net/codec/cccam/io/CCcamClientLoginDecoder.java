@@ -112,9 +112,15 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		} else {
 			logger.info("password verification failed: "+passwordVerification);
 		}
+		
+		CCcamPacketSender sender = new CCcamPacketSender(session);
+		session.setPacketSender(sender);
+		
 		ctx.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
 		ctx.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
 		ctx.channel().pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
+		
+		sender.writeCliData();
 	}
 
 	private boolean testMultiCsSha(byte[] secureRandom) {
