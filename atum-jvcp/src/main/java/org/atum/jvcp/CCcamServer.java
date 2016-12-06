@@ -16,7 +16,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
  *
  */
 
-public class CCcamServer extends CamServer {
+public class CCcamServer extends Thread implements CamServer {
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamServer.class);
@@ -28,9 +28,7 @@ public class CCcamServer extends CamServer {
 		AccountStore.getSingleton();
 		
 		NettyBootstrap.listen(this,port);
-		this.start();
-		
-	
+		this.start();	
 	}
 	
 	public void run(){
