@@ -3,7 +3,6 @@ package org.atum.jvcp.net.codec.cccam;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.net.ClientConnector;
 import org.atum.jvcp.net.NetworkConstants;
-import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.cccam.io.CCcamClientLoginDecoder;
 
 import io.netty.channel.Channel;

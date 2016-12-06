@@ -17,6 +17,7 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 
 	private Class<? extends LoginDecoder> decoder;
 	private CCcamServer cCcamServer;
+	@SuppressWarnings("unused")
 	private final ChannelAcceptorHandler ACCECPTOR_HANDLER = new ChannelAcceptorHandler();
 	private final ChannelFilter filter = new ChannelFilter();
 	private Logger logger = Logger.getLogger(CCcamPipeline.class);

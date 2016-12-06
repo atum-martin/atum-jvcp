@@ -9,7 +9,7 @@ import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
- * A basic socket acceptor which will decode the CCcam handshake and print the username sent.
+ * The main class of the CCcam application. Contains references to created sessions.
  * 
  * @since: 22/11/2016
  * @author atum-martin
@@ -18,11 +18,22 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 public class CCcamServer extends Thread implements CamServer {
 
+	/**
+	 * Instance of log4j logger
+	 */
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamServer.class);
+	
+	/**
+	 * A list which contains all open CCcam readers and clients.
+	 */
 	private ArrayList<CCcamSession> sessionList = new ArrayList<CCcamSession>();
 	
-	
+	/**
+	 * Creates a new CCcam server that will listen on a specified port.
+	 * 
+	 * @param port The port number the CCcam server will bind to.
+	 */
 	public CCcamServer(int port) {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
@@ -31,6 +42,9 @@ public class CCcamServer extends Thread implements CamServer {
 		this.start();	
 	}
 	
+	/**
+	 * Session keep alive thread.
+	 */
 	public void run(){
 		while(true){
 			synchronized(sessionList){
@@ -44,6 +58,10 @@ public class CCcamServer extends Thread implements CamServer {
 		}
 	}
 
+	/**
+	 * Loops through all sessions checking when the last packet was sent.
+	 * If this time exceeds 30 seconds send a keep alive packet. 
+	 */
 	private void sendKeepAlives() {
 		for(CCcamSession session : sessionList){
 			if(session.getLastKeepalive() > 30000){
@@ -52,10 +70,18 @@ public class CCcamServer extends Thread implements CamServer {
 		}
 	}
 
+	/**
+	 * Creates a default instance of CCcam server that listens on port 12000.
+	 * @param args Not used.
+	 */
 	public static void main(String[] args) {
 		new CCcamServer(12000);
 	}
 
+	/**
+	 * Adds a {@link CCcamSession} to the list of sessions maintained as part of the CCcam server.
+	 * @param session The instance of the session that should be added to the session list.
+	 */
 	public void registerSession(CCcamSession session) {
 		synchronized (sessionList){
 			sessionList.add(session);

@@ -1,7 +1,5 @@
 package org.atum.jvcp.net.codec.cccam.io;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;

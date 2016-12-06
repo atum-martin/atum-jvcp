@@ -1,7 +1,6 @@
 package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.net.codec.cccam.io.CCcamClientLoginDecoder;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
