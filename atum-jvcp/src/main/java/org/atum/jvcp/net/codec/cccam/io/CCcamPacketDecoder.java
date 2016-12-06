@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.cache.HashCache;
+import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
@@ -101,6 +102,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			int cardId = payload.readInt();
 			break;	
 			
+		case CCcamConstants.MSG_NEW_CARD:
+			decodeCCcamNewCard(session, payload);
+			break;	
+			
 		case CCcamConstants.MSG_KEEPALIVE:
 			session.setLastKeepAlive(System.currentTimeMillis());
 			break;
@@ -110,6 +115,27 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			//payload.readBytes(size);
 			break;
 		}
+	}
+
+	private void decodeCCcamNewCard(CCcamSession session, ByteBuf payload) {
+		int length = payload.readableBytes();
+		int shareId = payload.readInt();
+		int nodeId = payload.readInt();
+		int cardId = payload.readShort();
+		int hopCount = payload.readByte();
+		int reshare = payload.readByte();
+		long serial = payload.readLong();
+		int providers = payload.readByte();
+		for(int i = 0; i < providers; i++){
+			int providerId = NetUtils.readTriByte(payload);
+			payload.readInt();
+		}
+		int nodeCount = payload.readByte();
+		for(int i = 0; i < nodeCount; i++){
+			long nodeShareId = payload.readLong();
+		}
+		
+		logger.info("Decoded new caid: 0x"+Integer.toHexString(cardId)+" "+length+" "+providers+" "+nodeCount);
 	}
 
 	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload) {

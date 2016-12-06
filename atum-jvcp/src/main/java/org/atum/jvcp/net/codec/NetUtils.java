@@ -49,4 +49,8 @@ public class NetUtils {
 		}
 		return arr.length;
 	}
+
+	public static int readTriByte(ByteBuf payload) {
+		return (payload.readByte() << 16 | payload.readByte() << 8 | payload.readByte() & 0xFF);
+	}
 }
