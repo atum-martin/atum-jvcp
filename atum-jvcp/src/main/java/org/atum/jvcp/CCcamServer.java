@@ -12,7 +12,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
  * The main class of the CCcam application. Contains references to created sessions.
  * 
  * @since: 22/11/2016
- * @author atum-martin
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
  *
  */
 
