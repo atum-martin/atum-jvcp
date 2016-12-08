@@ -163,6 +163,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
+		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
+		if(answer != null && answer.hasAnswer()){
+			session.getPacketSender().writeEcmAnswer(answer.getDcw());
+		}
 	}
 
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {

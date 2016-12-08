@@ -1,5 +1,6 @@
 package org.atum.jvcp.model;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.zip.Adler32;
@@ -17,7 +18,7 @@ public class EcmRequest {
 	private byte[] dcw = null;
 	private long ecmHash;
 	private long timestamp;
-	private List<CCcamSession> sessions = new LinkedList<CCcamSession>();
+	private List<CCcamSession> sessions = Collections.synchronizedList(new LinkedList<CCcamSession>());
 
 	public EcmRequest(int cardId,Provider prov,int shareId,int serviceId,byte[] ecm, boolean computeHash){
 		this.setCardId(cardId);
@@ -128,5 +129,9 @@ public class EcmRequest {
 
 	public void setEcmHash(long ecmHash2) {
 		this.ecmHash = ecmHash2;
+	}
+
+	public void addListener(CCcamSession session) {
+		sessions.add(session);
 	}
 }
