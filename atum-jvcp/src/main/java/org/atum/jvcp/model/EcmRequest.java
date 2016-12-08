@@ -1,5 +1,8 @@
 package org.atum.jvcp.model;
 
+import java.util.zip.Adler32;
+import java.util.zip.Checksum;
+
 public class EcmRequest {
 
 	private int cardId;
@@ -8,6 +11,8 @@ public class EcmRequest {
 	private int serviceId;
 	private byte[] ecm;
 	private byte[] dcw = null;
+	private long ecmHash;
+	private long timestamp;
 
 	public EcmRequest(int cardId,Provider prov,int shareId,int serviceId,byte[] ecm){
 		this.setCardId(cardId);
@@ -15,6 +20,14 @@ public class EcmRequest {
 		this.setShareId(shareId);
 		this.setServiceId(serviceId);
 		this.setEcm(ecm);
+		updateTimestamp();
+	}
+
+	/**
+	 * Sets the timestamp of this ECM to NOW.
+	 */
+	private void updateTimestamp() {
+		timestamp = System.currentTimeMillis();
 	}
 
 	public int getCardId() {
@@ -52,9 +65,25 @@ public class EcmRequest {
 	public byte[] getEcm() {
 		return ecm;
 	}
+	
+	public long getTimestamp(){
+		return timestamp;
+	}
 
 	public void setEcm(byte[] ecm) {
 		this.ecm = ecm;
+		computeEcmHash();
+	}
+
+	/**
+	 * CRC checksum for ECM. 
+	 * Adler32 is a faster checksum implementation than CRC32.
+	 * TODO: Implement simpler crc system as ecm length is always 16.
+	 */
+	private void computeEcmHash() {
+		Checksum cksum = new Adler32();
+		cksum.update(ecm, 0, ecm.length);
+		ecmHash = cksum.getValue();
 	}
 
 	public byte[] getDcw() {
@@ -63,5 +92,25 @@ public class EcmRequest {
 
 	public void setDcw(byte[] dcw) {
 		this.dcw = dcw;
+	}
+	
+	public boolean hasAnswer(){
+		return dcw != null;
+	}
+	
+	public long getEcmHash(){
+		return ecmHash;
+	}
+	
+	@Override
+	public int hashCode(){
+		return (int) ecmHash;
+	}
+	
+	public boolean equals(EcmRequest req){
+		if(req.hashCode() == this.hashCode()){
+			return true;
+		}
+		return false;
 	}
 }
