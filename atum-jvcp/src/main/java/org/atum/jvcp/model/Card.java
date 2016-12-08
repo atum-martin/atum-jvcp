@@ -91,7 +91,7 @@ public class Card {
 	 * @return An array of providers associated with this card.
 	 */
 	public Provider[] getProviders() {
-		return new Provider[] { new Provider(), };
+		return new Provider[] { new Provider(0), };
 	}
 
 	/**

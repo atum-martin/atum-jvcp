@@ -1,7 +1,11 @@
 package org.atum.jvcp.model;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
+
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 public class EcmRequest {
 
@@ -13,13 +17,14 @@ public class EcmRequest {
 	private byte[] dcw = null;
 	private long ecmHash;
 	private long timestamp;
+	private List<CCcamSession> sessions = new LinkedList<CCcamSession>();
 
-	public EcmRequest(int cardId,Provider prov,int shareId,int serviceId,byte[] ecm){
+	public EcmRequest(int cardId,Provider prov,int shareId,int serviceId,byte[] ecm, boolean computeHash){
 		this.setCardId(cardId);
 		this.setProv(prov);
 		this.setShareId(shareId);
 		this.setServiceId(serviceId);
-		this.setEcm(ecm);
+		this.setEcm(ecm, computeHash);
 		updateTimestamp();
 	}
 
@@ -70,9 +75,10 @@ public class EcmRequest {
 		return timestamp;
 	}
 
-	public void setEcm(byte[] ecm) {
+	public void setEcm(byte[] ecm, boolean computeHash) {
 		this.ecm = ecm;
-		computeEcmHash();
+		if(computeHash)
+			ecmHash = computeEcmHash(ecm);
 	}
 
 	/**
@@ -80,10 +86,10 @@ public class EcmRequest {
 	 * Adler32 is a faster checksum implementation than CRC32.
 	 * TODO: Implement simpler crc system as ecm length is always 16.
 	 */
-	private void computeEcmHash() {
+	public static long computeEcmHash(byte[] ecm) {
 		Checksum cksum = new Adler32();
 		cksum.update(ecm, 0, ecm.length);
-		ecmHash = cksum.getValue();
+		return cksum.getValue();
 	}
 
 	public byte[] getDcw() {
@@ -112,5 +118,15 @@ public class EcmRequest {
 			return true;
 		}
 		return false;
+	}
+
+	public void fireActionListeners() {
+		for(CCcamSession session : sessions){
+			session.getPacketSender().writeEcmAnswer(dcw);
+		}
+	}
+
+	public void setEcmHash(long ecmHash2) {
+		this.ecmHash = ecmHash2;
 	}
 }

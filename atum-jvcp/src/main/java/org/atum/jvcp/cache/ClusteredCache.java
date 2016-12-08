@@ -21,8 +21,8 @@ import org.atum.jvcp.model.EcmRequest;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 8 Dec 2016 21:11:04
  */
-@SuppressWarnings("hiding")
-public class ClusteredCache<Long, T> extends LinkedHashMap<Long, T> implements CacheExchangeInterface {
+@SuppressWarnings("rawtypes")
+public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterface {
 
 	private static final long serialVersionUID = 4261198925084345053L;
 	private long timeout;
@@ -35,7 +35,7 @@ public class ClusteredCache<Long, T> extends LinkedHashMap<Long, T> implements C
 		this.timeout = timeout;
 	}
 
-	protected boolean removeEldestEntry(Map.Entry<Long, T> eldest) {
+	protected boolean removeEldestEntry(Map.Entry eldest) {
 		long now = System.currentTimeMillis();
 		EcmRequest req = (EcmRequest) eldest.getValue();
 		if (now - req.getTimestamp() > timeout) {
@@ -51,6 +51,19 @@ public class ClusteredCache<Long, T> extends LinkedHashMap<Long, T> implements C
 
 		}
 		return answer;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean addEntry(long ecmHash,EcmRequest dcw){
+		EcmRequest previousEntry = (EcmRequest) this.put(ecmHash, dcw);
+		return true;
+	}
+
+	/**
+	 * @param ecmHash
+	 */
+	public void removeRequest(long ecmHash) {
+		this.remove(ecmHash);
 	}
 
 }

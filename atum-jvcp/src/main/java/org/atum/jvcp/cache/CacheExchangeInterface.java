@@ -12,4 +12,5 @@ import org.atum.jvcp.model.EcmRequest;
 public interface CacheExchangeInterface {
 
 	public EcmRequest peekCache(long ecmHash);
+	public boolean addEntry(long ecmHash,EcmRequest dcw);
 }
