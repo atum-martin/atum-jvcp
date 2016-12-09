@@ -92,7 +92,7 @@ public class CCcamSession {
 	}
 
 	public boolean isReader() {
-		return true;
+		return false;
 	}
 
 	public EcmRequest getLastRequest() {

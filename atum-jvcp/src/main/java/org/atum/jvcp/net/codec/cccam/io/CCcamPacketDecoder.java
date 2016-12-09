@@ -29,7 +29,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			state = PacketState.HEADER;
 		switch (state) {
 		case HEADER:
-
+			if(in.readableBytes() < 4){
+				return;
+			}
 			ByteBuf command = in.readBytes(4);
 			synchronized (session) {
 				session.getDecrypter().decrypt(command);
@@ -42,14 +44,14 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			session.setCurrentPacket(cmdCode, size);
 
 			if (in.readableBytes() < size) {
-				logger.info("packet payload too small: " + cmdCode + " " + size);
+				//logger.info("packet payload too small: " + cmdCode + " " + size);
 				ctx.channel().attr(NetworkConstants.PACKET_STATE).set(PacketState.PAYLOAD);
 				return;
 			}
 		case PAYLOAD:
-			if (state == PacketState.PAYLOAD) {
+			/*if (state == PacketState.PAYLOAD) {
 				logger.info("reconstructing fragmented packet: " + session.getPacketCode() + " " + session.getPacketSize());
-			}
+			}*/
 			
 			if (in.readableBytes() < session.getPacketSize()) {
 				return;
@@ -143,6 +145,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			byte[] dcw = new byte[16];
 			payload.readBytes(dcw);
 			logger.info("Recieved DCW");
+			
+			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw)){
+				//answer was not handled. No entry existed in any cache.
+			}
 			return;
 		}
 		//REQUEST ECM
@@ -151,7 +157,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		//shareId
 		int id = payload.readInt();
 		int serviceId = payload.readShort();
-		int ecmLength = payload.readByte();
+		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[ecmLength];
 		payload.readBytes(ecm);
 		/*
@@ -160,8 +166,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
+		logger.info("requested client ECM: "+EcmRequest.computeEcmHash(ecm));
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
+			logger.info("handled client ECM: "+answer.getCspHash());
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}
@@ -191,11 +199,11 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			long cacheNodeId = payload.readLong();
 		}
 		
-		if(!CardServer.handleEcmAnswer(ecmd5, cw)){
+		if(!CardServer.handleEcmAnswer(cspHash, cw)){
 			//answer was not handled. No entry existed in any cache.
-			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId, ecmd5, 0L);
+			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId, ecmd5, 0);
 			req.setDcw(cw);
-			CardServer.getCache().addEntry(req.getEcmHash(), req);
+			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
 		//HashCache.getSingleton().pushCache(cardId, serviceId, ecmd5, cw);
 		

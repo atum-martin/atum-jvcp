@@ -26,8 +26,8 @@ public class NettyBootstrap {
 
 		logger.info("Server listening on port: " + port);
 		
-		@SuppressWarnings("unused")
-		CCcamClient client = CCcamClient.connect(cCcamServer, "127.0.0.1", 12000);
+		//@SuppressWarnings("unused")
+		//CCcamClient client = CCcamClient.connect(cCcamServer, "127.0.0.1", 12000);
 		
 	}
 

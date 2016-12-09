@@ -16,7 +16,7 @@ public class EcmRequest {
 	private int serviceId;
 	private byte[] ecm;
 	private byte[] dcw = null;
-	private long ecmHash;
+	private int cspHash;
 	private long timestamp;
 	private List<CCcamSession> sessions = Collections.synchronizedList(new LinkedList<CCcamSession>());
 
@@ -79,18 +79,16 @@ public class EcmRequest {
 	public void setEcm(byte[] ecm, boolean computeHash) {
 		this.ecm = ecm;
 		if(computeHash)
-			ecmHash = computeEcmHash(ecm);
+			cspHash = computeEcmHash(ecm);
 	}
 
-	/**
-	 * CRC checksum for ECM. 
-	 * Adler32 is a faster checksum implementation than CRC32.
-	 * TODO: Implement simpler crc system as ecm length is always 16.
-	 */
-	public static long computeEcmHash(byte[] ecm) {
-		Checksum cksum = new Adler32();
-		cksum.update(ecm, 0, ecm.length);
-		return cksum.getValue();
+	public static int computeEcmHash(byte[] ecm) {
+		int hash = 0;
+		for(int i = 3; i < ecm.length; i++){
+			int em = (ecm[i] & 0xFF);
+			hash = 31 * hash + em;
+		}
+		return hash;
 	}
 
 	public byte[] getDcw() {
@@ -105,13 +103,13 @@ public class EcmRequest {
 		return dcw != null;
 	}
 	
-	public long getEcmHash(){
-		return ecmHash;
+	public int getCspHash(){
+		return cspHash;
 	}
 	
 	@Override
 	public int hashCode(){
-		return (int) ecmHash;
+		return (int) cspHash;
 	}
 	
 	public boolean equals(EcmRequest req){
@@ -123,15 +121,17 @@ public class EcmRequest {
 
 	public void fireActionListeners() {
 		for(CCcamSession session : sessions){
+			System.out.println("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 	}
 
-	public void setEcmHash(long ecmHash2) {
-		this.ecmHash = ecmHash2;
+	public void setCspHash(int cspHash) {
+		this.cspHash = cspHash;
 	}
 
 	public void addListener(CCcamSession session) {
+		System.out.println("adding listener for ecm.");
 		sessions.add(session);
 	}
 }
