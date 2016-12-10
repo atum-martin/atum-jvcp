@@ -30,8 +30,7 @@ public class CardServer {
 	/**
 	 * Main method used to initialize a blank cccam server with clustered cache.
 	 * 
-	 * @param Not
-	 *            used
+	 * @param Not used
 	 */
 	public static void main(String[] args) {
 		new CCcamServer(12000);

@@ -1,5 +1,6 @@
 package org.atum.jvcp.model;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,10 +84,17 @@ public class EcmRequest {
 	}
 
 	public static int computeEcmHash(byte[] ecm) {
+		/*try {
+			return new String(ecm, "ISO-8859-1").hashCode();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return 0;*/
 		int hash = 0;
 		for(int i = 3; i < ecm.length; i++){
 			int em = (ecm[i] & 0xFF);
-			hash = 31 * hash + em;
+			hash = (31 * hash + em);
 		}
 		return hash;
 	}

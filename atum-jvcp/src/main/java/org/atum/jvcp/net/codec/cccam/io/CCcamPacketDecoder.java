@@ -160,6 +160,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[ecmLength];
 		payload.readBytes(ecm);
+		
+		System.out.println(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
 		if(dcw != null){
@@ -173,6 +176,15 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}
+	/*
+	#define CSP_HASH_SWAP(n) (((((uint32_t)(n) & 0xFF)) << 24) | \
+            ((((uint32_t)(n) & 0xFF00)) << 8) | \
+            ((((uint32_t)(n) & 0xFF0000)) >> 8) | \
+            ((((uint32_t)(n) & 0xFF000000)) >> 24))
+	*/
+	private long cspHashSwap(long n){
+		return ((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L);
+	}
 
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
 		int cardId = payload.readShort();
@@ -185,11 +197,11 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		payload.readByte();
 		payload.readByte();
 		int cycleTime = payload.readByte(); 
-		int ecm0 = payload.readByte();
+		int ecm0 = payload.readByte();//this is byte 20
 		
-		byte[] ecmd5 = new byte[16];
-		payload.readBytes(ecmd5);
-		int cspHash = payload.readInt();
+		byte[] ecmMD5 = new byte[16];
+		payload.readBytes(ecmMD5);
+		int cspHash = (int) cspHashSwap(payload.readInt());
 		
 		byte[] cw = new byte[16];
 		payload.readBytes(cw);
@@ -199,9 +211,11 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			long cacheNodeId = payload.readLong();
 		}
 		
+		//System.out.println(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		
 		if(!CardServer.handleEcmAnswer(cspHash, cw)){
 			//answer was not handled. No entry existed in any cache.
-			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId, ecmd5, 0);
+			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash);
 			req.setDcw(cw);
 			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
