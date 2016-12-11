@@ -201,7 +201,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		byte[] ecmMD5 = new byte[16];
 		payload.readBytes(ecmMD5);
-		int cspHash = (int) cspHashSwap(payload.readInt());
+		long cspHash = cspHashSwap(getUnsignedInt(payload.readInt()));
 		
 		byte[] cw = new byte[16];
 		payload.readBytes(cw);
@@ -224,4 +224,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 	}
 
+	public static long getUnsignedInt(int x) {
+	    return x & 0x00000000ffffffffL;
+	}
+	
 }

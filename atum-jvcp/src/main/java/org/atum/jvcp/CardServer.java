@@ -52,7 +52,7 @@ public class CardServer {
 		return pendingEcms;
 	}
 
-	public static boolean handleEcmAnswer(int cspHash, byte[] cw) {
+	public static boolean handleEcmAnswer(long cspHash, byte[] cw) {
 		//long ecmHash = EcmRequest.computeEcmHash(cspHash);
 		//logger.info("ECM cache entry for: "+cspHash);
 		EcmRequest req = CardServer.getPendingCache().peekCache(cspHash);
@@ -88,7 +88,7 @@ public class CardServer {
 		return sum;
 	}
 
-	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash){
+	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, long cspHash){
 		if(cspHash == 0L){
 			//no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
@@ -100,7 +100,7 @@ public class CardServer {
 	}
 
 	public static EcmRequest handleEcmRequest(CCcamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
-		int cspHash = EcmRequest.computeEcmHash(ecm);
+		long cspHash = EcmRequest.computeEcmHash(ecm);
 		EcmRequest answer = CardServer.getCache().peekCache(cspHash);
 		if (answer != null) {
 			return answer;

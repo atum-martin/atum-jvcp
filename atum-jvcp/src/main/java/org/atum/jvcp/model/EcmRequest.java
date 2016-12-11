@@ -17,7 +17,7 @@ public class EcmRequest {
 	private int serviceId;
 	private byte[] ecm;
 	private byte[] dcw = null;
-	private int cspHash;
+	private long cspHash;
 	private long timestamp;
 	private List<CCcamSession> sessions = Collections.synchronizedList(new LinkedList<CCcamSession>());
 
@@ -83,7 +83,7 @@ public class EcmRequest {
 			cspHash = computeEcmHash(ecm);
 	}
 
-	public static int computeEcmHash(byte[] ecm) {
+	public static long computeEcmHash(byte[] ecm) {
 		/*try {
 			return new String(ecm, "ISO-8859-1").hashCode();
 		} catch (UnsupportedEncodingException e) {
@@ -91,10 +91,10 @@ public class EcmRequest {
 			e.printStackTrace();
 		}
 		return 0;*/
-		int hash = 0;
+		long hash = 0;
 		for(int i = 3; i < ecm.length; i++){
-			int em = (ecm[i] & 0xFF);
-			hash = (31 * hash + em);
+			long em = (ecm[i] & 0xFF);
+			hash = (31L * hash + em);
 		}
 		return hash;
 	}
@@ -111,7 +111,7 @@ public class EcmRequest {
 		return dcw != null;
 	}
 	
-	public int getCspHash(){
+	public long getCspHash(){
 		return cspHash;
 	}
 	
@@ -134,7 +134,7 @@ public class EcmRequest {
 		}
 	}
 
-	public void setCspHash(int cspHash) {
+	public void setCspHash(long cspHash) {
 		this.cspHash = cspHash;
 	}
 

@@ -44,7 +44,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 		return false;
 	}
 
-	public EcmRequest peekCache(int ecmHash) {
+	public EcmRequest peekCache(long ecmHash) {
 		EcmRequest answer = (EcmRequest) this.get(ecmHash);
 		if (answer == null) {
 			// add listener to map?
@@ -54,7 +54,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 	}
 	
 	@SuppressWarnings("unchecked")
-	public boolean addEntry(int ecmHash,EcmRequest dcw){
+	public boolean addEntry(long ecmHash,EcmRequest dcw){
 		EcmRequest previousEntry = (EcmRequest) this.put(ecmHash, dcw);
 		return true;
 	}
@@ -62,7 +62,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 	/**
 	 * @param ecmHash
 	 */
-	public void removeRequest(int ecmHash) {
+	public void removeRequest(long ecmHash) {
 		this.remove(ecmHash);
 	}
 
