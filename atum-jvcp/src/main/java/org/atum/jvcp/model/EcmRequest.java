@@ -91,10 +91,12 @@ public class EcmRequest {
 			e.printStackTrace();
 		}
 		return 0;*/
-		long hash = 0;
+		//oscam/trunk/module-cacheex.c
+		//value used for hash is signed 4 byte integer.
+		int hash = 0;
 		for(int i = 3; i < ecm.length; i++){
-			long em = (ecm[i] & 0xFF);
-			hash = (31L * hash + em);
+			int em = (ecm[i] & 0xFF);
+			hash = (31 * hash + em);
 		}
 		return hash;
 	}

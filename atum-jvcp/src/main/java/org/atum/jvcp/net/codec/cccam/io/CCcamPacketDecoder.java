@@ -161,7 +161,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		byte[] ecm = new byte[ecmLength];
 		payload.readBytes(ecm);
 		
-		System.out.println(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		System.out.println("ecm req: "+ecmLength+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
