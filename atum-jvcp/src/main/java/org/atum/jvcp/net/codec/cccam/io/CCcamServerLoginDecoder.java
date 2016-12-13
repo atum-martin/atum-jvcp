@@ -183,7 +183,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		
 		
 		
-		cCcamServer.registerSession(session);
+		camServer.registerSession(session);
 	}
 	
 

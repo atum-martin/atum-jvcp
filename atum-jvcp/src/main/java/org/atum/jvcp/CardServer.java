@@ -5,7 +5,9 @@ package org.atum.jvcp;
 
 import java.util.Arrays;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
@@ -33,6 +35,8 @@ public class CardServer {
 	 * @param Not used
 	 */
 	public static void main(String[] args) {
+		BasicConfigurator.configure();
+		AccountStore.getSingleton();
 		new CCcamServer(12000);
 	}
 

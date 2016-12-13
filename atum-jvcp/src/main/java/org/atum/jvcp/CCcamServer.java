@@ -6,7 +6,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.net.NettyBootstrap;
+import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
+import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 
 /**
  * The main class of the CCcam application. Contains references to created sessions.
@@ -34,11 +36,8 @@ public class CCcamServer extends Thread implements CamServer {
 	 * 
 	 * @param port The port number the CCcam server will bind to.
 	 */
-	public CCcamServer(int port) {
-		BasicConfigurator.configure();
-		AccountStore.getSingleton();
-		
-		NettyBootstrap.listen(this,port);
+	public CCcamServer(int port) {	
+		NettyBootstrap.listen(new CCcamPipeline(this, CCcamServerLoginDecoder.class),port);
 		this.start();	
 	}
 	
