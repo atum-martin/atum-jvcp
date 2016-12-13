@@ -31,7 +31,7 @@ public class NewcamdPipeline extends ChannelInitializer<SocketChannel> {
 		this.decoder = decoder;
 		this.newcamdServer = newcamdServer;
 	}
-
+	
 	@Override
 	protected void initChannel(SocketChannel channel) throws Exception {
 		final ChannelPipeline pipeline = channel.pipeline();

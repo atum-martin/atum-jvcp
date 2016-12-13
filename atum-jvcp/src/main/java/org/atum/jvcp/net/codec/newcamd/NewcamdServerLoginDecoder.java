@@ -77,30 +77,6 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 	private void handleLoginBlockHeader(ChannelHandlerContext context, ByteBuf buffer) {
 
 	}
-	
 
-	/*private void handleLoginBlock(ChannelHandlerContext context, ByteBuf buffer) {
-		if (buffer.readableBytes() < 66) {
-			logger.info("less than 66 bytes in buffer");
-			return;
-		}
-		logger.info("buf size: "+buffer.readableBytes());
-		byte[] junk = new byte[24];
-		readBuffer(buffer, junk, junk.length);
-		
-		byte[] nodeId = new byte[8];
-		readBuffer(buffer, nodeId, nodeId.length);
-		
-		byte[] remoteVersionByte = new byte[32];
-		readBuffer(buffer, remoteVersionByte, remoteVersionByte.length);
-		String remoteVersion = toCCcamString(remoteVersionByte);
-		
-		byte[] remoteBuildByte = new byte[32];
-		readBuffer(buffer, remoteBuildByte, remoteBuildByte.length);
-		String remoteBuild = toCCcamString(remoteBuildByte);
-		
-		logger.info(remoteVersion+" "+remoteBuild);
-		
-	}*/
 
 }

@@ -2,6 +2,7 @@ package org.atum.jvcp.net.codec.cccam;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
+import org.atum.jvcp.NewcamdServer;
 import org.atum.jvcp.net.ChannelAcceptorHandler;
 import org.atum.jvcp.net.ChannelFilter;
 import org.atum.jvcp.net.LoginDecoder;

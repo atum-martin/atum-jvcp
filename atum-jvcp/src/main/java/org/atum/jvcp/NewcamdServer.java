@@ -11,6 +11,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
+import org.atum.jvcp.net.codec.newcamd.NewcamdServerLoginDecoder;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 /**
@@ -32,12 +33,13 @@ public class NewcamdServer extends Thread implements CamServer {
 	private ArrayList<NewcamdSession> sessionList = new ArrayList<NewcamdSession>();
 	
 	/**
-	 * Creates a new CCcam server that will listen on a specified port.
+	 * Creates a new NewcamdServer server that will listen on a specified port.
 	 * 
 	 * @param port The port number the CCcam server will bind to.
 	 */
 	public NewcamdServer(int port) {	
-		NettyBootstrap.listen(new NewcamdPipeline(this, NewcamdServerLoginDecoder.class),port);
+		NewcamdPipeline pipe = new NewcamdPipeline(this, NewcamdServerLoginDecoder.class);
+		NettyBootstrap.listen(pipe,port);
 		this.start();	
 	}
 
