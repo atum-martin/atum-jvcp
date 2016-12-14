@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.atum.jvcp.model.EcmRequest;
 
 /**
@@ -22,6 +23,8 @@ import org.atum.jvcp.model.EcmRequest;
 @SuppressWarnings("rawtypes")
 public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterface {
 
+	@SuppressWarnings("unused")
+	private Logger logger = Logger.getLogger(ClusteredCache.class);
 	private static final long serialVersionUID = 4261198925084345053L;
 	private long timeout;
 
