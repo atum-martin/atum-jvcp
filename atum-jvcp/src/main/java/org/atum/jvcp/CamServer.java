@@ -1,6 +1,6 @@
 package org.atum.jvcp;
 
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
+import org.atum.jvcp.net.CamSession;
 
 /**
  * An interface which defines how a cam emulator should behave.
@@ -11,8 +11,8 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
  */
 public interface CamServer {
 	/**
-	 * Adds a {@link CCcamSession} to the list of sessions maintained as part of the CCcam server.
+	 * Adds a {@link CamSession} to the list of sessions maintained as part of the CCcam server.
 	 * @param session The instance of the session that should be added to the session list.
 	 */
-	public void registerSession(CCcamSession session);
+	public void registerSession(CamSession session);
 }

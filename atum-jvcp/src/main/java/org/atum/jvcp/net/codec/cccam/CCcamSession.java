@@ -4,9 +4,10 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.EcmRequest;
+import org.atum.jvcp.net.CamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketSender;
 
-public class CCcamSession {
+public class CCcamSession extends CamSession {
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamSession.class);
