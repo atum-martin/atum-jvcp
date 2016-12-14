@@ -22,7 +22,7 @@ public class CCcamPacketEncoder extends MessageToByteEncoder<CCcamPacket> {
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, CCcamPacket msg, ByteBuf out) throws Exception {
-		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
 		int packetLength = 0;
 		if(msg.getOut() != null){
 			packetLength = msg.getOut().readableBytes();

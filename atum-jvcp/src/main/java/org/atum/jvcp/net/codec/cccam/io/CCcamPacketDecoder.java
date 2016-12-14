@@ -28,7 +28,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
 		PacketState state = ctx.channel().attr(NetworkConstants.PACKET_STATE).get();
 		if (state == null)
 			state = PacketState.HEADER;

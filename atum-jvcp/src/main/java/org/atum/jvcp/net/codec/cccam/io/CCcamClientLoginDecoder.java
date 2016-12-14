@@ -69,7 +69,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		byte[] sha = crypt.digest();
 		logger.debug("SHA cipher buffer len: "+sha.length);
 
-		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
 		
 		CCcamCipher encrypter = session.getEncrypter();
 		CCcamCipher decrypter = session.getDecrypter();
@@ -107,7 +107,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 			logger.info("less than 16 bytes in client buffer");
 			return;
 		}
-		CCcamSession session = ctx.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
 		ByteBuf passHash = in.readBytes(20);
 		session.getDecrypter().decrypt(passHash);
 		String passwordVerification = NetUtils.readCCcamString(passHash, 20);

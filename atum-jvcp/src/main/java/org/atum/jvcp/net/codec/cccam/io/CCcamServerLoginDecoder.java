@@ -92,7 +92,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		CCcamSession session = new CCcamSession(context, encrypter, decrypter);
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
-		context.channel().attr(NetworkConstants.CCCAM_SESSION).set(session);
+		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 
 	}
 
@@ -103,7 +103,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 			return;
 		}
 
-		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 
 		byte[] shaCipher = new byte[20];
 
@@ -121,7 +121,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 			return;
 		}
 
-		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 
 		byte[] usernameBuf = new byte[20];
 
@@ -142,7 +142,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 			return;
 		}
 
-		CCcamSession session = context.channel().attr(NetworkConstants.CCCAM_SESSION).get();
+		CCcamSession session = (CCcamSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 
 		byte[] passHash = new byte[6];
 		NetUtils.readBuffer(buffer, passHash, 6);
