@@ -55,6 +55,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 	
 	@SuppressWarnings("unchecked")
 	public boolean addEntry(long ecmHash,EcmRequest dcw){
+		@SuppressWarnings("unused")
 		EcmRequest previousEntry = (EcmRequest) this.put(ecmHash, dcw);
 		return true;
 	}

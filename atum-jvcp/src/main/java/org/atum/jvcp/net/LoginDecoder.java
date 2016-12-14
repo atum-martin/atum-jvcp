@@ -3,7 +3,6 @@ package org.atum.jvcp.net;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.CamServer;
 
 import io.netty.channel.ChannelHandlerContext;

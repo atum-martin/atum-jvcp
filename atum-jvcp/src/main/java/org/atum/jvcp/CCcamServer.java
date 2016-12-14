@@ -2,9 +2,7 @@ package org.atum.jvcp;
 
 import java.util.ArrayList;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.net.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.cccam.CCcamPipeline;

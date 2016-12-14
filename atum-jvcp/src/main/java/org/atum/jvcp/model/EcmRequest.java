@@ -1,11 +1,8 @@
 package org.atum.jvcp.model;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.zip.Adler32;
-import java.util.zip.Checksum;
 
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 

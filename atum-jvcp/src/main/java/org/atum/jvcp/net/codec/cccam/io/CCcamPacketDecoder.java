@@ -101,6 +101,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			break;
 			
 		case CCcamConstants.MSG_CARD_REMOVED:
+			@SuppressWarnings("unused")
 			int cardId = payload.readInt();
 			break;	
 			
@@ -119,6 +120,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void decodeCCcamNewCard(CCcamSession session, ByteBuf payload) {
 		int length = payload.readableBytes();
 		int shareId = payload.readInt();
@@ -140,6 +142,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		logger.info("Decoded new caid: 0x"+Integer.toHexString(cardId)+" "+length+" "+providers+" "+nodeCount);
 	}
 
+	@SuppressWarnings("unused")
 	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload) {
 		if(session.isReader()){
 			byte[] dcw = new byte[16];
@@ -186,6 +189,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		return ((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L);
 	}
 
+	@SuppressWarnings("unused")
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
 		int cardId = payload.readShort();
 		int provider = payload.readInt();

@@ -1,10 +1,6 @@
 package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.CCcamServer;
-import org.atum.jvcp.net.codec.cccam.CCcamClient;
-import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
-import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;

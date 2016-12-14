@@ -8,9 +8,6 @@ import java.util.ArrayList;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.net.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
-import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
-import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
 import org.atum.jvcp.net.codec.newcamd.NewcamdServerLoginDecoder;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
@@ -31,6 +28,7 @@ public class NewcamdServer extends Thread implements CamServer {
 	/**
 	 * A list which contains all open Newcamd readers and clients.
 	 */
+	@SuppressWarnings("unused")
 	private ArrayList<NewcamdSession> sessionList = new ArrayList<NewcamdSession>();
 	
 	/**
