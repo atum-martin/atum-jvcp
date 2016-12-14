@@ -24,8 +24,8 @@ public class Account {
 	 * Constructs a new Account object with a specified username and password.
 	 * This is not persisted.
 	 * 
-	 * @param username
-	 * @param password
+	 * @param username Username of the account.
+	 * @param password Password of the account.
 	 */
 	public Account(String username, String password) {
 		this.username = username;

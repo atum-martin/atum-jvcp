@@ -24,7 +24,7 @@ public class AccountStore {
 	private Logger logger = Logger.getLogger(AccountStore.class);
 
 	/**
-	 * A map of {link: {@link Account#getUsername()} that maps to the user
+	 * A map of {@link Account#getUsername()} that maps to the user
 	 * {@link Account} which contains the users settings.
 	 */
 	private HashMap<String, Account> accountStore = new HashMap<String, Account>();
@@ -68,7 +68,7 @@ public class AccountStore {
 	 * An {link: Account} object containing the user settings for the specified
 	 * user. Returns null in the event no account is found.
 	 * 
-	 * @param username
+	 * @param username Username of the account you want to retrieve.
 	 * @return An {link: Account} object containing the user settings for the
 	 *         specified user. Returns null in the event no account is found.
 	 */

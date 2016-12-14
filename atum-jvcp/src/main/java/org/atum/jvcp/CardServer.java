@@ -32,7 +32,7 @@ public class CardServer {
 	/**
 	 * Main method used to initialize a blank cccam server with clustered cache.
 	 * 
-	 * @param Not used
+	 * @param args Not used
 	 */
 	public static void main(String[] args) {
 		BasicConfigurator.configure();

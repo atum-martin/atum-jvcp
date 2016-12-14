@@ -1,8 +1,6 @@
-/**
- * 
- */
 package org.atum.jvcp.cache;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -61,7 +59,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 	}
 
 	/**
-	 * @param ecmHash
+	 * @param ecmHash Removes an ECM request with a specified ecmHash/cspHash
 	 */
 	public void removeRequest(long ecmHash) {
 		this.remove(ecmHash);
