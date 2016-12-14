@@ -15,6 +15,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 3 Dec 2016 14:57:43
+ */
+
 public class CCcamClientLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamClientLoginDecoder.class);

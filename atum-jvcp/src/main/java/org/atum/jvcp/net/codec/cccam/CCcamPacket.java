@@ -2,6 +2,11 @@ package org.atum.jvcp.net.codec.cccam;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 24 Nov 2016 22:40:08
+ */
+
 public class CCcamPacket {
 
 	private int command;

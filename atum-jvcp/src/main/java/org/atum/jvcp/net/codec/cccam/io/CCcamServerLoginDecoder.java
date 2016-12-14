@@ -21,8 +21,8 @@ import org.atum.jvcp.net.codec.cccam.CCcamCipher;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
- *
- * @author Martin
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 21 Nov 2016 22:16:25
  */
 public class CCcamServerLoginDecoder extends LoginDecoder {
 

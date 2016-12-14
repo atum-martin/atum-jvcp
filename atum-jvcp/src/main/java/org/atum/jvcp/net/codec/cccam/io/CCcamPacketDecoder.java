@@ -17,6 +17,11 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 22 Nov 2016 22:23:11
+ */
+
 public class CCcamPacketDecoder extends ByteToMessageDecoder {
 
 	private Logger logger = Logger.getLogger(CCcamPacketDecoder.class);

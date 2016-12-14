@@ -10,6 +10,11 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 24 Nov 2016 22:40:08
+ */
+
 public class CCcamPacketEncoder extends MessageToByteEncoder<CCcamPacket> {
 
 	@SuppressWarnings("unused")

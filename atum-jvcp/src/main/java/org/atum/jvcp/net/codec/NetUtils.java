@@ -2,6 +2,11 @@ package org.atum.jvcp.net.codec;
 
 import io.netty.buffer.ByteBuf;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 22 Nov 2016 22:23:11
+ */
+
 public class NetUtils {
 
 	public static void readBuffer(ByteBuf buffer, byte[] buf, int len) {

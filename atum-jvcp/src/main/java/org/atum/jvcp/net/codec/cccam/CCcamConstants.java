@@ -1,8 +1,15 @@
 package org.atum.jvcp.net.codec.cccam;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 23 Nov 2016 00:08:03
+ */
+
 public class CCcamConstants {
 
-	//Taken from Oscam CCcam implementation.s
+	/**
+	 * Taken from Oscam CCcam implementation.
+	 */
 	public static final int MSG_CLI_DATA = 0,
 			MSG_CW_ECM = 1,
 			MSG_EMM_ACK = 2,

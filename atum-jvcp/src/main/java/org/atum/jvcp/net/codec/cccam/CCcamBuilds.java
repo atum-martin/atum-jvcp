@@ -3,6 +3,11 @@ package org.atum.jvcp.net.codec.cccam;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 3 Dec 2016 14:57:43
+ */
+
 public class CCcamBuilds {
 	
 	private static Map<String,CCcamBuild> builds = new HashMap<String,CCcamBuild>();

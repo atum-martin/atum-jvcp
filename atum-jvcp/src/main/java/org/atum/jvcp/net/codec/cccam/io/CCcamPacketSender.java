@@ -14,6 +14,11 @@ import org.atum.jvcp.net.codec.cccam.CCcamPacket;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 23 Nov 2016 00:05:46
+ */
+
 public class CCcamPacketSender {
 
 	private CCcamSession session;

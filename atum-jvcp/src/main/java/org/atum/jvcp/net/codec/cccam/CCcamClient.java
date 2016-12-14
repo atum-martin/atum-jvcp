@@ -8,6 +8,11 @@ import org.atum.jvcp.net.codec.cccam.io.CCcamClientLoginDecoder;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 3 Dec 2016 14:57:43
+ */
+
 public class CCcamClient extends CCcamSession {
 
 	public CCcamClient(ChannelHandlerContext context, CCcamCipher encrypter, CCcamCipher decrypter) {

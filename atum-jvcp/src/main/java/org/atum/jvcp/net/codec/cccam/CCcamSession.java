@@ -7,6 +7,11 @@ import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.CamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketSender;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 21 Nov 2016 22:16:25
+ */
+
 public class CCcamSession extends CamSession {
 
 	@SuppressWarnings("unused")

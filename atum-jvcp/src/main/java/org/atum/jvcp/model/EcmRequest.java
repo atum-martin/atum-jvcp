@@ -83,13 +83,13 @@ public class EcmRequest {
 	/**
 	 * This is based on String.hashCode(), Due to CSP only storing 16/19 of the
 	 * ecm bytes within "customData" an offset is needed to only calculate the
-	 * checksum of unique values rather than reapeat variables like ecm length
+	 * checksum of unique values rather than repeated variables like ecm length
 	 * and ecm command.
 	 * 
 	 * @param ecm
 	 *            - This should be 19 bytes in length and contain ecm command
 	 *            and 2 bytes representing ecm length.
-	 * @return
+	 * @return A 4 byte integer hash of the 16 byte ecm.
 	 */
 	public static long computeEcmHash(byte[] ecm) {
 		/*
