@@ -63,12 +63,6 @@ public class CCcamCipher {
 	public void encrypt(ByteBuf in) {
 		cipher(in, Mode.ENCRYPT);
 	}
-	
-	public void printValues(){
-		System.out.println("counter: "+counter);
-		System.out.println("sum: "+sum);
-		System.out.println("state: "+state);
-	}
 
 	public void cipher(byte[] data, int len, Mode mode) {
 		for (int i = 0; i < len; i++) {

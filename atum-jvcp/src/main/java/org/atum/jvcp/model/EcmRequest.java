@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
@@ -13,6 +14,8 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 public class EcmRequest {
 
+	private Logger logger = Logger.getLogger(EcmRequest.class);
+	
 	private int cardId;
 	private Provider prov;
 	private int shareId;
@@ -147,7 +150,7 @@ public class EcmRequest {
 
 	public void fireActionListeners() {
 		for (CCcamSession session : sessions) {
-			System.out.println("removing listener and firing event.");
+			logger.debug("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 	}
@@ -157,7 +160,7 @@ public class EcmRequest {
 	}
 
 	public void addListener(CCcamSession session) {
-		System.out.println("adding listener for ecm.");
+		logger.debug("adding listener for ecm.");
 		sessions.add(session);
 	}
 }

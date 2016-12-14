@@ -170,7 +170,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
 		payload.readBytes(ecm);
 		
-		System.out.println("ecm req: "+ecmLength+" "+(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		logger.debug("ecm req: "+ecmLength+" "+(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
@@ -221,7 +221,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			long cacheNodeId = payload.readLong();
 		}
 		
-		//System.out.println(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		if(!CardServer.handleEcmAnswer(cspHash, cw)){
 			//answer was not handled. No entry existed in any cache.
