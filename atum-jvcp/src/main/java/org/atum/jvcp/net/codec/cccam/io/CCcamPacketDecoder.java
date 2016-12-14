@@ -97,7 +97,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			break;
 			
 		case CCcamConstants.MSG_CW_ECM:
-			decodeCCcamEcm(session, payload);
+			decodeCCcamEcm(session, payload, size);
 			break;
 			
 		case CCcamConstants.MSG_CARD_REMOVED:
@@ -143,7 +143,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	}
 
 	@SuppressWarnings("unused")
-	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload) {
+	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload, int size) {
 		if(session.isReader()){
 			byte[] dcw = new byte[16];
 			payload.readBytes(dcw);
@@ -154,6 +154,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			}
 			return;
 		}
+		final int CCCAM_ECM_HEADER_LENGTH = 13;
 		//REQUEST ECM
 		int cardId = payload.readShort();
 		int provider = payload.readInt();
@@ -161,10 +162,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int id = payload.readInt();
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readByte() & 0xFF;
-		byte[] ecm = new byte[ecmLength];
+		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
 		payload.readBytes(ecm);
 		
-		System.out.println("ecm req: "+ecmLength+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		System.out.println("ecm req: "+ecmLength+" "+(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);

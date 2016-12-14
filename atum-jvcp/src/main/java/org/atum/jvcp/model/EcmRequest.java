@@ -18,7 +18,7 @@ public class EcmRequest {
 	private long timestamp;
 	private List<CCcamSession> sessions = Collections.synchronizedList(new LinkedList<CCcamSession>());
 
-	public EcmRequest(int cardId,Provider prov,int shareId,int serviceId,byte[] ecm, boolean computeHash){
+	public EcmRequest(int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
 		this.setProv(prov);
 		this.setShareId(shareId);
@@ -69,29 +69,43 @@ public class EcmRequest {
 	public byte[] getEcm() {
 		return ecm;
 	}
-	
-	public long getTimestamp(){
+
+	public long getTimestamp() {
 		return timestamp;
 	}
 
 	public void setEcm(byte[] ecm, boolean computeHash) {
 		this.ecm = ecm;
-		if(computeHash)
+		if (computeHash)
 			cspHash = computeEcmHash(ecm);
 	}
 
+	/**
+	 * This is based on String.hashCode(), Due to CSP only storing 16/19 of the
+	 * ecm bytes within "customData" an offset is needed to only calculate the
+	 * checksum of unique values rather than reapeat variables like ecm length
+	 * and ecm command.
+	 * 
+	 * @param ecm
+	 *            - This should be 19 bytes in length and contain ecm command
+	 *            and 2 bytes representing ecm length.
+	 * @return
+	 */
 	public static long computeEcmHash(byte[] ecm) {
-		/*try {
-			return new String(ecm, "ISO-8859-1").hashCode();
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 0;*/
-		//oscam/trunk/module-cacheex.c
-		//value used for hash is signed 4 byte integer.
+		/*
+		 * try { return new String(ecm, "ISO-8859-1").hashCode(); } catch
+		 * (UnsupportedEncodingException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } return 0;
+		 */
+		// oscam/trunk/module-cacheex.c
+		// value used for hash is signed 4 byte integer.
+
+		// This is based on String.hashCode(), Due to CSP only storing 16/19 of
+		// the ecm bytes within "customData" an offset is needed to only
+		// calculate the checksum of unique values rather than reapeat variables
+		// like ecm length and ecm command.
 		int hash = 0;
-		for(int i = 3; i < ecm.length; i++){
+		for (int i = 3; i < ecm.length; i++) {
 			int em = (ecm[i] & 0xFF);
 			hash = (31 * hash + em);
 		}
@@ -105,29 +119,29 @@ public class EcmRequest {
 	public void setDcw(byte[] dcw) {
 		this.dcw = dcw;
 	}
-	
-	public boolean hasAnswer(){
+
+	public boolean hasAnswer() {
 		return dcw != null;
 	}
-	
-	public long getCspHash(){
+
+	public long getCspHash() {
 		return cspHash;
 	}
-	
+
 	@Override
-	public int hashCode(){
+	public int hashCode() {
 		return (int) cspHash;
 	}
-	
-	public boolean equals(EcmRequest req){
-		if(req.hashCode() == this.hashCode()){
+
+	public boolean equals(EcmRequest req) {
+		if (req.hashCode() == this.hashCode()) {
 			return true;
 		}
 		return false;
 	}
 
 	public void fireActionListeners() {
-		for(CCcamSession session : sessions){
+		for (CCcamSession session : sessions) {
 			System.out.println("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
