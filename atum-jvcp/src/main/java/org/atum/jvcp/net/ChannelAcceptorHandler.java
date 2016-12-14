@@ -2,13 +2,16 @@ package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
 
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.ChannelHandler.Sharable;
+
 /**
-*
-* @author Martin
-*/
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 21 Nov 2016 22:16:25
+ */
+
 @Sharable
 public class ChannelAcceptorHandler extends SimpleChannelInboundHandler<Object> {
 

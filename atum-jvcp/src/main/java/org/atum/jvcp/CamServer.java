@@ -5,8 +5,8 @@ import org.atum.jvcp.net.CamSession;
 /**
  * An interface which defines how a cam emulator should behave.
  * 
- * @since: 1/12/2016
- * @author atum-martin
+ * @since 3 Dec 2016 14:57:43
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
  *
  */
 public interface CamServer {

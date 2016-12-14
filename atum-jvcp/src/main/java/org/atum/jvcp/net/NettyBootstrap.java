@@ -9,6 +9,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 21 Nov 2016 22:16:25
+ */
+
 public class NettyBootstrap {
 
 	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port) {

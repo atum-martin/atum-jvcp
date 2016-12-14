@@ -6,6 +6,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelHandler.Sharable;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 25 Nov 2016 23:49:09
+ */
+
 @Sharable
 public class ChannelFilter extends ChannelInboundHandlerAdapter {
 

@@ -12,7 +12,7 @@ import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 /**
  * The main class of the CCcam application. Contains references to created sessions.
  * 
- * @since: 22/11/2016
+ * @since 12 Nov 2016 20:31:49
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  *
  */

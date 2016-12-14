@@ -6,6 +6,11 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 import io.netty.util.AttributeKey;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 21 Nov 2016 22:16:25
+ */
+
 public class NetworkConstants {
 	public static final AttributeKey<LoginState> LOGIN_STATE = AttributeKey.newInstance("LoginState");
 	public static final AttributeKey<CCcamSession> CCCAM_SESSION = AttributeKey.newInstance("CCCAM_SESSION");

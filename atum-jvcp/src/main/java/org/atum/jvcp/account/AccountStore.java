@@ -9,6 +9,11 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 18 Nov 2016 20:58:29
+ */
+
 public class AccountStore {
 
 	private Logger logger = Logger.getLogger(AccountStore.class);

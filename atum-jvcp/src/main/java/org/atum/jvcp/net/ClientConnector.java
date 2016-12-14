@@ -10,6 +10,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 3 Dec 2016 14:57:43
+ */
+
 public class ClientConnector {
 
 	@SuppressWarnings("unused")

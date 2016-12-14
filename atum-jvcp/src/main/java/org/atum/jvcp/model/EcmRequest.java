@@ -6,6 +6,11 @@ import java.util.List;
 
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 30 Nov 2016 23:34:34
+ */
+
 public class EcmRequest {
 
 	private int cardId;

@@ -12,6 +12,11 @@ import java.util.zip.Checksum;
 
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 2 Dec 2016 20:28:01
+ */
+
 public class HashCache {
 	
 	private Map<Integer,CardCache> cache = new HashMap<Integer,CardCache>();

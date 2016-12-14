@@ -15,7 +15,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
- * @since 8 Dec 2016 22:39:08
+ * @since 8 Dec 2016 23:29:32
  */
 public class CardServer {
 

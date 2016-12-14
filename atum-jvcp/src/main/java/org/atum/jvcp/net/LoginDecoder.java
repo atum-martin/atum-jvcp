@@ -8,6 +8,11 @@ import org.atum.jvcp.CamServer;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 3 Dec 2016 14:57:43
+ */
+
 public abstract class LoginDecoder extends ByteToMessageDecoder {
 
 	protected CamServer camServer;

@@ -1,5 +1,10 @@
 package org.atum.jvcp.model;
 
+/**
+ * @author <a href="https://github.com/atum-martin">atum-martin</a>
+ * @since 23 Nov 2016 00:05:46
+ */
+
 public class Provider {
 
 	private int providerId;
