@@ -6,6 +6,7 @@ import io.netty.buffer.Unpooled;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
+import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
@@ -19,7 +20,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
  * @since 23 Nov 2016 00:05:46
  */
 
-public class CCcamPacketSender {
+public class CCcamPacketSender implements PacketSenderInterface {
 
 	private CCcamSession session;
 	private Logger logger = Logger.getLogger(CCcamSession.class);

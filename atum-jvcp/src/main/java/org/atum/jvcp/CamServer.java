@@ -1,6 +1,7 @@
 package org.atum.jvcp;
 
-import org.atum.jvcp.net.CamSession;
+import org.atum.jvcp.model.CamSession;
+
 
 /**
  * An interface which defines how a cam emulator should behave.

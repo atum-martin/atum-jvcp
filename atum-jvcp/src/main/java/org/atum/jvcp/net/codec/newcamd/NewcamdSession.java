@@ -3,7 +3,8 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
-import org.atum.jvcp.net.CamSession;
+import org.atum.jvcp.model.CamSession;
+
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>

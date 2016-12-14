@@ -3,8 +3,8 @@ package org.atum.jvcp.net.codec.cccam;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
-import org.atum.jvcp.net.CamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketSender;
 
 /**
@@ -22,7 +22,6 @@ public class CCcamSession extends CamSession {
 	private CCcamCipher decrypter;
 
 	private String username;
-	private CCcamPacketSender packetSender;
 
 	private long lastPing = System.currentTimeMillis();
 
@@ -61,22 +60,13 @@ public class CCcamSession extends CamSession {
 	public ChannelHandlerContext getCtx() {
 		return context;
 	}
-
-	public void setPacketSender(CCcamPacketSender packetSender) {
-		this.packetSender = packetSender;
-	}
-	
-
-	public CCcamPacketSender getPacketSender() {
-		return this.packetSender;
-	}
 	
 	public long getLastKeepalive(){
 		return System.currentTimeMillis() - lastPing ;
 	}
 	
 	public void keepAlive(){
-		packetSender.writeKeepAlive();
+		getPacketSender().writeKeepAlive();
 		lastPing = System.currentTimeMillis();
 	}
 

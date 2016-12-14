@@ -6,7 +6,7 @@ package org.atum.jvcp;
 import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.net.CamSession;
+import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
 import org.atum.jvcp.net.codec.newcamd.NewcamdServerLoginDecoder;

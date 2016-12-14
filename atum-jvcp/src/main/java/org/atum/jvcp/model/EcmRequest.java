@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -24,7 +23,7 @@ public class EcmRequest {
 	private byte[] dcw = null;
 	private long cspHash;
 	private long timestamp;
-	private List<CCcamSession> sessions = Collections.synchronizedList(new LinkedList<CCcamSession>());
+	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 
 	public EcmRequest(int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
@@ -149,7 +148,7 @@ public class EcmRequest {
 	}
 
 	public void fireActionListeners() {
-		for (CCcamSession session : sessions) {
+		for (CamSession session : sessions) {
 			logger.debug("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
@@ -159,7 +158,7 @@ public class EcmRequest {
 		this.cspHash = cspHash;
 	}
 
-	public void addListener(CCcamSession session) {
+	public void addListener(CamSession session) {
 		logger.debug("adding listener for ecm.");
 		sessions.add(session);
 	}
