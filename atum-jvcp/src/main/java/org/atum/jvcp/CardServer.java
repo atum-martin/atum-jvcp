@@ -11,7 +11,11 @@ import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
+import org.atum.jvcp.net.NettyBootstrap;
+import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
+import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
+import org.atum.jvcp.net.codec.http.HttpPipeline;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -38,6 +42,7 @@ public class CardServer {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
 		new CCcamServer(12000);
+		NettyBootstrap.listen(new HttpPipeline(),8080);
 	}
 
 	public static ClusteredCache getCache() {

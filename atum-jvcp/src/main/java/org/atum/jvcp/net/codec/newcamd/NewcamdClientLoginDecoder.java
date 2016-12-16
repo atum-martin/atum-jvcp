@@ -13,7 +13,7 @@ import org.atum.jvcp.net.codec.LoginState;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
- * @since 13 Dec 2016 23:43:11
+ * @since 15 Dec 2016 23:51:26
  */
 public class NewcamdClientLoginDecoder extends LoginDecoder {
 
