@@ -12,9 +12,7 @@ import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
-import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
-import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
 
 /**
@@ -61,7 +59,7 @@ public class CardServer {
 		return pendingEcms;
 	}
 
-	public static boolean handleEcmAnswer(long cspHash, byte[] cw) {
+	public static boolean handleEcmAnswer(int cspHash, byte[] cw, int cardId, int serviceId) {
 		//long ecmHash = EcmRequest.computeEcmHash(cspHash);
 		//logger.info("ECM cache entry for: "+cspHash);
 		EcmRequest req = CardServer.getPendingCache().peekCache(cspHash);
@@ -70,6 +68,7 @@ public class CardServer {
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
 			req.fireActionListeners();
+			logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 			return true;
 		} else {
 			//EcmRequest either exists in cache or no pending requests have come in.
@@ -81,7 +80,7 @@ public class CardServer {
 			//this should never fail
 			if (DCW_CHECKING && req.hasAnswer()) {
 				if (!Arrays.equals(cw, req.getDcw())) {
-					logger.warn("Duplicate ECM with different DCW. "+cspHash+" "+sum(cw));
+					//logger.warn("Duplicate ECM with different DCW. "+cspHash+" "+sum(cw));
 				}
 			}
 			return true;
@@ -97,24 +96,25 @@ public class CardServer {
 		return sum;
 	}
 
-	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, long cspHash){
+	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache){
 		if(cspHash == 0L){
 			//no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
 		}
 		EcmRequest answer = new EcmRequest(cardId, new Provider(provider), shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
-		getPendingCache().addEntry(cspHash, answer);
+		if(!cache)
+			getPendingCache().addEntry(cspHash, answer);
 		return answer;
 	}
 
 	public static EcmRequest handleEcmRequest(CCcamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
-		long cspHash = EcmRequest.computeEcmHash(ecm);
+		int cspHash = EcmRequest.computeEcmHash(ecm);
 		EcmRequest answer = CardServer.getCache().peekCache(cspHash);
 		if (answer != null) {
 			return answer;
 		}
-		answer = createEcmRequest(cardId, provider, shareId, serviceId, ecm, cspHash);
+		answer = createEcmRequest(cardId, provider, shareId, serviceId, ecm, cspHash, false);
 		answer.addListener(session);
 		return answer;
 	}

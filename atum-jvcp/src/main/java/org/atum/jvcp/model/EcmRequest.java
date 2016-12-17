@@ -1,10 +1,12 @@
 package org.atum.jvcp.model;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -13,7 +15,7 @@ import org.apache.log4j.Logger;
 
 public class EcmRequest {
 
-	private Logger logger = Logger.getLogger(EcmRequest.class);
+	private static Logger logger = Logger.getLogger(EcmRequest.class);
 	
 	private int cardId;
 	private Provider prov;
@@ -21,7 +23,7 @@ public class EcmRequest {
 	private int serviceId;
 	private byte[] ecm;
 	private byte[] dcw = null;
-	private long cspHash;
+	private int cspHash;
 	private long timestamp;
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 
@@ -98,7 +100,7 @@ public class EcmRequest {
 	 *            and 2 bytes representing ecm length.
 	 * @return A 4 byte integer hash of the 16 byte ecm.
 	 */
-	public static long computeEcmHash(byte[] ecm) {
+	public static int computeEcmHash(byte[] ecm) {
 		/*
 		 * try { return new String(ecm, "ISO-8859-1").hashCode(); } catch
 		 * (UnsupportedEncodingException e) { // TODO Auto-generated catch block
@@ -116,7 +118,19 @@ public class EcmRequest {
 			int em = (ecm[i] & 0xFF);
 			hash = (31 * hash + em);
 		}
-		return hash;
+		
+		byte[] ecmBits = new byte[ecm.length-3]; 
+		System.arraycopy(ecm, 3, ecmBits, 0, ecm.length-3);
+		int hash2 = 0;
+		try {
+			hash2 = new String(ecmBits, "ISO-8859-1").hashCode();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		//if(hash2 != hash){
+			logger.info("hash mismatch: "+Integer.toHexString(CCcamPacketDecoder.cspHashSwap(hash))+" "+Integer.toHexString(CCcamPacketDecoder.cspHashSwap(hash2)));
+		//}
+		return CCcamPacketDecoder.cspHashSwap(hash2);
 	}
 
 	public byte[] getDcw() {
@@ -131,7 +145,7 @@ public class EcmRequest {
 		return dcw != null;
 	}
 
-	public long getCspHash() {
+	public int getCspHash() {
 		return cspHash;
 	}
 
@@ -152,9 +166,10 @@ public class EcmRequest {
 			logger.debug("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
+		sessions.clear();
 	}
 
-	public void setCspHash(long cspHash) {
+	public void setCspHash(int cspHash) {
 		this.cspHash = cspHash;
 	}
 

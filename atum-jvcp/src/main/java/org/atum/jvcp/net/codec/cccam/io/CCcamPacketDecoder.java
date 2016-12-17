@@ -154,7 +154,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			payload.readBytes(dcw);
 			logger.info("Recieved DCW");
 			
-			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw)){
+			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
 			}
 			return;
@@ -168,9 +168,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
-		payload.readBytes(ecm);
-		
-		logger.debug("ecm req: "+ecmLength+" "+(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		NetUtils.readBuffer(payload, ecm, ecm.length, 0);
+		//payload.readBytes(ecm);
+		logger.info("ecm hex dump: "+bytesToString(ecm,0,ecm.length));
+		logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
@@ -178,21 +179,35 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
-		logger.info("requested client ECM: "+EcmRequest.computeEcmHash(ecm));
+		long cspHash = EcmRequest.computeEcmHash(ecm);
+		logger.info("requested client ECM: "+cspHash);
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}
+	
+	  public static String bytesToString(byte[] bytes, int offs, int len) {
+		    StringBuffer sb = new StringBuffer();
+		    String bt;
+		    if(len > bytes.length) len = bytes.length;
+		    for(int i = 0; i < len && (i + offs < bytes.length); i++) {
+		      bt = Integer.toHexString(bytes[offs + i] & 0xFF);
+		      if(bt.length() == 1) sb.append('0');
+		      sb.append(bt);
+		      sb.append(' ');
+		    }
+		    return sb.toString().trim().toUpperCase();
+		  }
 	/*
 	#define CSP_HASH_SWAP(n) (((((uint32_t)(n) & 0xFF)) << 24) | \
             ((((uint32_t)(n) & 0xFF00)) << 8) | \
             ((((uint32_t)(n) & 0xFF0000)) >> 8) | \
             ((((uint32_t)(n) & 0xFF000000)) >> 24))
 	*/
-	private long cspHashSwap(long n){
-		return ((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L);
+	public static int cspHashSwap(long n){
+		return (int) (((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L));
 	}
 
 	@SuppressWarnings("unused")
@@ -211,7 +226,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		byte[] ecmMD5 = new byte[16];
 		payload.readBytes(ecmMD5);
-		long cspHash = cspHashSwap(getUnsignedInt(payload.readInt()));
+		int cspHash = payload.readInt();
 		
 		byte[] cw = new byte[16];
 		payload.readBytes(cw);
@@ -223,9 +238,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
-		if(!CardServer.handleEcmAnswer(cspHash, cw)){
+		if(!CardServer.handleEcmAnswer(cspHash, cw, cardId, serviceId)){
 			//answer was not handled. No entry existed in any cache.
-			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash);
+			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash, true);
 			req.setDcw(cw);
 			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
@@ -235,7 +250,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	}
 
 	public static long getUnsignedInt(int x) {
-	    return x & 0x00000000ffffffffL;
+		return x;
+	    //return x & 0x00000000ffffffffL;
 	}
 	
 }
