@@ -3,7 +3,9 @@ package org.atum.jvcp.net.codec.cccam;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.model.CamSession;
+import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketSender;
 
@@ -20,6 +22,7 @@ public class CCcamSession extends CamSession {
 	private ChannelHandlerContext context;
 	private CCcamCipher encrypter;
 	private CCcamCipher decrypter;
+	private CCcamServer server;
 
 	private String username;
 
@@ -30,8 +33,9 @@ public class CCcamSession extends CamSession {
 	
 	private EcmRequest lastRequest = null;
 	
-	public CCcamSession(ChannelHandlerContext context, CCcamCipher encrypter, CCcamCipher decrypter) {
+	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
 		this.context = context;
+		this.server = server;
 		this.encrypter = encrypter;
 		this.decrypter = decrypter;
 	}
@@ -87,15 +91,15 @@ public class CCcamSession extends CamSession {
 		lastPing = currentTimeMillis;
 	}
 
-	public boolean isReader() {
-		return false;
-	}
-
 	public EcmRequest getLastRequest() {
 		return lastRequest;
 	}
 
 	public void setLastRequest(EcmRequest lastRequest) {
 		this.lastRequest = lastRequest;
+	}
+
+	public CCcamServer getServer() {
+		return server;
 	}
 }

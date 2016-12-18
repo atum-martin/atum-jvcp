@@ -15,16 +15,18 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class CCcamClient extends CCcamSession {
 
-	public CCcamClient(ChannelHandlerContext context, CCcamCipher encrypter, CCcamCipher decrypter) {
-		super(context, encrypter, decrypter);
+	public CCcamClient(ChannelHandlerContext context,CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
+		super(context, server, encrypter, decrypter);
 	}
 
 	public static CCcamClient connect(CCcamServer server, String host,int port){
 		ClientConnector conn = new ClientConnector();
 		
 		Channel channel = conn.connect(host, port, new CCcamPipeline(server, CCcamClientLoginDecoder.class));
-		CCcamClient client = new CCcamClient(channel.pipeline().firstContext(),new CCcamCipher(),new CCcamCipher());
+		CCcamClient client = new CCcamClient(channel.pipeline().firstContext(),server, new CCcamCipher(),new CCcamCipher());
 		channel.attr(NetworkConstants.CAM_SESSION).set(client);
+		client.setReader(true);
+		server.registerSession(client);
 		return client;
 	}
 

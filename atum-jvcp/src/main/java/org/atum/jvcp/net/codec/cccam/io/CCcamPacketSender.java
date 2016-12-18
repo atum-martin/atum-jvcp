@@ -89,13 +89,17 @@ public class CCcamPacketSender implements PacketSenderInterface {
 		out.writeShort(req.getServiceId());
 		out.writeByte(req.getEcm().length);
 		out.writeBytes(req.getEcm());
-
+		session.setLastRequest(req);
 		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out));
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
+		byte[] sendDcw = new byte[dcw.length];
+		System.arraycopy(dcw, 0, sendDcw, 0, dcw.length);
 		ByteBuf out = Unpooled.buffer(16);
+		session.getDecrypter().cc_crypt_cw(session.getServer().getNodeId(), session.getLastRequest().getShareId(), sendDcw);
 		out.writeBytes(dcw);
+		session.getDecrypter().encrypt(out);
 		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out));
 	}
 

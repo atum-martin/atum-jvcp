@@ -76,8 +76,8 @@ public class Card {
 	}
 
 	/**
-	 * An integer value representing a proividers card ID. <a
-	 * href="http://www.streamboard.tv/oscam/wiki/CardsList">Card List</a>
+	 * An integer value representing a proividers card ID.
+	 * <a href="http://www.streamboard.tv/oscam/wiki/CardsList">Card List</a>
 	 * 
 	 * @return An integer value representing the card identifier.
 	 */

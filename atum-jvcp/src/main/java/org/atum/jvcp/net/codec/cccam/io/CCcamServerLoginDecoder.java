@@ -89,7 +89,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		decrypter.CipherInit(secureRandom, secureRandom.length);
 		decrypter.encrypt(sha, sha.length);
 
-		CCcamSession session = new CCcamSession(context, encrypter, decrypter);
+		CCcamSession session = new CCcamSession(context, (CCcamServer) camServer, encrypter, decrypter);
 
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);

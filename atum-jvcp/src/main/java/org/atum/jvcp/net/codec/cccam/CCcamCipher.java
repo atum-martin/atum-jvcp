@@ -55,7 +55,7 @@ public class CCcamCipher {
 	public void encrypt(byte[] data, int len) {
 		cipher(data, len, Mode.ENCRYPT);
 	}
-	
+
 	public void decrypt(ByteBuf in) {
 		cipher(in, Mode.DECRYPT);
 	}
@@ -80,8 +80,8 @@ public class CCcamCipher {
 			state = (state ^ z) & 0xFF;
 		}
 	}
-	
-	public void cipher(ByteBuf in,Mode mode){
+
+	public void cipher(ByteBuf in, Mode mode) {
 		int length = in.readableBytes();
 		for (int i = 0; i < length; i++) {
 			counter = ++counter & 0xFF;
@@ -96,10 +96,45 @@ public class CCcamCipher {
 			in.setByte(i, write);
 			if (mode == Mode.DECRYPT)
 				z = write;
-			
+
 			state = (state ^ z) & 0xFF;
 		}
 		in.resetReaderIndex();
+		// in.resetWriterIndex();
 	}
 
+	/**
+	 * Encrypts CW sent in an ECM answer, ripped from CCcam CSP implementation.
+	 * 
+	 * @param nodeid
+	 * @param shareid
+	 * @param cws
+	 */
+	///////////////////////////////////////////////////////////////////////////////
+	// node_id : client nodeid, the sender of the ECM Request(big endian)
+	// card_id : local card_id for the server
+	public void cc_crypt_cw(byte[] nodeid, int shareId, byte[] cws) {
+		byte tmp;
+		byte i;
+		byte n;
+		int cardId = shareId;
+		byte[] nod = new byte[8];
+		// int card_id = (shareid[0] << 24) | (shareid[1] << 16) | (shareid[2]
+		// << 8) | (shareid[3]);
+		for (i = 0; i < 8; i++)
+			nod[i] = nodeid[7 - i];
+		for (i = 0; i < 16; i++) {
+			if (i % 2 == 1) {
+				if (i != 15)
+					n = (byte) (((nod[i >> 1] >> 4) & 0x0f) | ((nod[(i >> 1) + 1] << 4) & 0xf0));
+				else
+					n = (byte) ((nod[i >> 1] >> 4) & 0x0f);
+			} else
+				n = (byte) (nod[i >> 1]);
+			tmp = (byte) (cws[i] ^ n);
+			if (i % 2 == 1)
+				tmp ^= -1;
+			cws[i] = (byte) ((cardId >> (2 * i)) ^ tmp & 0xff);
+		}
+	}
 }

@@ -8,5 +8,6 @@ public interface PacketSenderInterface {
 
 	public void writeKeepAlive();
 	public void writeEcmAnswer(byte[] dcw);
+	public void writeEcmRequest(EcmRequest req);
 
 }

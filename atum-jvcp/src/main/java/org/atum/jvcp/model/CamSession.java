@@ -7,6 +7,7 @@ package org.atum.jvcp.model;
 public class CamSession {
 	
 	private PacketSenderInterface packetSender;
+	private boolean isReader = false;
 	
 	public PacketSenderInterface getPacketSender(){
 		return packetSender;
@@ -14,5 +15,13 @@ public class CamSession {
 	
 	public void setPacketSender(PacketSenderInterface packetSender){
 		this.packetSender = packetSender;
+	}
+	
+	public boolean isReader() {
+		return isReader;
+	}
+	
+	public void setReader(boolean isReader){
+		this.isReader = isReader;
 	}
 }

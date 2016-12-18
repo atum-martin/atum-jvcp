@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
+import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
@@ -84,6 +85,18 @@ public class CCcamServer extends Thread implements CamServer {
 		synchronized (sessionList){
 			sessionList.add((CCcamSession) session);
 		}
+	}
+	
+	public void sendEcmToReaders(EcmRequest req){
+		synchronized (sessionList){
+			for(CamSession session : sessionList){
+				session.getPacketSender().writeEcmRequest(req);
+			}
+		}
+	}
+
+	public byte[] getNodeId() {
+		return new byte[]{0x12, 0x21, 0x45, 0x1A, 0x07, 0x19, 0x12, 0x12, };
 	}
 
 }

@@ -67,6 +67,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 				session.getDecrypter().decrypt(payload);
 			}
 			handlePacket(session, session.getPacketCode(), session.getPacketSize(), payload);
+			payload.release();
 			break;
 		}
 	}
@@ -154,6 +155,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			payload.readBytes(dcw);
 			logger.info("Recieved DCW");
 			
+			logger.info("dcw dump: "+bytesToString(dcw,0,dcw.length));
+			
 			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
 			}
@@ -184,6 +187,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
+			logger.info("dcw dump: "+bytesToString(answer.getDcw(),0,answer.getDcw().length));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}

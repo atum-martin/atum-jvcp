@@ -27,16 +27,17 @@ public class CCcamPacketEncoder extends MessageToByteEncoder<CCcamPacket> {
 		if(msg.getOut() != null){
 			packetLength = msg.getOut().readableBytes();
 		}
-		
 		ByteBuf unencBuf = Unpooled.buffer(4+packetLength);
 		unencBuf.writeByte(0);
 		unencBuf.writeByte(msg.getCommand());
 		unencBuf.writeShort(packetLength);
+		//unencBuf.writeByte(packetLength >> 8);
+		//unencBuf.writeByte(packetLength & 0xFF);
 		if(packetLength != 0)
 			unencBuf.writeBytes(msg.getOut());
 		session.getEncrypter().encrypt(unencBuf);
 		out.writeBytes(unencBuf);
-		
+		unencBuf.release();
 	}
 
 
