@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.NewcamdServer;
+import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
@@ -56,7 +57,11 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 			logger.debug("less than 14 bytes in crypto buffer");
 			return;
 		}
-		ByteBuf desKey = buffer.readBytes(14);
+		ByteBuf random14 = buffer.readBytes(14);
+		NewcamdServer server = (NewcamdServer) camServer;
+		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(server.getDesKey(), random14))); // loginKey
+		NewcamdSession session = new NewcamdSession(desKey16);
+		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {

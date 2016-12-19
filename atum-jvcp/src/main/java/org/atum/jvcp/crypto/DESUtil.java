@@ -1,5 +1,7 @@
 package org.atum.jvcp.crypto;
 
+import io.netty.buffer.ByteBuf;
+
 /**
  * Created by IntelliJ IDEA. User: bowman Date: Oct 8, 2005 Time: 8:46:40 PM
  */
@@ -9,10 +11,10 @@ public class DESUtil {
 
 	private static final int DES_KEYSCHED_SZ = 32;
 
-	public static byte[] xorKey(byte[] desKey14, byte[] xorKey14) {
+	public static byte[] xorKey(byte[] desKey14, ByteBuf xorKey14) {
 		byte[] newKey = new byte[14];
 		for (int i = 0; i < 14; i++)
-			newKey[i] = (byte) (desKey14[i] ^ xorKey14[i]);
+			newKey[i] = (byte) (desKey14[i] ^ xorKey14.readByte());
 		return newKey;
 	}
 

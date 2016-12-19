@@ -49,4 +49,12 @@ public class NewcamdServer extends Thread implements CamServer {
 		// TODO Auto-generated method stub
 		
 	}
+
+	/**
+	 * Returns a 14 byte key used for encrypting and decrypting information on a newcamd channel.
+	 * @return A 14 byte key used for encrypting and decrypting information on a newcamd channel.
+	 */
+	public byte[] getDesKey() {
+		return new byte[]{ 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x10, 0x11, 0x12, 0x15, 0x14,};
+	}
 }

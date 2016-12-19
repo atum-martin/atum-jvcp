@@ -12,4 +12,14 @@ import org.atum.jvcp.model.CamSession;
  */
 public class NewcamdSession extends CamSession {
 
+	private byte[] desKey;
+	
+	public NewcamdSession(byte[] desKey){
+		this.desKey = desKey;
+	}
+
+	public byte[] getDesKey() {
+		return desKey;
+	}
+
 }
