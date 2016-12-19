@@ -36,7 +36,7 @@ public class CCcamPipeline extends ChannelInitializer<SocketChannel> {
 	protected void initChannel(SocketChannel channel) throws Exception {
 		final ChannelPipeline pipeline = channel.pipeline();
 
-		channel.attr(NetworkConstants.LOGIN_STATE).set(LoginState.SHA);
+		channel.attr(NetworkConstants.LOGIN_STATE).set(LoginState.ENCRYPTION);
 
 		pipeline.addLast("filter", filter);
 		pipeline.addLast("timeout", new IdleStateHandler(10000, 0, 0));

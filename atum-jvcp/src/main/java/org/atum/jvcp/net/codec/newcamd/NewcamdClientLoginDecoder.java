@@ -29,7 +29,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		logger.info("processing state: " + state);
 		switch (state) {
 
-		case SHA:
+		case ENCRYPTION:
 			// this shouldn't be getting hit.
 			handleSHA(context);
 			break;

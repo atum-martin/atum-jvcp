@@ -45,7 +45,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		logger.info("processing state: " + state);
 		switch (state) {
 
-		case SHA:
+		case ENCRYPTION:
 			// this shouldn't be getting hit.
 			handleSHA(context);
 			break;

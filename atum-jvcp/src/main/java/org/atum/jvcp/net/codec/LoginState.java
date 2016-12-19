@@ -12,5 +12,5 @@ public enum LoginState {
 	LOGIN_BLOCK_HEADER,
 	LOGIN_BLOCK,
 	LOGGED_IN, 
-	SHA
+	ENCRYPTION
 }

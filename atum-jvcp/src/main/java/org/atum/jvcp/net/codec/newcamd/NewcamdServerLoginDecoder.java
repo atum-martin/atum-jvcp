@@ -29,9 +29,9 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		logger.info("processing state: " + state);
 		switch (state) {
 
-		case SHA:
+		case ENCRYPTION:
 			// this shouldn't be getting hit.
-			handleSHA(context);
+			handleCrypto(context, buffer);
 			break;
 		case HANDSHAKE:
 			handleHandshake(context, buffer);
@@ -51,15 +51,18 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		
 	}
 
-	private void handleSHA(ChannelHandlerContext context) {
-		
-
+	private void handleCrypto(ChannelHandlerContext context, ByteBuf buffer) {
+		if (buffer.readableBytes() < 14) {
+			logger.debug("less than 14 bytes in crypto buffer");
+			return;
+		}
+		ByteBuf desKey = buffer.readBytes(14);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
 
 		if (buffer.readableBytes() < 20) {
-			logger.info("less than 20 bytes in buffer");
+			logger.debug("less than 20 bytes in buffer");
 			return;
 		}
 
@@ -67,7 +70,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {
 		if (buffer.readableBytes() < 20) {
-			logger.info("less than 20 bytes in buffer");
+			logger.debug("less than 20 bytes in buffer");
 			return;
 		}
 
