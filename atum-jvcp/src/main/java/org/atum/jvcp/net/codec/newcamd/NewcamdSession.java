@@ -3,6 +3,8 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
+import io.netty.buffer.ByteBuf;
+
 import org.atum.jvcp.model.CamSession;
 
 

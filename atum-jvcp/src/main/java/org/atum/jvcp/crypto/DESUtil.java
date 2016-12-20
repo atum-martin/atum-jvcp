@@ -1,6 +1,7 @@
 package org.atum.jvcp.crypto;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 /**
  * Created by IntelliJ IDEA. User: bowman Date: Oct 8, 2005 Time: 8:46:40 PM
@@ -169,7 +170,7 @@ public class DESUtil {
 		return result;
 	}
 
-	public static byte[] desDecrypt(byte[] buffer, int len, byte[] desKey16) {
+	public static ByteBuf desDecrypt(byte[] buffer, int len, byte[] desKey16) {
 
 		len -= 8;
 		byte[] decrypted = new byte[len];
@@ -211,8 +212,10 @@ public class DESUtil {
 
 		if (checksum != 0)
 			return null;
-		else
-			return decrypted;
+		else {
+			return Unpooled.copiedBuffer(decrypted);
+			//return decrypted;
+		}
 	}
 
 	public static byte[] desEncrypt(byte[] buffer, int len, byte[] desKey16, int maxSize) {

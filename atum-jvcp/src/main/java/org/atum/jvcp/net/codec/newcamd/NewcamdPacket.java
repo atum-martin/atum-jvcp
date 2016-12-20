@@ -13,15 +13,29 @@ import io.netty.buffer.Unpooled;
 public class NewcamdPacket {
 	
 	private int command;
-	private ByteBuf headers = Unpooled.buffer(10);
+	private ByteBuf headers;
 	private ByteBuf payload = null;
 
 	public NewcamdPacket(int command) {
 		this.command = command;
+		this.headers = Unpooled.buffer(10);
+	}
+
+	/**
+	 * @param command
+	 * @param headers
+	 */
+	public NewcamdPacket(int command, ByteBuf headers) {
+		this.command = command;
+		this.headers = headers;
 	}
 
 	public void setHeader(int index,int value){
 		headers.setByte(index, value);
+	}
+	
+	public void setHeaderShort(int index,int value){
+		headers.setShort(index, value);
 	}
 	
 	public void setPayload(ByteBuf payload){
@@ -34,5 +48,12 @@ public class NewcamdPacket {
 
 	public int getCommand() {
 		return command;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getSize() {
+		return payload == null ? 0 : payload.capacity();
 	}
 }

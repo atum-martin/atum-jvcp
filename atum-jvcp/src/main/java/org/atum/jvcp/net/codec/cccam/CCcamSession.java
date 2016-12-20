@@ -26,8 +26,6 @@ public class CCcamSession extends CamSession {
 
 	private long lastPing = System.currentTimeMillis();
 
-	private int packetCommandCode;
-	private int packetSize;
 	
 	private EcmRequest lastRequest = null;
 	
@@ -70,19 +68,6 @@ public class CCcamSession extends CamSession {
 	public void keepAlive(){
 		getPacketSender().writeKeepAlive();
 		lastPing = System.currentTimeMillis();
-	}
-
-	public void setCurrentPacket(int cmdCode, int size) {
-		this.packetCommandCode = cmdCode;
-		this.packetSize = size;
-	}
-	
-	public int getPacketCode(){
-		return packetCommandCode;
-	}
-	
-	public int getPacketSize(){
-		return packetSize;
 	}
 
 	public void setLastKeepAlive(long currentTimeMillis) {

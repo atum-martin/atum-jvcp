@@ -8,6 +8,9 @@ public class CamSession {
 	
 	private PacketSenderInterface packetSender;
 	private boolean isReader = false;
+
+	private int packetCommandCode;
+	private int packetSize;
 	
 	public PacketSenderInterface getPacketSender(){
 		return packetSender;
@@ -23,5 +26,18 @@ public class CamSession {
 	
 	public void setReader(boolean isReader){
 		this.isReader = isReader;
+	}
+	
+	public void setCurrentPacket(int cmdCode, int size) {
+		this.packetCommandCode = cmdCode;
+		this.packetSize = size;
+	}
+	
+	public int getPacketCode(){
+		return packetCommandCode;
+	}
+	
+	public int getPacketSize(){
+		return packetSize;
 	}
 }

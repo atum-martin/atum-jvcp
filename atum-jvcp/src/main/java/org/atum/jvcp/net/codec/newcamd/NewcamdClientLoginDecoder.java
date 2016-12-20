@@ -7,6 +7,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.NewcamdServer;
+import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
@@ -18,7 +19,7 @@ import org.atum.jvcp.net.codec.LoginState;
 public class NewcamdClientLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(NewcamdClientLoginDecoder.class);
-	
+
 	public NewcamdClientLoginDecoder(NewcamdServer newcamdServer) {
 		super(newcamdServer);
 	}
@@ -30,8 +31,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		switch (state) {
 
 		case ENCRYPTION:
-			// this shouldn't be getting hit.
-			handleSHA(context);
+			handleCrypto(context, buffer);
 			break;
 		case HANDSHAKE:
 			handleHandshake(context, buffer);
@@ -48,18 +48,28 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 	}
 
 	public void init(ChannelHandlerContext context) {
-		
+
 	}
 
-	private void handleSHA(ChannelHandlerContext context) {
-		
+	private void handleCrypto(ChannelHandlerContext context, ByteBuf buffer) {
+		if (buffer.readableBytes() < 14) {
+			logger.debug("less than 14 bytes in crypto buffer");
+			return;
+		}
+		ByteBuf random14 = buffer.readBytes(14);
+		NewcamdServer server = (NewcamdServer) camServer;
+		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(server.getDesKey(), random14))); // loginKey
+		NewcamdSession session = new NewcamdSession(desKey16);
 
+		//String password = DESUtil.cryptPassword(clientPassword);
+
+		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
 
 		if (buffer.readableBytes() < 20) {
-			logger.info("less than 20 bytes in buffer");
+			logger.debug("less than 20 bytes in buffer");
 			return;
 		}
 
@@ -67,7 +77,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {
 		if (buffer.readableBytes() < 20) {
-			logger.info("less than 20 bytes in buffer");
+			logger.debug("less than 20 bytes in buffer");
 			return;
 		}
 
@@ -77,6 +87,5 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 	private void handleLoginBlockHeader(ChannelHandlerContext context, ByteBuf buffer) {
 
 	}
-
 
 }
