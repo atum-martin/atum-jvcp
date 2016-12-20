@@ -7,7 +7,8 @@ package org.atum.jvcp.crypto;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 19 Dec 2016 20:47:46
  * 
- * Decompiled CSP source, appears to be ripped from BartMassey Java implementation of DES.
+ *        Decompiled CSP source, appears to be ripped from BartMassey Java
+ *        implementation of DES.
  */
 
 public class DESAlgorithm {
