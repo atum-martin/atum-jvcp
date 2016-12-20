@@ -41,6 +41,7 @@ public class NewcamdPacket {
 	
 	public void setPayload(ByteBuf payload){
 		this.payload = payload;
+		payload.resetReaderIndex();
 	}
 	
 	public ByteBuf getPayload(){

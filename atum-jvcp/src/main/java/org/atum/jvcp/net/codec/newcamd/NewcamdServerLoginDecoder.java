@@ -87,9 +87,10 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		}
 		NewcamdSession session = (NewcamdSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 		NewcamdPacket loginPacket = NewcamdPacketDecoder.parseBuffer(context, session, buffer);
-		if(loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
-			context.channel().close();
-			return;
+		if(loginPacket == null || loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
+			logger.info("newcamd client with invalid command code");
+			//context.channel().close();
+			//return;
 		}
 		String username = loginPacket.readStr();
 		String cryptedPass = loginPacket.readStr();

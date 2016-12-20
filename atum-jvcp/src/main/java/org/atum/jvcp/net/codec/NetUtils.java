@@ -55,6 +55,24 @@ public class NetUtils {
 		return arr.length;
 	}
 
+	public static byte[] getBytesValue(String byteStr) {
+		String[] parts = byteStr.split(" ");
+		byte[] bytes = new byte[parts.length];
+		for (int i = 0; i < parts.length; i++) {
+			if (parts[i].length() != 2)
+				throw new NumberFormatException("Bad byte value '" + parts[i] + "' in '" + i + "' (must be 2 digit hex value)");
+			try {
+				int tmp = Integer.parseInt(parts[i], 16);
+				if (tmp < 0 || tmp > 255)
+					throw new NumberFormatException();
+				bytes[i] = (byte) (tmp & 0xFF);
+			} catch (NumberFormatException e) {
+				throw new NumberFormatException("Bad byte value '" + parts[i] + "' in '" + i + "' (must be 00-FF)");
+			}
+		}
+		return bytes;
+	}
+
 	public static int readTriByte(ByteBuf payload) {
 		return (payload.readByte() << 16 | payload.readByte() << 8 | payload.readByte() & 0xFF);
 	}

@@ -74,6 +74,10 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			in.readBytes(payload);
 
 			ByteBuf decryptedPayload = DESUtil.desDecrypt(payload, session.getPacketSize(), session.getDesKey());
+			if(decryptedPayload == null){
+				//invalid DES key.
+				return null;
+			} 
 			return parseDecryptedBuffer(decryptedPayload, session.getPacketSize());
 		}
 		return null;
