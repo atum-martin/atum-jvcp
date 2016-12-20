@@ -70,16 +70,30 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		ByteBuf out = Unpooled.buffer(random.length);
 		out.writeBytes(random);
 		context.writeAndFlush(out);
+		
+		NewcamdServer server = (NewcamdServer) camServer;
+		byte[] desKey16 = DESUtil.desKeySpread(DESUtil.xorKey(server.getDesKey(), random));
+		NewcamdSession session = new NewcamdSession(desKey16);
+		
+		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
 
-		if (buffer.readableBytes() < 20) {
-			logger.debug("less than 20 bytes in buffer");
+		if (buffer.readableBytes() < 13) {
+			logger.debug("less than 13 bytes in handshake buffer");
 			return;
 		}
-		
+		NewcamdSession session = (NewcamdSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		NewcamdPacket loginPacket = NewcamdPacketDecoder.parseBuffer(context, session, buffer);
+		if(loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
+			context.channel().close();
+			return;
+		}
+		String username = loginPacket.readStr();
+		String cryptedPass = loginPacket.readStr();
+		logger.info("newcamd login: "+username);
 	}
 
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {

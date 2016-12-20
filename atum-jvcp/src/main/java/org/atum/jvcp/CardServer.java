@@ -41,6 +41,7 @@ public class CardServer {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
 		new CCcamServer(12000);
+		new NewcamdServer(12001);
 		NettyBootstrap.listen(new HttpPipeline(),8080);
 	}
 

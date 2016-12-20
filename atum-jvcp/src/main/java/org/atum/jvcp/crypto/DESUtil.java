@@ -13,9 +13,15 @@ public class DESUtil {
 	private static final int DES_KEYSCHED_SZ = 32;
 
 	public static byte[] xorKey(byte[] desKey14, ByteBuf xorKey14) {
+		byte[] key = new byte[14];
+		xorKey14.readBytes(key);
+		return xorKey(desKey14, key);
+	}
+	
+	public static byte[] xorKey(byte[] desKey14, byte[] xorKey14) {
 		byte[] newKey = new byte[14];
 		for (int i = 0; i < 14; i++)
-			newKey[i] = (byte) (desKey14[i] ^ xorKey14.readByte());
+			newKey[i] = (byte) (desKey14[i] ^ xorKey14[i]);
 		return newKey;
 	}
 

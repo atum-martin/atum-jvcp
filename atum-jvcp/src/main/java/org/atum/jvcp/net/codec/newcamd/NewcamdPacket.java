@@ -15,6 +15,7 @@ public class NewcamdPacket {
 	private int command;
 	private ByteBuf headers;
 	private ByteBuf payload = null;
+	private transient int strReaderIndex = 0;
 
 	public NewcamdPacket(int command) {
 		this.command = command;
@@ -48,6 +49,17 @@ public class NewcamdPacket {
 
 	public int getCommand() {
 		return command;
+	}
+	
+	public String readStr(){
+		StringBuilder build = new StringBuilder();
+		for(; strReaderIndex < payload.capacity(); strReaderIndex++){
+			char c = payload.getChar(strReaderIndex);
+			if(c == 0)
+				return build.toString();
+			build.append(c);
+		}
+		return build.toString();
 	}
 
 	/**

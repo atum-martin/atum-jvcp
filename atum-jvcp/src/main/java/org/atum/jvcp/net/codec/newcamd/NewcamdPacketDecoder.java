@@ -58,13 +58,9 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 				return null;
 			}
 			int size = in.readShort();
-
-			// logger.info("packet recieved: " + cmdCode + " " + size);
 			session.setCurrentPacket(-1, size);
 
 			if (in.readableBytes() < size) {
-				// logger.info("packet payload too small: " + cmdCode + " " +
-				// size);
 				ctx.channel().attr(NetworkConstants.PACKET_STATE).set(PacketState.PAYLOAD);
 				return null;
 			}
@@ -78,8 +74,6 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			in.readBytes(payload);
 
 			ByteBuf decryptedPayload = DESUtil.desDecrypt(payload, session.getPacketSize(), session.getDesKey());
-			// handlePacket(session, session.getPacketCode(),
-			// session.getPacketSize(), decryptedPayload);
 			return parseDecryptedBuffer(decryptedPayload, session.getPacketSize());
 		}
 		return null;
@@ -103,20 +97,5 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			packet.setPayload(payload);
 		}
 		return packet;
-	}
-
-	public static String bytesToString(byte[] bytes, int offs, int len) {
-		StringBuffer sb = new StringBuffer();
-		String bt;
-		if (len > bytes.length)
-			len = bytes.length;
-		for (int i = 0; i < len && (i + offs < bytes.length); i++) {
-			bt = Integer.toHexString(bytes[offs + i] & 0xFF);
-			if (bt.length() == 1)
-				sb.append('0');
-			sb.append(bt);
-			sb.append(' ');
-		}
-		return sb.toString().trim().toUpperCase();
 	}
 }
