@@ -20,6 +20,7 @@ public class NewcamdPacket {
 	public NewcamdPacket(int command) {
 		this.command = command;
 		this.headers = Unpooled.buffer(10);
+		headers.writeBytes(new byte[10]);
 	}
 
 	/**
@@ -56,8 +57,10 @@ public class NewcamdPacket {
 		StringBuilder build = new StringBuilder();
 		for(; strReaderIndex < payload.capacity(); strReaderIndex++){
 			char c = (char) payload.getByte(strReaderIndex);
-			if(c == 0)
+			if(c == 0){
+				strReaderIndex++;
 				return build.toString();
+			}
 			build.append(c);
 		}
 		return build.toString();
