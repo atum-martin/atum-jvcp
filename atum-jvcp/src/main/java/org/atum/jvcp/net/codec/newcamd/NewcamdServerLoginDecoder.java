@@ -6,6 +6,8 @@ import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
@@ -24,7 +26,7 @@ import org.atum.jvcp.net.codec.LoginState;
 public class NewcamdServerLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(NewcamdServerLoginDecoder.class);
-	
+
 	private static Random r = new SecureRandom();
 
 	private void fillRandomBytes(byte[] data, int len) {
@@ -33,7 +35,6 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		}
 	}
 
-	
 	public NewcamdServerLoginDecoder(NewcamdServer newcamdServer) {
 		super(newcamdServer);
 	}
@@ -68,49 +69,65 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 
 	private void handleCrypto(ChannelHandlerContext context) {
 		byte[] random = new byte[14];
-		fillRandomBytes(random,random.length);
+		fillRandomBytes(random, random.length);
 		ByteBuf out = Unpooled.buffer(random.length);
 		out.writeBytes(random);
 		context.writeAndFlush(out);
-		
+
 		NewcamdServer server = (NewcamdServer) camServer;
 		byte[] desKey16 = DESUtil.desKeySpread(DESUtil.xorKey(server.getDesKey(), random));
 		NewcamdSession session = new NewcamdSession(desKey16);
-		
+
 		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 	}
 
-	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
+	private void handleHandshake(final ChannelHandlerContext context, ByteBuf buffer) {
 
 		if (buffer.readableBytes() < 13) {
 			logger.debug("less than 13 bytes in handshake buffer");
 			return;
 		}
-		NewcamdSession session = (NewcamdSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		final NewcamdSession session = (NewcamdSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 		NewcamdPacket loginPacket = NewcamdPacketDecoder.parseBuffer(context, session, buffer);
-		if(loginPacket == null || loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
-			logger.info("newcamd client with invalid command code "+loginPacket.getCommand());
+		if (loginPacket == null || loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN) {
+			logger.info("newcamd client with invalid command code " + loginPacket.getCommand());
 			context.channel().close();
 			return;
 		}
 		String username = loginPacket.readStr();
-		String cryptedPass = loginPacket.readStr();
-		logger.info("newcamd login: "+username);
+		final String cryptedPass = loginPacket.readStr();
+		logger.info("newcamd login: " + username+" "+cryptedPass);
 		Account acc = AccountStore.getSingleton().getAccount(username);
-		if(acc == null/* || !DESUtil.checkPassword(acc.getPassword(), cryptedPass)*/){
+		if (acc == null/*
+						 * || !DESUtil.checkPassword(acc.getPassword(),
+						 * cryptedPass)
+						 */) {
 			logger.info("newcamd invalid pass ");
 			context.channel().close();
 			return;
 		}
-		
+
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
 		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());
+
 		
-		byte[] desKey = ((NewcamdServer) camServer).getDesKey();
-		desKey = DESUtil.xorUserPass(desKey, cryptedPass);
-        desKey = DESUtil.desKeySpread(desKey);
-        session.setDesKey(desKey);
+		context.channel().writeAndFlush(new NewcamdPacket(NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN_ACK)).addListener(new ChannelFutureListener() {
+
+			public void operationComplete(ChannelFuture future) throws Exception {
+				byte[] desKey = ((NewcamdServer) camServer).getDesKey();
+				desKey = DESUtil.xorUserPass(desKey, cryptedPass);
+				desKey = DESUtil.desKeySpread(desKey);
+				// This listener is added to ensure the DES key is set after the
+				// packet is encoded.
+				session.setDesKey(desKey);
+				context.channel().writeAndFlush(NewcamdPacketSender.createCardData(0x963));
+			}
+
+		});
+		
+		
+
 	}
 
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {
@@ -125,6 +142,5 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 	private void handleLoginBlockHeader(ChannelHandlerContext context, ByteBuf buffer) {
 
 	}
-
 
 }

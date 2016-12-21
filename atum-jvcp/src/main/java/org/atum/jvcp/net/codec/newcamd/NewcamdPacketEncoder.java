@@ -3,6 +3,7 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
+import org.apache.log4j.Logger;
 import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.NetworkConstants;
 
@@ -17,26 +18,35 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class NewcamdPacketEncoder extends MessageToByteEncoder<NewcamdPacket> {
 
+	private Logger logger = Logger.getLogger(NewcamdPacketDecoder.class);
+
 	@Override
 	protected void encode(ChannelHandlerContext ctx, NewcamdPacket msg, ByteBuf out) throws Exception {
-		NewcamdSession session = (NewcamdSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
-		int payloadCap = 0;
-		if (msg.getPayload() != null)
-			payloadCap = msg.getPayload().capacity();
+		try {
+			logger.debug("encoding newcamd message: " + msg.getCommand() + " " + msg.getSize());
+			NewcamdSession session = (NewcamdSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
+			int payloadCap = 0;
+			if (msg.getPayload() != null)
+				payloadCap = msg.getPayload().capacity();
+			byte[] encryptedPayload = new byte[13 + payloadCap];
+			msg.getHeaders().readBytes(encryptedPayload, 0, 10);
+			encryptedPayload[10] = (byte) (msg.getCommand() & 0xFF);
+			encryptedPayload[11] = (byte)(payloadCap >> 8);
+			encryptedPayload[12] = (byte)(payloadCap & 0xFF);
+			
+			if (payloadCap != 0){
+				msg.getPayload().readBytes(encryptedPayload, 13, payloadCap);
+			}
+			encryptedPayload = DESUtil.desEncrypt(encryptedPayload, encryptedPayload.length, session.getDesKey(), NewcamdConstants.CWS_NETMSGSIZE);
+			
+			ByteBuf output = Unpooled.buffer(2 + encryptedPayload.length);
+			output.writeShort(encryptedPayload.length);
+			output.writeBytes(encryptedPayload);
 
-		byte[] encryptedPayload = new byte[11 + payloadCap];
-		msg.getHeaders().readBytes(encryptedPayload);
-		encryptedPayload[11] = (byte) (msg.getCommand() & 0xFF);
-		if (payloadCap != 0)
-			msg.getPayload().readBytes(encryptedPayload, 12, payloadCap);
-
-		encryptedPayload = DESUtil.desEncrypt(encryptedPayload, encryptedPayload.length, session.getDesKey(), NewcamdConstants.CWS_NETMSGSIZE);
-		ByteBuf output = Unpooled.buffer(2 + encryptedPayload.length);
-		output.writeShort(output.capacity());
-		output.writeBytes(encryptedPayload);		
-		
-		out.writeBytes(output);
-		output.release();
-		
+			out.writeBytes(output);
+			//output.release();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

@@ -78,7 +78,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 				//invalid DES key.
 				return null;
 			} 
-			return parseDecryptedBuffer(decryptedPayload, session.getPacketSize());
+			return parseDecryptedBuffer(decryptedPayload, decryptedPayload.capacity());
 		}
 		return null;
 	}
@@ -94,7 +94,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		NewcamdPacket packet = new NewcamdPacket(commandCode, headers);
 		int dataLength = decryptedPayload.readShort();
 		if(dataLength != 0){
-			if(dataLength != (packetSize-13)){
+			if(dataLength != (packetSize-14)){
 				loggerA.warn("Invalid packet size: "+dataLength+" "+packetSize);
 			}
 			ByteBuf payload = decryptedPayload.readBytes(dataLength);
