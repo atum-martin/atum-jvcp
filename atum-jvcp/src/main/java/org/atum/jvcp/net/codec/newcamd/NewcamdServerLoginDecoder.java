@@ -10,6 +10,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.NewcamdServer;
+import org.atum.jvcp.account.Account;
+import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
@@ -89,12 +91,22 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		NewcamdPacket loginPacket = NewcamdPacketDecoder.parseBuffer(context, session, buffer);
 		if(loginPacket == null || loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
 			logger.info("newcamd client with invalid command code "+loginPacket.getCommand());
-			//context.channel().close();
-			//return;
+			context.channel().close();
+			return;
 		}
 		String username = loginPacket.readStr();
 		String cryptedPass = loginPacket.readStr();
 		logger.info("newcamd login: "+username);
+		Account acc = AccountStore.getSingleton().getAccount(username);
+		if(acc == null/* || !DESUtil.checkPassword(acc.getPassword(), cryptedPass)*/){
+			logger.info("newcamd invalid pass ");
+			context.channel().close();
+			return;
+		}
+		byte[] desKey = ((NewcamdServer) camServer).getDesKey();
+		desKey = DESUtil.xorUserPass(desKey, cryptedPass);
+        desKey = DESUtil.desKeySpread(desKey);
+        session.setDesKey(desKey);
 	}
 
 	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {

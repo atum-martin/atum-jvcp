@@ -3,8 +3,6 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
-import io.netty.buffer.ByteBuf;
-
 import org.atum.jvcp.model.CamSession;
 
 
@@ -22,6 +20,10 @@ public class NewcamdSession extends CamSession {
 
 	public byte[] getDesKey() {
 		return desKey;
+	}
+
+	public void setDesKey(byte[] desKey) {
+		this.desKey = desKey;
 	}
 
 }
