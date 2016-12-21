@@ -69,4 +69,8 @@ public class NewcamdPacket {
 	public int getSize() {
 		return payload == null ? 0 : payload.capacity();
 	}
+
+	public ByteBuf getHeaders() {
+		return headers;
+	}
 }

@@ -103,6 +103,10 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 			context.channel().close();
 			return;
 		}
+		
+		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
+		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());
+		
 		byte[] desKey = ((NewcamdServer) camServer).getDesKey();
 		desKey = DESUtil.xorUserPass(desKey, cryptedPass);
         desKey = DESUtil.desKeySpread(desKey);
