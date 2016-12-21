@@ -90,7 +90,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 	 */
 	private static NewcamdPacket parseDecryptedBuffer(ByteBuf decryptedPayload, int packetSize) {
 		ByteBuf headers = decryptedPayload.readBytes(10);
-		int commandCode = decryptedPayload.readByte();
+		int commandCode = decryptedPayload.readByte() & 0xFF;
 		NewcamdPacket packet = new NewcamdPacket(commandCode, headers);
 		int dataLength = decryptedPayload.readShort();
 		if(dataLength != 0){

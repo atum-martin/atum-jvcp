@@ -88,7 +88,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		NewcamdSession session = (NewcamdSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 		NewcamdPacket loginPacket = NewcamdPacketDecoder.parseBuffer(context, session, buffer);
 		if(loginPacket == null || loginPacket.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN){
-			logger.info("newcamd client with invalid command code");
+			logger.info("newcamd client with invalid command code "+loginPacket.getCommand());
 			//context.channel().close();
 			//return;
 		}

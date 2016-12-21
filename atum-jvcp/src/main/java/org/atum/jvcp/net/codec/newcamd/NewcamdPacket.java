@@ -55,7 +55,7 @@ public class NewcamdPacket {
 	public String readStr(){
 		StringBuilder build = new StringBuilder();
 		for(; strReaderIndex < payload.capacity(); strReaderIndex++){
-			char c = payload.getChar(strReaderIndex);
+			char c = (char) payload.getByte(strReaderIndex);
 			if(c == 0)
 				return build.toString();
 			build.append(c);
