@@ -10,8 +10,8 @@ import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
-import org.atum.jvcp.net.codec.newcamd.NewcamdServerLoginDecoder;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
+import org.atum.jvcp.net.codec.newcamd.io.NewcamdServerLoginDecoder;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>

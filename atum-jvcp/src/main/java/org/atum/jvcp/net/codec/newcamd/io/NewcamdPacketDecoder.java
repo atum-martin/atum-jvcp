@@ -1,18 +1,13 @@
-package org.atum.jvcp.net.codec.newcamd;
+package org.atum.jvcp.net.codec.newcamd.io;
 
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.atum.jvcp.CardServer;
 import org.atum.jvcp.crypto.DESUtil;
-import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NetworkConstants;
-import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
-import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
-import org.atum.jvcp.net.codec.cccam.CCcamConstants;
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
-import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
+import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
+import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

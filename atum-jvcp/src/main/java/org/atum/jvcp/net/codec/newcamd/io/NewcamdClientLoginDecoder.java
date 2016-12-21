@@ -1,4 +1,4 @@
-package org.atum.jvcp.net.codec.newcamd;
+package org.atum.jvcp.net.codec.newcamd.io;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
+import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>

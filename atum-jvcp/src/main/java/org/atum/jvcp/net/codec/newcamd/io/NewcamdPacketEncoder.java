@@ -1,11 +1,14 @@
 /**
  * 
  */
-package org.atum.jvcp.net.codec.newcamd;
+package org.atum.jvcp.net.codec.newcamd.io;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.NetworkConstants;
+import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
+import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
+import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -18,12 +21,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class NewcamdPacketEncoder extends MessageToByteEncoder<NewcamdPacket> {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(NewcamdPacketDecoder.class);
 
 	@Override
 	protected void encode(ChannelHandlerContext ctx, NewcamdPacket msg, ByteBuf out) throws Exception {
 		try {
-			logger.debug("encoding newcamd message: " + msg.getCommand() + " " + msg.getSize());
 			NewcamdSession session = (NewcamdSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
 			int payloadCap = 0;
 			if (msg.getPayload() != null)
@@ -44,7 +47,7 @@ public class NewcamdPacketEncoder extends MessageToByteEncoder<NewcamdPacket> {
 			output.writeBytes(encryptedPayload);
 
 			out.writeBytes(output);
-			//output.release();
+			output.release();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
