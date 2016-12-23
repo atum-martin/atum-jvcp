@@ -9,6 +9,7 @@ import io.netty.util.AttributeKey;
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 21 Nov 2016 22:16:25
+ * 
  */
 
 public class NetworkConstants {
