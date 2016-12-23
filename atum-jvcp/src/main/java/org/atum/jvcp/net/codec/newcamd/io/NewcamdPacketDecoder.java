@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.PacketState;
+import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
@@ -35,7 +36,8 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 
 	private void handlePacket(NewcamdSession session, NewcamdPacket packet) {
 		switch (packet.getCommand()) {
-		
+		case NewcamdConstants.MSG_CARD_DATA_REQ:
+			break;
 		default:
 			logger.info("unhandled packet: " + packet.getCommand() + " " + packet.getSize());
 			// payload.readBytes(size);
