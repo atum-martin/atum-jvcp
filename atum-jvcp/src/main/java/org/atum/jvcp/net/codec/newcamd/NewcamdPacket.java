@@ -53,6 +53,18 @@ public class NewcamdPacket {
 		return command;
 	}
 	
+	public boolean isEcm(){
+		return command == 0x80 || command == 0x81;
+	}
+	
+	public boolean isEmm(){
+		return command >= 0x82 || command <= 0x8F;
+	}
+	
+	public boolean isDcw(){
+		return isEcm() && (payload == null || payload.capacity() == 16);
+	}
+	
 	public String readStr(){
 		StringBuilder build = new StringBuilder();
 		for(; strReaderIndex < payload.capacity(); strReaderIndex++){

@@ -13,6 +13,7 @@ import org.atum.jvcp.model.CamSession;
 public class NewcamdSession extends CamSession {
 
 	private byte[] desKey;
+	private int cardId;
 	
 	public NewcamdSession(byte[] desKey){
 		this.desKey = desKey;
@@ -24,6 +25,14 @@ public class NewcamdSession extends CamSession {
 
 	public void setDesKey(byte[] desKey) {
 		this.desKey = desKey;
+	}
+
+	public int getCardId() {
+		return cardId;
+	}
+	
+	public void setCardId(int cardId){
+		this.cardId = cardId;
 	}
 
 }

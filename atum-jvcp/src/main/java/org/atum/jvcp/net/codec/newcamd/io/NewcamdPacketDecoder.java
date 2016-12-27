@@ -3,7 +3,9 @@ package org.atum.jvcp.net.codec.newcamd.io;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.CardServer;
 import org.atum.jvcp.crypto.DESUtil;
+import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.PacketState;
 import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
@@ -35,8 +37,20 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 	}
 
 	private void handlePacket(NewcamdSession session, NewcamdPacket packet) {
+		if(packet.isEcm()){
+			decodeEcm(session, packet);
+			return;
+		}
+		if(packet.isEmm()){
+			decodeEmm(session, packet);
+			return;
+		}
 		switch (packet.getCommand()) {
 		case NewcamdConstants.MSG_CARD_DATA_REQ:
+			logger.info("newcamd MSG_CARD_DATA_REQ decode: "+session.isReader());
+			break;
+		case NewcamdConstants.MSG_KEEPALIVE:
+			handleKeepalive(session, packet);
 			break;
 		default:
 			logger.info("unhandled packet: " + packet.getCommand() + " " + packet.getSize());
@@ -45,6 +59,35 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		}
 	}
 	
+	private void decodeEmm(NewcamdSession session, NewcamdPacket packet) {
+		logger.info("newcamd emm decode: "+session.isReader());
+	}
+
+	private void handleKeepalive(NewcamdSession session, NewcamdPacket packet) {
+		logger.info("newcamd keepalive decode: "+session.isReader());
+	}
+
+	private void decodeEcm(NewcamdSession session, NewcamdPacket packet) {
+		if(packet.isDcw()){
+			logger.info("newcamd ecm dcw decode: "+session.isReader());
+			return;
+		}
+		logger.info("newcamd ecm decode: "+session.isReader());
+		byte[] ecm = new byte[packet.getSize()+3];
+		ecm[0] = (byte) packet.getCommand();
+		ecm[1] = (byte) (packet.getSize() >> 8);
+		ecm[2] = (byte) (packet.getSize() & 0xFF);
+		packet.getPayload().readBytes(ecm, 3, packet.getSize());
+		
+		//long cspHash = EcmRequest.computeEcmHash(ecm);
+		EcmRequest answer = CardServer.handleEcmRequest(session, session.getCardId(), 0, 0, 0, ecm);
+		if(answer != null && answer.hasAnswer()){
+			logger.info("handled client ECM: "+answer.getCspHash());
+			//logger.info("dcw dump: "+bytesToString(answer.getDcw(),0,answer.getDcw().length));
+			session.getPacketSender().writeEcmAnswer(answer.getDcw());
+		}
+	}
+
 	public static NewcamdPacket parseBuffer(ChannelHandlerContext ctx, NewcamdSession session, ByteBuf in) {
 		PacketState state = ctx.channel().attr(NetworkConstants.PACKET_STATE).get();
 		if (state == null)

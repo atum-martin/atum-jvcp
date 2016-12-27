@@ -114,6 +114,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
 		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());
 
+		session.setPacketSender(new NewcamdPacketSender());
 		
 		context.channel().writeAndFlush(new NewcamdPacket(NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN_ACK)).addListener(new ChannelFutureListener() {
 
@@ -124,7 +125,9 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 				// This listener is added to ensure the DES key is set after the
 				// packet is encoded.
 				session.setDesKey(desKey);
-				context.channel().writeAndFlush(NewcamdPacketSender.createCardData(0x963));
+				session.setReader(false);
+				context.channel().writeAndFlush(NewcamdPacketSender.createCardData(session, 0x963));
+				camServer.registerSession(session);
 			}
 
 		});

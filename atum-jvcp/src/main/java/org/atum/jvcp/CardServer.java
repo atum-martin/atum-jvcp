@@ -9,12 +9,14 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
+import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
+import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -25,7 +27,7 @@ public class CardServer {
 	/**
 	 * Instance of log4j logger
 	 */
-	private static Logger logger = Logger.getLogger(CCcamServer.class);
+	private static Logger logger = Logger.getLogger(CardServer.class);
 
 	private static ClusteredCache cache = new ClusteredCache();
 	private static ClusteredCache pendingEcms = new ClusteredCache();
@@ -111,7 +113,7 @@ public class CardServer {
 		return answer;
 	}
 
-	public static EcmRequest handleEcmRequest(CCcamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
+	public static EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
 		int cspHash = EcmRequest.computeEcmHash(ecm);
 		EcmRequest answer = CardServer.getCache().peekCache(cspHash);
 		if (answer != null) {
