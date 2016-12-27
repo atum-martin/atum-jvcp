@@ -3,6 +3,7 @@
  */
 package org.atum.jvcp.net.codec.newcamd.io;
 
+import org.apache.log4j.Logger;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
@@ -18,6 +19,14 @@ import io.netty.buffer.Unpooled;
  */
 public class NewcamdPacketSender implements PacketSenderInterface {
 
+	private Logger logger = Logger.getLogger(NewcamdPacketSender.class);
+
+	private NewcamdSession session;
+
+	public NewcamdPacketSender(NewcamdSession session) {
+		this.session = session;
+	}
+	
 	public static NewcamdPacket createCardData(NewcamdSession session, int cardId){
 		session.setCardId(cardId);
 		ByteBuf payload = Unpooled.buffer(23);
@@ -37,10 +46,14 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
+		logger.info("writing newcamd DCW ecm request answer.");
+		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_SERVER_2_CLIENT_ECM);
+		packet.setPayload(Unpooled.copiedBuffer(dcw));
+		session.write(packet);
 		
 	}
 
 	public void writeEcmRequest(EcmRequest req) {
-		
+		logger.info("sending newcamd ecm request.");
 	}
 }

@@ -1,5 +1,7 @@
 package org.atum.jvcp.net.codec.cccam;
 
+import org.atum.jvcp.net.codec.Packet;
+
 import io.netty.buffer.ByteBuf;
 
 /**
@@ -7,7 +9,7 @@ import io.netty.buffer.ByteBuf;
  * @since 24 Nov 2016 22:40:08
  */
 
-public class CCcamPacket {
+public class CCcamPacket implements Packet {
 
 	private int command;
 	private ByteBuf out;

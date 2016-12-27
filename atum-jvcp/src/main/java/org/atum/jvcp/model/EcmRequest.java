@@ -118,19 +118,7 @@ public class EcmRequest {
 			int em = (ecm[i] & 0xFF);
 			hash = (31 * hash + em);
 		}
-		
-		byte[] ecmBits = new byte[ecm.length-3]; 
-		System.arraycopy(ecm, 3, ecmBits, 0, ecm.length-3);
-		int hash2 = 0;
-		try {
-			hash2 = new String(ecmBits, "ISO-8859-1").hashCode();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		//if(hash2 != hash){
-			logger.info("hash mismatch: "+Integer.toHexString(CCcamPacketDecoder.cspHashSwap(hash))+" "+Integer.toHexString(CCcamPacketDecoder.cspHashSwap(hash2)));
-		//}
-		return CCcamPacketDecoder.cspHashSwap(hash2);
+		return CCcamPacketDecoder.cspHashSwap(hash);
 	}
 
 	public byte[] getDcw() {

@@ -3,6 +3,8 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
+import org.atum.jvcp.net.codec.Packet;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
@@ -10,7 +12,7 @@ import io.netty.buffer.Unpooled;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 20 Dec 2016 21:53:06
  */
-public class NewcamdPacket {
+public class NewcamdPacket implements Packet {
 	
 	private int command;
 	private ByteBuf headers;

@@ -60,7 +60,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		ByteBuf random14 = buffer.readBytes(14);
 		NewcamdServer server = (NewcamdServer) camServer;
 		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(server.getDesKey(), random14))); // loginKey
-		NewcamdSession session = new NewcamdSession(desKey16);
+		NewcamdSession session = new NewcamdSession(context, desKey16);
 
 		//String password = DESUtil.cryptPassword(clientPassword);
 

@@ -132,10 +132,11 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		ByteBuf headers = decryptedPayload.readBytes(10);
 		int commandCode = decryptedPayload.readByte() & 0xFF;
 		NewcamdPacket packet = new NewcamdPacket(commandCode, headers);
-		int dataLength = decryptedPayload.readShort();
+		//int dataLength = decryptedPayload.readShort();
+		int dataLength = (decryptedPayload.readByte() & 0x0F) * 256 + (decryptedPayload.readByte() & 0xFF);
 		if(dataLength != 0){
 			if(dataLength != (packetSize-14)){
-				loggerA.warn("Invalid packet size: "+dataLength+" "+packetSize);
+				loggerA.warn("Invalid packet size: "+dataLength+" "+packetSize+" "+commandCode);
 			}
 			ByteBuf payload = decryptedPayload.readBytes(dataLength);
 			packet.setPayload(payload);

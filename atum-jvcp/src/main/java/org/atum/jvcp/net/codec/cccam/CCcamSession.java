@@ -17,7 +17,6 @@ public class CCcamSession extends CamSession {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamSession.class);
 	
-	private ChannelHandlerContext context;
 	private CCcamCipher encrypter;
 	private CCcamCipher decrypter;
 	private CCcamServer server;
@@ -30,7 +29,7 @@ public class CCcamSession extends CamSession {
 	private EcmRequest lastRequest = null;
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
-		this.context = context;
+		super(context);
 		this.server = server;
 		this.encrypter = encrypter;
 		this.decrypter = decrypter;
@@ -50,15 +49,6 @@ public class CCcamSession extends CamSession {
 
 	public String getUsername() {
 		return username;
-	}
-	
-	public void write(CCcamPacket cCcamPacket){
-		context.channel().writeAndFlush(cCcamPacket);
-	}
-	
-
-	public ChannelHandlerContext getCtx() {
-		return context;
 	}
 	
 	public long getLastKeepalive(){

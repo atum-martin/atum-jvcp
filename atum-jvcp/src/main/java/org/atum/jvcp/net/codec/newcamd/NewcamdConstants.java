@@ -41,4 +41,6 @@ public class NewcamdConstants {
 	      MSG_ADMIN_COMMAND_ACK = CWS_FIRSTCMDNO + 17,
 	      MSG_ADMIN_COMMAND_NAK = CWS_FIRSTCMDNO + 18,
 	      MSG_KEEPALIVE = CWS_FIRSTCMDNO + 0x1D;
+	  
+	public static final int MSG_SERVER_2_CLIENT_ECM = 0x80;
 }

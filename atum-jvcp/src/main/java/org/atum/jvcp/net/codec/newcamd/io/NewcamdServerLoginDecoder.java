@@ -79,7 +79,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 
 		NewcamdServer server = (NewcamdServer) camServer;
 		byte[] desKey16 = DESUtil.desKeySpread(DESUtil.xorKey(server.getDesKey(), random));
-		NewcamdSession session = new NewcamdSession(desKey16);
+		NewcamdSession session = new NewcamdSession(context, desKey16);
 
 		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
@@ -114,7 +114,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
 		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());
 
-		session.setPacketSender(new NewcamdPacketSender());
+		session.setPacketSender(new NewcamdPacketSender(session));
 		
 		context.channel().writeAndFlush(new NewcamdPacket(NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN_ACK)).addListener(new ChannelFutureListener() {
 

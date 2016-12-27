@@ -5,6 +5,8 @@ package org.atum.jvcp.net.codec.newcamd;
 
 import org.atum.jvcp.model.CamSession;
 
+import io.netty.channel.ChannelHandlerContext;
+
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -15,7 +17,8 @@ public class NewcamdSession extends CamSession {
 	private byte[] desKey;
 	private int cardId;
 	
-	public NewcamdSession(byte[] desKey){
+	public NewcamdSession(ChannelHandlerContext context, byte[] desKey){
+		super(context);
 		this.desKey = desKey;
 	}
 
