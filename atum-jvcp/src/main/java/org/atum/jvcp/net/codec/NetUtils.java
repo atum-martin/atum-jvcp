@@ -8,16 +8,6 @@ import io.netty.buffer.ByteBuf;
  */
 
 public class NetUtils {
-
-	public static void readBuffer(ByteBuf buffer, byte[] buf, int len) {
-		readBuffer(buffer,buf,len,0);
-	}
-
-	public static void readBuffer(ByteBuf buffer, byte[] buf, int len, int offset) {
-		for (int i = 0; i < len; i++) {
-			buf[i+offset] = buffer.readByte();
-		}
-	}
 	
 	public static String readCCcamString(ByteBuf buffer, int len) {
 		byte[] buf = new byte[len];

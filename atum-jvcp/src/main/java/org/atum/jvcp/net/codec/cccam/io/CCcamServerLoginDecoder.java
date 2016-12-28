@@ -107,7 +107,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 
 		byte[] shaCipher = new byte[20];
 
-		NetUtils.readBuffer(buffer, shaCipher, 20);
+		buffer.readBytes(shaCipher);
 
 		session.getDecrypter().decrypt(shaCipher, 20);
 
@@ -125,8 +125,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 
 		byte[] usernameBuf = new byte[20];
 
-		NetUtils.readBuffer(buffer, usernameBuf, 20);
-
+		buffer.readBytes(usernameBuf);
 		session.getDecrypter().decrypt(usernameBuf, 20);
 		String username = NetUtils.toCCcamString(usernameBuf);
 		session.setUsername(username);
@@ -145,7 +144,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		CCcamSession session = (CCcamSession) context.channel().attr(NetworkConstants.CAM_SESSION).get();
 
 		byte[] passHash = new byte[6];
-		NetUtils.readBuffer(buffer, passHash, 6);
+		buffer.readBytes(passHash);
 
 		Account acc = AccountStore.getSingleton().getAccount(session.getUsername());
 		byte[] passLookup = acc.getPassword().getBytes();

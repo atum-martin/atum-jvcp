@@ -35,7 +35,7 @@ public class NewcamdServer extends Thread implements CamServer {
 	/**
 	 * Creates a new NewcamdServer server that will listen on a specified port.
 	 * 
-	 * @param port The port number the CCcam server will bind to.
+	 * @param port The port number the NewcamdServer server will bind to.
 	 */
 	public NewcamdServer(int port) {	
 		NewcamdPipeline pipe = new NewcamdPipeline(this, NewcamdServerLoginDecoder.class);

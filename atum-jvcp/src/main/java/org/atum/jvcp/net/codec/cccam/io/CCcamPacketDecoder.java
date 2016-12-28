@@ -171,7 +171,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
-		NetUtils.readBuffer(payload, ecm, ecm.length, 0);
+		//NetUtils.readBuffer(payload, ecm, ecm.length, 0);
+		payload.readBytes(ecm);
 		//payload.readBytes(ecm);
 		logger.info("ecm hex dump: "+bytesToString(ecm,0,ecm.length));
 		logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
