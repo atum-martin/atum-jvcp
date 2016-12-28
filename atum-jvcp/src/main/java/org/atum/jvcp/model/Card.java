@@ -1,7 +1,5 @@
 package org.atum.jvcp.model;
 
-import org.atum.jvcp.cache.HashCache;
-
 /**
  * A java POJO which represents a card being used as a reader in a conditional
  * access module.
@@ -45,7 +43,6 @@ public class Card {
 		this.cardId = cardId;
 		this.shareId = shareId;
 		this.remoteId = remoteId;
-		HashCache.getSingleton().setupCache(cardId);
 	}
 
 	/**
