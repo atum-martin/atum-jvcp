@@ -29,7 +29,7 @@ public class ClusteredCache extends LinkedHashMap implements CacheExchangeInterf
 	private long timeout;
 
 	public ClusteredCache() {
-		timeout = 8000L;
+		timeout = 20000L;
 	}
 
 	public ClusteredCache(long timeout) {
