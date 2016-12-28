@@ -13,10 +13,8 @@ import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
-import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
-import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -91,14 +89,6 @@ public class CardServer {
 			return true;
 		}
 		return false;
-	}
-	
-	private static int sum(byte[] ecmd5) {
-		int sum = 0;
-		for(byte b : ecmd5){
-			sum += b;
-		}
-		return sum;
 	}
 
 	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache){
