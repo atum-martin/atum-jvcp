@@ -3,10 +3,9 @@
  */
 package org.atum.jvcp.html;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -14,29 +13,32 @@ import java.io.InputStreamReader;
  */
 public class HtmlResource {
 	
-	private String content;
+	private byte[] content;
 	
 	public HtmlResource(String source){
-		StringBuilder builder = new StringBuilder();
 		System.out.println("loading resource: "+source);
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
 		if(is == null){
 			this.content = null;
 			return;
 		}
-		BufferedReader br = new BufferedReader(new InputStreamReader(is));
-		String line;
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+		int bytesRead;
+		byte[] data = new byte[16384];
+
 		try {
-			while((line = br.readLine()) != null){
-				builder.append(line);
+			while ((bytesRead = is.read(data, 0, data.length)) != -1) {
+			  buffer.write(data, 0, bytesRead);
 			}
+			buffer.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		this.content = builder.toString();
+		this.content = buffer.toByteArray();
 	}
 	
-	public String getContent(){
+	public byte[] getContent(){
 		return content;
 	}
 }

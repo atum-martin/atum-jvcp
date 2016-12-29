@@ -35,17 +35,26 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> 
 		
 		//response.headers().set(CONTENT_TYPE, "text/html");
 		//response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
-		String content = "";
+		byte[] content = null;
 		if(msg.uri().endsWith("html") || msg.uri().endsWith("/")){
-			content = header.getContent()+nav.getContent()+footer.getContent();
+			//String contentStr = header.getContent()+nav.getContent()+footer.getContent();
+			//content = contentStr.getBytes();
+			content = new byte[header.getContent().length+nav.getContent().length+footer.getContent().length];
+			System.arraycopy(header.getContent(), 0, content, 0, header.getContent().length);
+			System.arraycopy(nav.getContent(), 0, content, header.getContent().length, nav.getContent().length);
+			System.arraycopy(footer.getContent(), 0, content, header.getContent().length+nav.getContent().length, footer.getContent().length);
 		} else {
-			content = (new HtmlResource("web"+msg.uri())).getContent();
+			String uri = msg.uri();
+			if(uri.contains("?")){
+				uri = uri.substring(0, uri.indexOf("?"));
+			}
+			content = (new HtmlResource("web"+uri)).getContent();
 		}
 		FullHttpResponse response = null;
 		if(content == null){
 			response = new DefaultFullHttpResponse(HTTP_1_1, NOT_FOUND);
 		} else {
-			response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(content.getBytes()));
+			response = new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.wrappedBuffer(content));
 		}
 		response.headers().set(CONTENT_LENGTH, response.content().readableBytes());
 		// Write the initial line and the header.
