@@ -52,7 +52,7 @@ public class CCcamPacketSender implements PacketSenderInterface {
 
 	public void writeSrvData() {
 		ByteBuf out = Unpooled.buffer(72);
-		out.writeLong(837493L);
+		out.writeBytes(session.getServer().getNodeId());
 		CCcamBuild build = CCcamBuilds.getBuild("2.0.11");
 		NetUtils.writeCCcamStr(out, build.getVersion(), 32);
 		NetUtils.writeCCcamStr(out, "" + build.getBuildNum(), 32);
@@ -67,7 +67,7 @@ public class CCcamPacketSender implements PacketSenderInterface {
 
 		ByteBuf out = Unpooled.buffer(93);
 		NetUtils.writeCCcamStr(out, "user99", 20);
-		out.writeLong(837493L);
+		out.writeBytes(session.getServer().getNodeId());
 		out.writeByte(0);
 		CCcamBuild build = CCcamBuilds.getBuild("2.0.11");
 		NetUtils.writeCCcamStr(out, build.getVersion(), 32);
@@ -98,7 +98,7 @@ public class CCcamPacketSender implements PacketSenderInterface {
 		System.arraycopy(dcw, 0, sendDcw, 0, dcw.length);
 		ByteBuf out = Unpooled.buffer(16);
 		session.getDecrypter().cc_crypt_cw(session.getServer().getNodeId(), session.getLastRequest().getShareId(), sendDcw);
-		out.writeBytes(dcw);
+		out.writeBytes(sendDcw);
 		session.getDecrypter().encrypt(out);
 		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out));
 	}
