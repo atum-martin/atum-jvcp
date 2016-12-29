@@ -113,7 +113,7 @@ public class CCcamCipher {
 	///////////////////////////////////////////////////////////////////////////////
 	// node_id : client nodeid, the sender of the ECM Request(big endian)
 	// card_id : local card_id for the server
-	public void cc_crypt_cw(byte[] nodeid, int shareId, byte[] cws) {
+	public static void cc_crypt_cw(byte[] nodeid, int shareId, byte[] cws) {
 		byte tmp;
 		byte i;
 		byte n;
@@ -122,7 +122,7 @@ public class CCcamCipher {
 		// int card_id = (shareid[0] << 24) | (shareid[1] << 16) | (shareid[2]
 		// << 8) | (shareid[3]);
 		for (i = 0; i < 8; i++)
-			nod[i] = nodeid[7 - i];
+			nod[i] = nodeid[7-i];
 		for (i = 0; i < 16; i++) {
 			if (i % 2 == 1) {
 				if (i != 15)

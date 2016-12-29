@@ -80,7 +80,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			}
 			String username = NetUtils.readCCcamString(payload, 20);
 
-			long nodeId = payload.readLong();
+			byte[] nodeId = new byte[8];
+			payload.readBytes(nodeId);
+			session.setNodeId(nodeId);
 			@SuppressWarnings("unused")
 			int flag = payload.readByte();
 			String version = NetUtils.readCCcamString(payload, 32);
@@ -92,7 +94,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			}
 			break;
 		case CCcamConstants.MSG_SRV_DATA:
-			nodeId = payload.readLong();
+			nodeId = new byte[8];
+			payload.readBytes(nodeId);
+			session.setNodeId(nodeId);
 			version = NetUtils.readCCcamString(payload, 32);
 			build = Integer.parseInt(NetUtils.readCCcamString(payload, 32));
 			logger.info("MSG_SRV_DATA: " + version + " " + build + " " + nodeId);
@@ -167,7 +171,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int cardId = payload.readShort();
 		int provider = payload.readInt();
 		//shareId
-		int id = payload.readInt();
+		int shareId = payload.readInt();
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
@@ -185,7 +189,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
 		long cspHash = EcmRequest.computeEcmHash(ecm);
 		logger.info("requested client ECM: "+cspHash);
-		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
+		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
 			logger.info("dcw dump: "+bytesToString(answer.getDcw(),0,answer.getDcw().length));

@@ -22,11 +22,10 @@ public class CCcamSession extends CamSession {
 	private CCcamServer server;
 
 	private String username;
+	private byte[] nodeId;
 
 	private long lastPing = System.currentTimeMillis();
 
-	
-	private EcmRequest lastRequest = null;
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
 		super(context);
@@ -64,15 +63,15 @@ public class CCcamSession extends CamSession {
 		lastPing = currentTimeMillis;
 	}
 
-	public EcmRequest getLastRequest() {
-		return lastRequest;
-	}
-
-	public void setLastRequest(EcmRequest lastRequest) {
-		this.lastRequest = lastRequest;
-	}
-
 	public CCcamServer getServer() {
 		return server;
+	}
+
+	public byte[] getNodeId() {
+		return nodeId;
+	}
+	
+	public void setNodeId(byte[] nodeId){
+		this.nodeId = nodeId;
 	}
 }

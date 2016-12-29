@@ -2,6 +2,7 @@ package org.atum.jvcp.model;
 
 import org.atum.jvcp.net.codec.Packet;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -13,6 +14,7 @@ public class CamSession {
 	private PacketSenderInterface packetSender;
 	private boolean isReader = false;
 	private ChannelHandlerContext context;
+	private EcmRequest lastRequest = null;
 
 	private int packetCommandCode;
 	private int packetSize;
@@ -51,11 +53,20 @@ public class CamSession {
 	}
 	
 	
-	public void write(Packet packet){
-		context.channel().writeAndFlush(packet);
+	public ChannelFuture write(Packet packet){
+		return context.channel().writeAndFlush(packet);
 	}	
 
 	public ChannelHandlerContext getCtx() {
 		return context;
+	}
+	
+
+	public EcmRequest getLastRequest() {
+		return lastRequest;
+	}
+
+	public void setLastRequest(EcmRequest lastRequest) {
+		this.lastRequest = lastRequest;
 	}
 }

@@ -107,9 +107,11 @@ public class CardServer {
 		int cspHash = EcmRequest.computeEcmHash(ecm);
 		EcmRequest answer = CardServer.getCache().peekCache(cspHash);
 		if (answer != null) {
+			session.setLastRequest(answer);
 			return answer;
 		}
 		answer = createEcmRequest(cardId, provider, shareId, serviceId, ecm, cspHash, false);
+		session.setLastRequest(answer);
 		answer.addListener(session);
 		return answer;
 	}

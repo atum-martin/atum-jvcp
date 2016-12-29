@@ -2,6 +2,8 @@ package org.atum.jvcp.net.codec.cccam.io;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.Card;
@@ -14,6 +16,7 @@ import org.atum.jvcp.net.codec.cccam.CCcamConstants;
 import org.atum.jvcp.net.codec.cccam.CCcamPacket;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -94,13 +97,20 @@ public class CCcamPacketSender implements PacketSenderInterface {
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
-		byte[] sendDcw = new byte[dcw.length];
+		final byte[] sendDcw = new byte[dcw.length];
 		System.arraycopy(dcw, 0, sendDcw, 0, dcw.length);
 		ByteBuf out = Unpooled.buffer(16);
-		session.getDecrypter().cc_crypt_cw(session.getServer().getNodeId(), session.getLastRequest().getShareId(), sendDcw);
-		out.writeBytes(sendDcw);
-		session.getDecrypter().encrypt(out);
-		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out));
+		CCcamCipher.cc_crypt_cw(
+				session.getNodeId(), 
+				session.getLastRequest().getShareId(), 
+				sendDcw);	
+		out.writeBytes(sendDcw);		
+		
+		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out)).addListener(new ChannelFutureListener() {
+			public void operationComplete(ChannelFuture future) throws Exception {
+				session.getEncrypter().encrypt(sendDcw, 16);
+			}
+		});
 	}
 
 }
