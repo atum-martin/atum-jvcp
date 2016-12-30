@@ -5,7 +5,6 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.model.CamSession;
-import org.atum.jvcp.model.EcmRequest;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
