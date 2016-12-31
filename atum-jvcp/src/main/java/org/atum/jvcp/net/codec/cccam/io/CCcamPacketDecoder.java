@@ -179,7 +179,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		payload.readBytes(ecm);
 		//payload.readBytes(ecm);
 		logger.info("ecm hex dump: "+bytesToString(ecm,0,ecm.length));
-		logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+		//logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
 		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
@@ -188,7 +188,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		}
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
 		long cspHash = EcmRequest.computeEcmHash(ecm);
-		logger.info("requested client ECM: "+cspHash);
+		//logger.info("requested client ECM: "+cspHash);
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());

@@ -37,7 +37,7 @@ public class CCcamServer extends Thread implements CamServer {
 	 * @param port The port number the CCcam server will bind to.
 	 */
 	public CCcamServer(int port) {	
-		NettyBootstrap.listen(new CCcamPipeline(this, CCcamServerLoginDecoder.class),port);
+		NettyBootstrap.listenTcp(new CCcamPipeline(this, CCcamServerLoginDecoder.class),port);
 		this.start();	
 	}
 	

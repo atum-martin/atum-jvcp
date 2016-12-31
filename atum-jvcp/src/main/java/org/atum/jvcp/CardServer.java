@@ -42,7 +42,7 @@ public class CardServer {
 		AccountStore.getSingleton();
 		new CCcamServer(12000);
 		new NewcamdServer(12001);
-		NettyBootstrap.listen(new HttpPipeline(),8080);
+		NettyBootstrap.listenTcp(new HttpPipeline(),8080);
 	}
 
 	public static ClusteredCache getCache() {
@@ -70,7 +70,7 @@ public class CardServer {
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
 			req.fireActionListeners();
-			logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
+			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 			logger.info("cache dcw dump: "+CCcamPacketDecoder.bytesToString(cw,0,cw.length));
 			return true;
 		} else {

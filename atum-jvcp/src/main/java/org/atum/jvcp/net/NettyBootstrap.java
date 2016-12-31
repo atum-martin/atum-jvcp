@@ -7,6 +7,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 /**
@@ -16,7 +17,15 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class NettyBootstrap {
 
-	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port) {
+	public static void listenTcp(ChannelInitializer<SocketChannel> pipeline, int port) {
+		listen(pipeline, port, NioServerSocketChannel.class);
+	}
+	
+	public static void listenUdp(ChannelInitializer<SocketChannel> pipeline, int port) {
+		listen(pipeline, port, NioDatagramChannel.class);
+	}
+	
+	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port, Class clazz) {
 		//port = 8080;
  
 		Logger logger = Logger.getLogger(NettyBootstrap.class);
@@ -25,7 +34,7 @@ public class NettyBootstrap {
 
 		ServerBootstrap bootstrap = new ServerBootstrap();
 
-		bootstrap.group(loopGroup).channel(NioServerSocketChannel.class).childHandler(pipeline).bind(port).syncUninterruptibly();
+		bootstrap.group(loopGroup).channel(clazz).childHandler(pipeline).bind(port).syncUninterruptibly();
 
 		logger.info("Server listening on port: " + port);
 		

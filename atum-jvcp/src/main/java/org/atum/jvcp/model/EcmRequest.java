@@ -150,7 +150,7 @@ public class EcmRequest {
 
 	public void fireActionListeners() {
 		for (CamSession session : sessions) {
-			logger.debug("removing listener and firing event.");
+			//logger.debug("removing listener and firing event.");
 			session.getPacketSender().writeEcmAnswer(dcw);
 		}
 		sessions.clear();
@@ -161,7 +161,7 @@ public class EcmRequest {
 	}
 
 	public void addListener(CamSession session) {
-		logger.debug("adding listener for ecm.");
+		//logger.debug("adding listener for ecm.");
 		sessions.add(session);
 	}
 }
