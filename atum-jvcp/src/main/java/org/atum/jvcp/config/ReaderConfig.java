@@ -79,7 +79,7 @@ public class ReaderConfig {
 		private String password;
 		private String protocol;
 		private String host;
-		private String server;
+		private String server = null;
 		private int port;
 	}
 }
