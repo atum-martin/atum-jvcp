@@ -45,21 +45,50 @@ public class ReaderConfig {
 			if (reader != null) {
 				logger.info("loaded reader: " + reader.protocol + "://" + reader.host + ":" + reader.port + " " + reader.username);
 				if (reader.protocol.equalsIgnoreCase("cccam")) {
-					CCcamClient.connect(getCCcamServer(reader.server), reader.host, reader.port, new Account(reader.username, reader.password));
+					CCcamServer server = getCCcamServer(reader.server);
+					if(server == null)
+						continue;
+					CCcamClient.connect(server, reader.host, reader.port, new Account(reader.username, reader.password));
+				} else if (reader.protocol.equalsIgnoreCase("newcamd")) {
+					NewcamdServer server = getNewcamdServer(reader.server);
+					if(server == null)
+						continue;
+					//CCcamClient.connect(server, reader.host, reader.port, new Account(reader.username, reader.password));
 				}
 			}
 		}
 	}
 
 	private CCcamServer getCCcamServer(String serverName) {
-		if(serverName == null || cccamServers.size() == 0)
+		if(cccamServers.size() == 0){
+			logger.info("no server found to bind reader to. Missing server name: "+serverName);
 			return null;
+		}
+		if(serverName == null){
+			return cccamServers.get(0);
+		}
 		for(CCcamServer serv : cccamServers){
 			if(serv.getName().equalsIgnoreCase(serverName)){
 				return serv;
 			}
 		}
 		return cccamServers.get(0);
+	}
+	
+	private NewcamdServer getNewcamdServer(String serverName) {
+		if(newcamdsServers.size() == 0){
+			logger.info("no server found to bind reader to. Missing server name: "+serverName);
+			return null;
+		}
+		if(serverName == null){
+			return newcamdsServers.get(0);
+		}
+		for(NewcamdServer serv : newcamdsServers){
+			if(serv.getName().equalsIgnoreCase(serverName)){
+				return serv;
+			}
+		}
+		return newcamdsServers.get(0);
 	}
 
 	private void setupServers(CamServer[] servers) {
