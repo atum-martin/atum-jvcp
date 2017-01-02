@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
+import org.atum.jvcp.account.Account;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
@@ -80,18 +81,20 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		encrypter.CipherInit(secureRandom, secureRandom.length);
 		encrypter.decrypt(sha, sha.length);
 		
+		Account account = ctx.channel().attr(NetworkConstants.ACCOUNT).get();
+		
 		ByteBuf out = Unpooled.buffer(20);
 		out.writeBytes(sha);
 		encrypter.encrypt(out);
 		ctx.writeAndFlush(out);
 		
 		out = Unpooled.buffer(20);
-		NetUtils.writeCCcamStr(out, "user99", 20);
+		NetUtils.writeCCcamStr(out, account.getUsername(), 20);
 		encrypter.encrypt(out);
 		ctx.writeAndFlush(out);
 		
 		final String CCcamHash = "CCcam\0";
-		byte[] password = "password789".getBytes();
+		byte[] password = account.getPassword().getBytes();
 		encrypter.encrypt(password,password.length);
 		out = Unpooled.buffer(CCcamHash.length());
 		out.writeBytes(CCcamHash.getBytes());

@@ -9,6 +9,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
+import org.atum.jvcp.config.ReaderConfig;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
@@ -40,9 +41,10 @@ public class CardServer {
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
-		new CCcamServer(12000);
-		new NewcamdServer(12001);
+		CCcamServer server1 = new CCcamServer(12000);
+		NewcamdServer server2 = new NewcamdServer(12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(),8080);
+		ReaderConfig config = new ReaderConfig(new CamServer[]{server1, server2,});
 	}
 
 	public static ClusteredCache getCache() {

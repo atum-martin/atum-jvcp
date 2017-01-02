@@ -1,0 +1,12 @@
+[
+  {
+   "name": "localreader",
+   "username": "user99",
+   "password": "password789",
+   "protocol": "cccam",
+   "host": "127.0.0.1",
+   "port": 12000
+   
+  },
+
+]

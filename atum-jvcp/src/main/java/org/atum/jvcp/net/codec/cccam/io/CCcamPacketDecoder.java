@@ -2,6 +2,7 @@ package org.atum.jvcp.net.codec.cccam.io;
 
 import java.util.List;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
 import org.atum.jvcp.model.EcmRequest;
@@ -218,6 +219,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	public static int cspHashSwap(long n){
 		return (int) (((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L));
 	}
+	
+	DescriptiveStatistics stats = new DescriptiveStatistics();
 
 	@SuppressWarnings("unused")
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
@@ -244,7 +247,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		for(int i = 0; i < nodeCount; i++){
 			long cacheNodeId = payload.readLong();
 		}
-		
+		stats.addValue((nodeCount+1));
+		if((testidx++) % 1000 == 1){
+			logger.info("mean node count: "+stats.getMean());
+		}
 		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		if(!CardServer.handleEcmAnswer(cspHash, cw, cardId, serviceId)){
@@ -257,6 +263,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		
 	}
+	private int testidx = 0;
 
 	public static long getUnsignedInt(int x) {
 		return x;

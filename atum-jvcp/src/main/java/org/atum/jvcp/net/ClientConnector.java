@@ -1,6 +1,7 @@
 package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.account.Account;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -20,7 +21,7 @@ public class ClientConnector {
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(ClientConnector.class);
 	
-	public Channel connect(String host, int port, ChannelInitializer<SocketChannel> pipeline) {
+	public Channel connect(String host, int port, Account account, ChannelInitializer<SocketChannel> pipeline) {
 		EventLoopGroup group = new NioEventLoopGroup();
 		try {
 			Bootstrap b = new Bootstrap();
@@ -28,6 +29,9 @@ public class ClientConnector {
 
 			try {
 				Channel channel = b.connect(host, port).sync().channel();
+				if(account != null){
+					channel.attr(NetworkConstants.ACCOUNT).set(account);
+				}
 				return channel;
 			} catch (InterruptedException e) {
 				e.printStackTrace();

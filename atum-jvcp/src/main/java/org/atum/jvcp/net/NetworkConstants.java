@@ -1,5 +1,6 @@
 package org.atum.jvcp.net;
 
+import org.atum.jvcp.account.Account;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.PacketState;
@@ -16,4 +17,5 @@ public class NetworkConstants {
 	public static final AttributeKey<LoginState> LOGIN_STATE = AttributeKey.newInstance("LoginState");
 	public static final AttributeKey<CamSession> CAM_SESSION = AttributeKey.newInstance("CAM_SESSION");
 	public static final AttributeKey<PacketState> PACKET_STATE = AttributeKey.newInstance("PACKET_STATE");
+	public static final AttributeKey<Account> ACCOUNT = AttributeKey.newInstance("ACCOUNT");
 }
