@@ -41,8 +41,8 @@ public class CardServer {
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();
-		CCcamServer server1 = new CCcamServer(12000);
-		NewcamdServer server2 = new NewcamdServer(12001);
+		CCcamServer server1 = new CCcamServer("cccam-server1", 12000);
+		NewcamdServer server2 = new NewcamdServer("newcamd-server1", 12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(),8080);
 		ReaderConfig config = new ReaderConfig(new CamServer[]{server1, server2,});
 	}

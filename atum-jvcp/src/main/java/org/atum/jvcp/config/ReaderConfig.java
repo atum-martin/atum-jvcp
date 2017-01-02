@@ -5,6 +5,7 @@ package org.atum.jvcp.config;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -32,8 +33,8 @@ public class ReaderConfig {
 	 * The instance of the log4j {@link Logger}.
 	 */
 	private Logger logger = Logger.getLogger(ReaderConfig.class);
-	private CCcamServer cccamServer = null;
-	private NewcamdServer newcamdsServer = null;
+	private ArrayList<CCcamServer> cccamServers = new ArrayList<CCcamServer>();
+	private ArrayList<NewcamdServer> newcamdsServers = new ArrayList<NewcamdServer>();
 
 	public ReaderConfig(CamServer[] servers) {
 		setupServers(servers);
@@ -44,19 +45,30 @@ public class ReaderConfig {
 			if (reader != null) {
 				logger.info("loaded reader: " + reader.protocol + "://" + reader.host + ":" + reader.port + " " + reader.username);
 				if (reader.protocol.equalsIgnoreCase("cccam")) {
-					CCcamClient.connect(cccamServer, reader.host, reader.port, new Account(reader.username, reader.password));
+					CCcamClient.connect(getCCcamServer(reader.server), reader.host, reader.port, new Account(reader.username, reader.password));
 				}
 			}
 		}
 	}
 
+	private CCcamServer getCCcamServer(String serverName) {
+		if(serverName == null || cccamServers.size() == 0)
+			return null;
+		for(CCcamServer serv : cccamServers){
+			if(serv.getName().equalsIgnoreCase(serverName)){
+				return serv;
+			}
+		}
+		return cccamServers.get(0);
+	}
+
 	private void setupServers(CamServer[] servers) {
 		for (int i = 0; i < servers.length; i++) {
-			if (cccamServer == null && servers[i] instanceof CCcamServer) {
-				cccamServer = (CCcamServer) servers[i];
+			if (servers[i] instanceof CCcamServer) {
+				cccamServers.add((CCcamServer) servers[i]);
 			}
-			if (newcamdsServer == null && servers[i] instanceof NewcamdServer) {
-				newcamdsServer = (NewcamdServer) servers[i];
+			if (servers[i] instanceof NewcamdServer) {
+				newcamdsServers.add((NewcamdServer) servers[i]);
 			}
 		}
 	}
@@ -67,6 +79,7 @@ public class ReaderConfig {
 		private String password;
 		private String protocol;
 		private String host;
+		private String server;
 		private int port;
 	}
 }

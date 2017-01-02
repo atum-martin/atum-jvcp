@@ -5,8 +5,8 @@
    "password": "password789",
    "protocol": "cccam",
    "host": "127.0.0.1",
-   "port": 12000
-   
+   "port": 12000,
+   "server": "cccam-server1",
   },
 
 ]

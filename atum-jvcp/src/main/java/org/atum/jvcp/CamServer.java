@@ -16,4 +16,6 @@ public interface CamServer {
 	 * @param session The instance of the session that should be added to the session list.
 	 */
 	public void registerSession(CamSession session);
+	
+	public String getName();
 }

@@ -37,7 +37,8 @@ public class NewcamdServer extends Thread implements CamServer {
 	 * 
 	 * @param port The port number the NewcamdServer server will bind to.
 	 */
-	public NewcamdServer(int port) {	
+	public NewcamdServer(String name, int port) {	
+		this.setName(name);
 		NewcamdPipeline pipe = new NewcamdPipeline(this, NewcamdServerLoginDecoder.class);
 		NettyBootstrap.listenTcp(pipe,port);
 		this.start();	
