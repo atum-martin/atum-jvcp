@@ -69,7 +69,8 @@ public class NewcamdServer extends Thread implements CamServer {
 	public void addReaders(ArrayList<CamSession> readers) {
 		synchronized (sessionList){
 			for(CamSession session : sessionList){
-				readers.add(session);
+				if(session.isReader())
+					readers.add(session);
 			}
 		}
 	}
