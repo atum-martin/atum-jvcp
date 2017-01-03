@@ -100,4 +100,15 @@ public class CCcamServer extends Thread implements CamServer {
 		return new byte[]{0x12, 0x21, 0x45, 0x1A, 0x07, 0x19, 0x12, 0x12, };
 	}
 
+	/**
+	 * @param readers
+	 */
+	public void addReaders(ArrayList<CamSession> readers) {
+		synchronized (sessionList){
+			for(CamSession session : sessionList){
+				readers.add(session);
+			}
+		}
+	}
+
 }

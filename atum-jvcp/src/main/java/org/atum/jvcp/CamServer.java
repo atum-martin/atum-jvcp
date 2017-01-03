@@ -1,5 +1,7 @@
 package org.atum.jvcp;
 
+import java.util.ArrayList;
+
 import org.atum.jvcp.model.CamSession;
 
 
@@ -18,4 +20,9 @@ public interface CamServer {
 	public void registerSession(CamSession session);
 	
 	public String getName();
+
+	/**
+	 * @param readers
+	 */
+	public void addReaders(ArrayList<CamSession> readers);
 }

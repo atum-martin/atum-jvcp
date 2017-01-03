@@ -46,7 +46,7 @@ public class ReaderConfig {
 		for (JvcpReader reader : readers) {
 			if (reader != null) {
 				if (!verifyReaderBasics(reader)) {
-					logger.info("reader failed basic validation: "+reader);
+					logger.error("reader failed basic validation: "+reader);
 					continue;
 				}
 				logger.info("loaded reader: " + reader.protocol + "://" + reader.host + ":" + reader.port + " " + reader.username);
@@ -61,7 +61,7 @@ public class ReaderConfig {
 					if (server == null)
 						continue;
 					if (reader.desKey == null) {
-						logger.info("no desKey set for newcamd reader: " + reader.name);
+						logger.error("no desKey set for newcamd reader: " + reader.name);
 						continue;
 					}
 					NewcamdClient.connect(server, reader.host, reader.port, new Account(reader.username, reader.password), NetUtils.getBytesValue(reader.desKey));
@@ -88,7 +88,7 @@ public class ReaderConfig {
 
 	private CCcamServer getCCcamServer(String serverName) {
 		if (cccamServers.size() == 0) {
-			logger.info("no server found to bind reader to. Missing server name: " + serverName);
+			logger.error("no server found to bind reader to. Missing server name: " + serverName);
 			return null;
 		}
 		if (serverName == null) {
@@ -104,7 +104,7 @@ public class ReaderConfig {
 
 	private NewcamdServer getNewcamdServer(String serverName) {
 		if (newcamdsServers.size() == 0) {
-			logger.info("no server found to bind reader to. Missing server name: " + serverName);
+			logger.error("no server found to bind reader to. Missing server name: " + serverName);
 			return null;
 		}
 		if (serverName == null) {

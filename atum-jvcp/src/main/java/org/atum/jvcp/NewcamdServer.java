@@ -62,4 +62,15 @@ public class NewcamdServer extends Thread implements CamServer {
 		final byte[] key = NetUtils.getBytesValue("01 02 03 04 05 06 07 08 09 10 11 12 13 14");
 		return key;
 	}
+
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.CamServer#addReaders(java.util.ArrayList)
+	 */
+	public void addReaders(ArrayList<CamSession> readers) {
+		synchronized (sessionList){
+			for(CamSession session : sessionList){
+				readers.add(session);
+			}
+		}
+	}
 }

@@ -3,6 +3,7 @@
  */
 package org.atum.jvcp;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.log4j.BasicConfigurator;
@@ -30,6 +31,7 @@ public class CardServer {
 
 	private static ClusteredCache cache = new ClusteredCache();
 	private static ClusteredCache pendingEcms = new ClusteredCache();
+	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
 	
 	private static final boolean DCW_CHECKING = true;
 
@@ -45,6 +47,16 @@ public class CardServer {
 		NewcamdServer server2 = new NewcamdServer("newcamd-server1", 12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(),8080);
 		ReaderConfig config = new ReaderConfig(new CamServer[]{server1, server2,});
+		addAllReaders(server1, readers);
+		addAllReaders(server2, readers);
+	}
+
+	/**
+	 * @param server1
+	 * @param readers2
+	 */
+	private static void addAllReaders(CamServer server1, ArrayList<CamSession> readers2) {
+		server1.addReaders(readers);
 	}
 
 	public static ClusteredCache getCache() {
