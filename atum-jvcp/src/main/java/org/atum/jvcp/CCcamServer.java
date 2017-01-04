@@ -91,7 +91,8 @@ public class CCcamServer extends Thread implements CamServer {
 	public void sendEcmToReaders(EcmRequest req){
 		synchronized (sessionList){
 			for(CamSession session : sessionList){
-				session.getPacketSender().writeEcmRequest(req);
+				if(session.isReader())
+					session.getPacketSender().writeEcmRequest(req);
 			}
 		}
 	}
