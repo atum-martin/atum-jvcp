@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
@@ -22,10 +23,10 @@ public class NettyBootstrap {
 	}
 	
 	public static void listenUdp(ChannelInitializer<SocketChannel> pipeline, int port) {
-		listen(pipeline, port, NioDatagramChannel.class);
+		//listen(pipeline, port, NioDatagramChannel.class);
 	}
 	
-	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port, Class clazz) {
+	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port, Class<? extends ServerChannel> clazz) {
 		//port = 8080;
  
 		Logger logger = Logger.getLogger(NettyBootstrap.class);
