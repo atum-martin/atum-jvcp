@@ -24,6 +24,7 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  */
 public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> implements ChannelHandler {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(HttpServerHandler.class);
 
 	@Override

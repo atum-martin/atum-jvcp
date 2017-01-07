@@ -14,6 +14,7 @@ import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 
 public class EcmRequest {
 
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(EcmRequest.class);
 	
 	private int cardId;

@@ -40,6 +40,7 @@ public class CardServer {
 	 * 
 	 * @param args Not used
 	 */
+	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		AccountStore.getSingleton();

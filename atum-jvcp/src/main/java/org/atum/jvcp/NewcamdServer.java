@@ -29,7 +29,6 @@ public class NewcamdServer extends Thread implements CamServer {
 	/**
 	 * A list which contains all open Newcamd readers and clients.
 	 */
-	@SuppressWarnings("unused")
 	private ArrayList<NewcamdSession> sessionList = new ArrayList<NewcamdSession>();
 	
 	/**
