@@ -26,11 +26,6 @@ import com.google.gson.GsonBuilder;
  */
 public class ReaderConfig {
 
-	public static void main(String[] args) {
-		BasicConfigurator.configure();
-		new ReaderConfig(null);
-	}
-
 	/**
 	 * The instance of the log4j {@link Logger}.
 	 */

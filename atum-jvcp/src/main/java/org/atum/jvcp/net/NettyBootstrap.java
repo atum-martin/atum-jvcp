@@ -24,18 +24,18 @@ public class NettyBootstrap {
 	}
 	
 	public static void listenUdp(ChannelInitializer<SocketChannel> pipeline, int port) {
-		listen(pipeline, port, NioDatagramChannel.class, new Bootstrap());
+		//listen(pipeline, port, NioDatagramChannel.class, new Bootstrap());
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port, Class clazz, AbstractBootstrap bootstrap) {
+	public static void listen(ChannelInitializer<SocketChannel> pipeline, int port, Class clazz, ServerBootstrap bootstrap) {
 		//port = 8080;
  
 		Logger logger = Logger.getLogger(NettyBootstrap.class);
 
 		EventLoopGroup loopGroup = new NioEventLoopGroup();	
 
-		bootstrap.group(loopGroup).channel(clazz).handler(pipeline).bind(port).syncUninterruptibly();
+		bootstrap.group(loopGroup).channel(clazz).childHandler(pipeline).bind(port).syncUninterruptibly();
 
 		logger.info("Server listening on port: " + port);
 		
