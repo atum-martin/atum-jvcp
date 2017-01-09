@@ -33,7 +33,6 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 	@Override
 	protected void decode(ChannelHandlerContext context, ByteBuf buffer, List<Object> outStream) throws Exception {
 		LoginState state = context.channel().attr(NetworkConstants.LOGIN_STATE).get();
-		logger.info("processing state: " + state);
 		switch (state) {
 
 		case ENCRYPTION:
@@ -85,7 +84,11 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		}
 		logger.info("login succeded for newcamd session: "+client);
 		
+		camServer.registerSession(client);
+		client.setDesKey(DESUtil.desKeySpread(DESUtil.xorUserPass(client.getFirstDesKey(), DESUtil.cryptPassword(client.getAccount().getPassword()))));
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
+		
+		client.write(NewcamdPacketSender.createCardDataReq());
 	}
 
 }

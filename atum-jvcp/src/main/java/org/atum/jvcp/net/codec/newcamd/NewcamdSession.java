@@ -15,15 +15,21 @@ import io.netty.channel.ChannelHandlerContext;
 public class NewcamdSession extends CamSession {
 
 	private byte[] desKey;
+	private byte[] firstDesKey;
 	private int cardId;
 	
 	public NewcamdSession(ChannelHandlerContext context, byte[] desKey){
 		super(context);
 		this.desKey = desKey;
+		this.firstDesKey = desKey;
 	}
 
 	public byte[] getDesKey() {
 		return desKey;
+	}
+	
+	public byte[] getFirstDesKey() {
+		return firstDesKey;
 	}
 
 	public void setDesKey(byte[] desKey) {

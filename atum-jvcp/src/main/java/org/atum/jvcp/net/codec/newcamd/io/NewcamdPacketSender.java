@@ -43,6 +43,11 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 		return packet;
 	}
 	
+	public static NewcamdPacket createCardDataReq(){
+		final NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CARD_DATA_REQ);
+		return packet;
+	}
+	
 	public static NewcamdPacket createLoginPacket(NewcamdClient client){
 		
 		String pass = DESUtil.cryptPassword(client.getAccount().getPassword());
@@ -58,7 +63,9 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	}
 
 	public void writeKeepAlive() {
-		
+		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_KEEPALIVE);
+		session.write(packet);
+		logger.info("writing newcamd keepalive.");
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
@@ -71,5 +78,6 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 
 	public void writeEcmRequest(EcmRequest req) {
 		logger.info("sending newcamd ecm request.");
+		
 	}
 }

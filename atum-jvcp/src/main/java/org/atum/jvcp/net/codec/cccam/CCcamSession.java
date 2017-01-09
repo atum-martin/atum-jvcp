@@ -23,8 +23,6 @@ public class CCcamSession extends CamSession {
 	private String username;
 	private byte[] nodeId;
 
-	private long lastPing = System.currentTimeMillis();
-
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
 		super(context);
@@ -47,19 +45,6 @@ public class CCcamSession extends CamSession {
 
 	public String getUsername() {
 		return username;
-	}
-	
-	public long getLastKeepalive(){
-		return System.currentTimeMillis() - lastPing ;
-	}
-	
-	public void keepAlive(){
-		getPacketSender().writeKeepAlive();
-		lastPing = System.currentTimeMillis();
-	}
-
-	public void setLastKeepAlive(long currentTimeMillis) {
-		lastPing = currentTimeMillis;
 	}
 
 	public CCcamServer getServer() {

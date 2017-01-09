@@ -21,6 +21,8 @@ public class CamSession {
 	private int packetCommandCode;
 	private int packetSize;
 	
+	private long lastPing = System.currentTimeMillis();
+	
 	public CamSession(ChannelHandlerContext context) {
 		this.context = context;
 	}
@@ -52,8 +54,20 @@ public class CamSession {
 	
 	public int getPacketSize(){
 		return packetSize;
+	}	
+	
+	public long getLastKeepalive(){
+		return System.currentTimeMillis() - lastPing ;
 	}
 	
+	public void keepAlive(){
+		getPacketSender().writeKeepAlive();
+		lastPing = System.currentTimeMillis();
+	}
+
+	public void setLastKeepAlive(long currentTimeMillis) {
+		lastPing = currentTimeMillis;
+	}
 	
 	public ChannelFuture write(Packet packet){
 		return context.channel().writeAndFlush(packet);

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 import org.atum.jvcp.net.codec.newcamd.io.NewcamdServerLoginDecoder;
@@ -42,13 +43,43 @@ public class NewcamdServer extends Thread implements CamServer {
 		NettyBootstrap.listenTcp(pipe,port);
 		this.start();	
 	}
+	
+	
+	/**
+	 * Session keep alive thread.
+	 */
+	public void run(){
+		while(true){
+			synchronized(sessionList){
+				sendKeepAlives();
+			}
+			try {
+				Thread.sleep(200L);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * Loops through all sessions checking when the last packet was sent.
+	 * If this time exceeds 30 seconds send a keep alive packet. 
+	 */
+	private void sendKeepAlives() {
+		for(NewcamdSession session : sessionList){
+			if(session.getLastKeepalive() > 30000){
+				session.keepAlive();
+			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.atum.jvcp.CamServer#registerSession(org.atum.jvcp.net.CamSession)
 	 */
 	public void registerSession(CamSession session) {
-		// TODO Auto-generated method stub
-		
+		synchronized(sessionList){
+			sessionList.add((NewcamdSession) session);
+		}
 	}
 
 	/**

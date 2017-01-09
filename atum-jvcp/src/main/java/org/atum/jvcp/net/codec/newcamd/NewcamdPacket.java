@@ -60,7 +60,7 @@ public class NewcamdPacket implements Packet {
 	}
 	
 	public boolean isEmm(){
-		return command >= 0x82 || command <= 0x8F;
+		return command >= 0x82 && command <= 0x8F;
 	}
 	
 	public boolean isDcw(){
