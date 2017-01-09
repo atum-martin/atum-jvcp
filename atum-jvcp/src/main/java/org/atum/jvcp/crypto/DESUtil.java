@@ -46,8 +46,8 @@ public class DESUtil {
 	}
 
 	public static String cryptPassword(String pass) {
-		// return MD5Crypt.crypt(pass, PW_SALT);
-		return null;
+		return MD5Crypt.crypt(pass, PW_SALT);
+		//return null;
 	}
 
 	public static byte[] desKeySpread(byte[] desKey14) {
