@@ -158,6 +158,8 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 			logger.info("password could not be verified.");
 			return;
 		}
+		
+		context.channel().attr(NetworkConstants.ACCOUNT).set(acc);
 
 		logger.info("password verified.");
 		byte[] clientVerification = new byte[20];

@@ -81,7 +81,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		encrypter.CipherInit(secureRandom, secureRandom.length);
 		encrypter.decrypt(sha, sha.length);
 		
-		Account account = ctx.channel().attr(NetworkConstants.ACCOUNT).get();
+		Account account = session.getAccount();
 		
 		ByteBuf out = Unpooled.buffer(20);
 		out.writeBytes(sha);

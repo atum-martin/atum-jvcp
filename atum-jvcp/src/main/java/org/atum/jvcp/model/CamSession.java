@@ -1,5 +1,7 @@
 package org.atum.jvcp.model;
 
+import org.atum.jvcp.account.Account;
+import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.Packet;
 
 import io.netty.channel.ChannelFuture;
@@ -69,4 +71,9 @@ public class CamSession {
 	public void setLastRequest(EcmRequest lastRequest) {
 		this.lastRequest = lastRequest;
 	}
+	
+	public Account getAccount(){
+		return this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get();
+	}
+
 }

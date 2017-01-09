@@ -110,6 +110,8 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 			context.channel().close();
 			return;
 		}
+		
+		context.channel().attr(NetworkConstants.ACCOUNT).set(acc);
 
 		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
 		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());

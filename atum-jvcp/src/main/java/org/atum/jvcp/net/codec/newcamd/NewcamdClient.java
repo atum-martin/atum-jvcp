@@ -30,5 +30,9 @@ public class NewcamdClient extends NewcamdSession {
 		server.registerSession(client);
 		return client;
 	}
+	
+	public String toString(){
+		return getAccount()+"@"+getCtx().channel().remoteAddress();
+	}
 
 }

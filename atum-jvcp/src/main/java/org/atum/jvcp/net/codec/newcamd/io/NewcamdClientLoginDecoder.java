@@ -8,9 +8,13 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.NewcamdServer;
 import org.atum.jvcp.crypto.DESUtil;
+import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
+import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
+import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
+import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 /**
@@ -20,7 +24,8 @@ import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 public class NewcamdClientLoginDecoder extends LoginDecoder {
 
 	private Logger logger = Logger.getLogger(NewcamdClientLoginDecoder.class);
-
+	private int packetDecodeFailedCounter = 0;
+	
 	public NewcamdClientLoginDecoder(NewcamdServer newcamdServer) {
 		super(newcamdServer);
 	}
@@ -37,12 +42,6 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		case HANDSHAKE:
 			handleHandshake(context, buffer);
 			break;
-		case HEADER:
-			handleLoginHeader(context, buffer);
-			break;
-		case LOGIN_BLOCK_HEADER:
-			handleLoginBlockHeader(context, buffer);
-			break;
 		default:
 			throw new IllegalStateException("Invalid state during login decoding.");
 		}
@@ -58,35 +57,35 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 			return;
 		}
 		ByteBuf random14 = buffer.readBytes(14);
-		NewcamdServer server = (NewcamdServer) camServer;
-		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(server.getDesKey(), random14))); // loginKey
-		NewcamdSession session = new NewcamdSession(context, desKey16);
-
-		//String password = DESUtil.cryptPassword(clientPassword);
-
-		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
+		NewcamdClient client = (NewcamdClient) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		
+		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(client.getDesKey(), random14))); // loginKey
+		client.setDesKey(desKey16);
+		client.setPacketSender(new NewcamdPacketSender(client));
+		
+		context.channel().pipeline().addLast("packet-encoder", new NewcamdPacketEncoder());
+		
+		client.write(NewcamdPacketSender.createLoginPacket(client));
+		
+		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
-
-		if (buffer.readableBytes() < 20) {
-			logger.debug("less than 20 bytes in buffer");
+		NewcamdClient client = (NewcamdClient) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		NewcamdPacket packet = NewcamdPacketDecoder.parseBuffer(context, client, buffer);
+		
+		if(packet == null && packetDecodeFailedCounter++ > 2){
+			context.channel().close();
 			return;
 		}
-
-	}
-
-	private void handleLoginHeader(ChannelHandlerContext context, ByteBuf buffer) {
-		if (buffer.readableBytes() < 20) {
-			logger.debug("less than 20 bytes in buffer");
+		
+		if(packet.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN_ACK){
+			logger.info("login failed for newcamd session: "+client);
 			return;
 		}
-
-		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.LOGIN_BLOCK_HEADER);
-	}
-
-	private void handleLoginBlockHeader(ChannelHandlerContext context, ByteBuf buffer) {
-
+		logger.info("login succeded for newcamd session: "+client);
+		
+		context.channel().pipeline().replace("login-header-decoder", "packet-decoder", new NewcamdPacketDecoder());
 	}
 
 }

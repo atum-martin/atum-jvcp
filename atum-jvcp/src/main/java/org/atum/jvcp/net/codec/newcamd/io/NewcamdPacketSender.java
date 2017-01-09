@@ -4,8 +4,10 @@
 package org.atum.jvcp.net.codec.newcamd.io;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
+import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
 import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
@@ -37,6 +39,20 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 		//each provider is 11 bytes long.
 		payload.writeBytes(new byte[11]);
 		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CARD_DATA);
+		packet.setPayload(payload);
+		return packet;
+	}
+	
+	public static NewcamdPacket createLoginPacket(NewcamdClient client){
+		
+		String pass = DESUtil.cryptPassword(client.getAccount().getPassword());
+		int packetSize = client.getAccount().getUsername().length() + pass.length() + 2;
+		ByteBuf payload = Unpooled.buffer(packetSize);
+		payload.writeBytes(client.getAccount().getUsername().getBytes());
+		payload.writeByte(0);
+		payload.writeBytes(pass.getBytes());
+		payload.writeByte(0);
+		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN);
 		packet.setPayload(payload);
 		return packet;
 	}
