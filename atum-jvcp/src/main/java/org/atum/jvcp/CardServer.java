@@ -15,6 +15,7 @@ import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
+import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
 
@@ -86,7 +87,7 @@ public class CardServer {
 			getPendingCache().removeRequest(cspHash);
 			req.fireActionListeners();
 			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
-			logger.info("cache dcw dump: "+CCcamPacketDecoder.bytesToString(cw,0,cw.length));
+			logger.info("cache dcw dump: "+NetUtils.bytesToString(cw,0,cw.length));
 			return true;
 		} else {
 			//EcmRequest either exists in cache or no pending requests have come in.

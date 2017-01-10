@@ -160,7 +160,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			payload.readBytes(dcw);
 			logger.info("Recieved DCW");
 			
-			logger.info("dcw dump: "+bytesToString(dcw,0,dcw.length));
+			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
 			
 			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
@@ -179,7 +179,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		//NetUtils.readBuffer(payload, ecm, ecm.length, 0);
 		payload.readBytes(ecm);
 		//payload.readBytes(ecm);
-		logger.info("ecm hex dump: "+bytesToString(ecm,0,ecm.length));
+		logger.info("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
 		//logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
@@ -193,23 +193,11 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
-			logger.info("dcw dump: "+bytesToString(answer.getDcw(),0,answer.getDcw().length));
+			logger.info("dcw dump: "+NetUtils.bytesToString(answer.getDcw(),0,answer.getDcw().length));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}
 	
-	  public static String bytesToString(byte[] bytes, int offs, int len) {
-		    StringBuffer sb = new StringBuffer();
-		    String bt;
-		    if(len > bytes.length) len = bytes.length;
-		    for(int i = 0; i < len && (i + offs < bytes.length); i++) {
-		      bt = Integer.toHexString(bytes[offs + i] & 0xFF);
-		      if(bt.length() == 1) sb.append('0');
-		      sb.append(bt);
-		      sb.append(' ');
-		    }
-		    return sb.toString().trim().toUpperCase();
-		  }
 	/*
 	#define CSP_HASH_SWAP(n) (((((uint32_t)(n) & 0xFF)) << 24) | \
             ((((uint32_t)(n) & 0xFF00)) << 8) | \

@@ -62,6 +62,21 @@ public class NetUtils {
 		}
 		return bytes;
 	}
+	
+	public static String bytesToString(byte[] bytes, int offs, int len) {
+		StringBuffer sb = new StringBuffer();
+		String bt;
+		if (len > bytes.length)
+			len = bytes.length;
+		for (int i = 0; i < len && (i + offs < bytes.length); i++) {
+			bt = Integer.toHexString(bytes[offs + i] & 0xFF);
+			if (bt.length() == 1)
+				sb.append('0');
+			sb.append(bt);
+			sb.append(' ');
+		}
+		return sb.toString().trim().toUpperCase();
+	}
 
 	public static int readTriByte(ByteBuf payload) {
 		return (payload.readByte() << 16 | payload.readByte() << 8 | payload.readByte() & 0xFF);

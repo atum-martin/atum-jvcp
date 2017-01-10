@@ -7,6 +7,7 @@ import org.atum.jvcp.CardServer;
 import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NetworkConstants;
+import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
 import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
@@ -70,6 +71,15 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 	private void decodeEcm(NewcamdSession session, NewcamdPacket packet) {
 		if(packet.isDcw()){
 			logger.info("newcamd ecm dcw decode: "+session.isReader());
+			
+			byte[] dcw = new byte[16];
+			packet.getPayload().readBytes(dcw);
+			
+			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
+			
+			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
+				//answer was not handled. No entry existed in any cache.
+			}
 			return;
 		}
 		logger.info("newcamd ecm decode: "+session.isReader());

@@ -8,12 +8,13 @@ import org.atum.jvcp.crypto.DESUtil;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
-import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
+import static org.atum.jvcp.net.codec.newcamd.NewcamdConstants.*;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -38,13 +39,13 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 		payload.writeByte(1);//1 provider.
 		//each provider is 11 bytes long.
 		payload.writeBytes(new byte[11]);
-		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CARD_DATA);
+		NewcamdPacket packet = new NewcamdPacket(MSG_CARD_DATA);
 		packet.setPayload(payload);
 		return packet;
 	}
 	
 	public static NewcamdPacket createCardDataReq(){
-		final NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CARD_DATA_REQ);
+		final NewcamdPacket packet = new NewcamdPacket(MSG_CARD_DATA_REQ);
 		return packet;
 	}
 	
@@ -57,20 +58,20 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 		payload.writeByte(0);
 		payload.writeBytes(pass.getBytes());
 		payload.writeByte(0);
-		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN);
+		NewcamdPacket packet = new NewcamdPacket(MSG_CLIENT_2_SERVER_LOGIN);
 		packet.setPayload(payload);
 		return packet;
 	}
 
 	public void writeKeepAlive() {
-		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_KEEPALIVE);
+		NewcamdPacket packet = new NewcamdPacket(MSG_KEEPALIVE);
 		session.write(packet);
 		logger.info("writing newcamd keepalive.");
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
 		logger.info("writing newcamd DCW ecm request answer.");
-		NewcamdPacket packet = new NewcamdPacket(NewcamdConstants.MSG_SERVER_2_CLIENT_ECM);
+		NewcamdPacket packet = new NewcamdPacket(MSG_SERVER_2_CLIENT_ECM);
 		packet.setPayload(Unpooled.copiedBuffer(dcw));
 		session.write(packet);
 		
@@ -78,6 +79,11 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 
 	public void writeEcmRequest(EcmRequest req) {
 		logger.info("sending newcamd ecm request.");
+		NewcamdPacket packet = new NewcamdPacket(req.getEcm()[0]);
+		byte[] payload = new byte[req.getEcm().length-3];
+		System.arraycopy(req.getEcm(), 3, payload, 0, payload.length);
+		packet.setPayload(Unpooled.copiedBuffer(payload));
+		session.write(packet);
 		
 	}
 }
