@@ -1,5 +1,6 @@
 package org.atum.jvcp.net.codec.cccam.io;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -10,6 +11,7 @@ import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
+import org.atum.jvcp.net.codec.cccam.CCcamCipher;
 import org.atum.jvcp.net.codec.cccam.CCcamConstants;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds.CCcamBuild;
@@ -158,6 +160,13 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		if(session.isReader()){
 			byte[] dcw = new byte[16];
 			payload.readBytes(dcw);
+			
+			CCcamCipher.cc_crypt_cw(
+					session.getServer().getNodeId(), 
+					session.getLastRequest().getShareId(), 
+					dcw);	
+			
+			session.getDecrypter().decrypt( Arrays.copyOf(dcw,16), 16);
 			logger.info("Recieved DCW");
 			
 			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));

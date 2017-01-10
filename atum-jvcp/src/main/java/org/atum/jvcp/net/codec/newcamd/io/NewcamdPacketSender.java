@@ -66,7 +66,7 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	public void writeKeepAlive() {
 		NewcamdPacket packet = new NewcamdPacket(MSG_KEEPALIVE);
 		session.write(packet);
-		logger.info("writing newcamd keepalive.");
+		//logger.info("writing newcamd keepalive.");
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {

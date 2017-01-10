@@ -61,11 +61,11 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 	}
 	
 	private void decodeEmm(NewcamdSession session, NewcamdPacket packet) {
-		logger.info("newcamd emm decode: "+session.isReader());
+		//logger.info("newcamd emm decode: "+session.isReader());
 	}
 
 	private void handleKeepalive(NewcamdSession session, NewcamdPacket packet) {
-		logger.info("newcamd keepalive decode: "+session.isReader());
+		//logger.info("newcamd keepalive decode: "+session.isReader());
 	}
 
 	private void decodeEcm(NewcamdSession session, NewcamdPacket packet) {
@@ -145,9 +145,9 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		//int dataLength = decryptedPayload.readShort();
 		int dataLength = (decryptedPayload.readByte() & 0x0F) * 256 + (decryptedPayload.readByte() & 0xFF);
 		if(dataLength != 0){
-			if(dataLength != (packetSize-14)){
+			/*if(dataLength != (packetSize-14)){
 				loggerA.warn("Invalid packet size: "+dataLength+" "+packetSize+" "+commandCode);
-			}
+			}*/
 			ByteBuf payload = decryptedPayload.readBytes(dataLength);
 			packet.setPayload(payload);
 		}
