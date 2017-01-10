@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.net.LoginDecoder;
-import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.cccam.CCcamCipher;
@@ -15,6 +14,8 @@ import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
+
+import static org.atum.jvcp.net.NetworkConstants.*;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -32,12 +33,12 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 
 	@Override
 	public void init(ChannelHandlerContext firstContext) {
-		firstContext.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
+		firstContext.channel().attr(LOGIN_STATE).set(LoginState.HANDSHAKE);
 	}
 
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-		LoginState state = ctx.channel().attr(NetworkConstants.LOGIN_STATE).get();
+		LoginState state = ctx.channel().attr(LOGIN_STATE).get();
 		logger.debug("processing client state: " + state);
 		switch (state) {
 		case HANDSHAKE:
@@ -70,7 +71,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		byte[] sha = crypt.digest();
 		logger.debug("SHA cipher buffer len: "+sha.length);
 
-		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(CAM_SESSION).get();
 		
 		CCcamCipher encrypter = session.getEncrypter();
 		CCcamCipher decrypter = session.getDecrypter();
@@ -101,7 +102,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		encrypter.encrypt(out);
 		ctx.writeAndFlush(out);
 		
-		ctx.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HEADER);
+		ctx.channel().attr(LOGIN_STATE).set(LoginState.HEADER);
 
 	}
 	
@@ -110,7 +111,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 			logger.info("less than 16 bytes in client buffer");
 			return;
 		}
-		CCcamSession session = (CCcamSession) ctx.channel().attr(NetworkConstants.CAM_SESSION).get();
+		CCcamSession session = (CCcamSession) ctx.channel().attr(CAM_SESSION).get();
 		ByteBuf passHash = in.readBytes(20);
 		session.getDecrypter().decrypt(passHash);
 		String passwordVerification = NetUtils.readCCcamString(passHash, 20);
@@ -124,7 +125,7 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		CCcamPacketSender sender = new CCcamPacketSender(session);
 		session.setPacketSender(sender);
 		
-		ctx.channel().attr(NetworkConstants.LOGIN_STATE).set(null);
+		ctx.channel().attr(LOGIN_STATE).set(null);
 		ctx.channel().pipeline().replace("login-header-decoder", "packet-decoder", new CCcamPacketDecoder());
 		ctx.channel().pipeline().addLast("packet-encoder", new CCcamPacketEncoder());
 		

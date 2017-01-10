@@ -23,6 +23,7 @@ public class Configuration {
 		new Configuration();
 	}
 	
+	@SuppressWarnings("rawtypes")
 	public Configuration(){
 		Gson gson = new GsonBuilder().create();
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream("readers.json");

@@ -8,14 +8,13 @@ import io.netty.channel.ChannelHandlerContext;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.NewcamdServer;
 import org.atum.jvcp.crypto.DESUtil;
-import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.LoginDecoder;
-import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
 import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
-import org.atum.jvcp.net.codec.newcamd.NewcamdConstants;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPacket;
-import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
+
+import static org.atum.jvcp.net.NetworkConstants.*;
+import static org.atum.jvcp.net.codec.newcamd.NewcamdConstants.*;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -32,7 +31,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 
 	@Override
 	protected void decode(ChannelHandlerContext context, ByteBuf buffer, List<Object> outStream) throws Exception {
-		LoginState state = context.channel().attr(NetworkConstants.LOGIN_STATE).get();
+		LoginState state = context.channel().attr(LOGIN_STATE).get();
 		switch (state) {
 
 		case ENCRYPTION:
@@ -56,7 +55,7 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 			return;
 		}
 		ByteBuf random14 = buffer.readBytes(14);
-		NewcamdClient client = (NewcamdClient) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		NewcamdClient client = (NewcamdClient) context.channel().attr(CAM_SESSION).get();
 		
 		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(client.getDesKey(), random14))); // loginKey
 		client.setDesKey(desKey16);
@@ -66,11 +65,11 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		
 		client.write(NewcamdPacketSender.createLoginPacket(client));
 		
-		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);
+		context.channel().attr(LOGIN_STATE).set(LoginState.HANDSHAKE);
 	}
 
 	private void handleHandshake(ChannelHandlerContext context, ByteBuf buffer) {
-		NewcamdClient client = (NewcamdClient) context.channel().attr(NetworkConstants.CAM_SESSION).get();
+		NewcamdClient client = (NewcamdClient) context.channel().attr(CAM_SESSION).get();
 		NewcamdPacket packet = NewcamdPacketDecoder.parseBuffer(context, client, buffer);
 		
 		if(packet == null && packetDecodeFailedCounter++ > 2){
@@ -78,8 +77,9 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 			return;
 		}
 		
-		if(packet.getCommand() != NewcamdConstants.MSG_CLIENT_2_SERVER_LOGIN_ACK){
+		if(packet.getCommand() != MSG_CLIENT_2_SERVER_LOGIN_ACK){
 			logger.info("login failed for newcamd session: "+client);
+			context.channel().close();
 			return;
 		}
 		logger.info("login succeded for newcamd session: "+client);
