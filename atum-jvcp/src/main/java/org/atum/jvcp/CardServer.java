@@ -33,6 +33,7 @@ public class CardServer {
 	private static ClusteredCache cache = new ClusteredCache();
 	private static ClusteredCache pendingEcms = new ClusteredCache();
 	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
+	private static int readerRoundRobin = 0;
 	
 	private static final boolean DCW_CHECKING = true;
 
@@ -114,9 +115,25 @@ public class CardServer {
 		}
 		EcmRequest answer = new EcmRequest(cardId, new Provider(provider), shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
-		if(!cache)
+		if(!cache){
+			sendEcmToReader(answer);
 			getPendingCache().addEntry(cspHash, answer);
+		}
 		return answer;
+	}
+
+	/**
+	 * @param answer
+	 */
+	private static boolean sendEcmToReader(EcmRequest req) {
+		CamSession session = readers.get(readerRoundRobin++ % readers.size());
+		if (session == null){
+			logger.error("no reader found for ecm req: "+req);
+			return false;
+		}
+		session.setLastRequest(req);
+		session.getPacketSender().writeEcmRequest(req);
+		return true;
 	}
 
 	public static EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {

@@ -252,10 +252,5 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 	}
 	private int testidx = 0;
-
-	public static long getUnsignedInt(int x) {
-		return x;
-	    //return x & 0x00000000ffffffffL;
-	}
 	
 }

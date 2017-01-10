@@ -92,7 +92,6 @@ public class CCcamPacketSender implements PacketSenderInterface {
 		out.writeShort(req.getServiceId());
 		out.writeByte(req.getEcm().length);
 		out.writeBytes(req.getEcm());
-		session.setLastRequest(req);
 		session.write(new CCcamPacket(CCcamConstants.MSG_CW_ECM, out));
 	}
 
