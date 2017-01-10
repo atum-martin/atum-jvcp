@@ -88,7 +88,7 @@ public class CardServer {
 			getPendingCache().removeRequest(cspHash);
 			req.fireActionListeners();
 			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
-			logger.info("cache dcw dump: "+NetUtils.bytesToString(cw,0,cw.length));
+			logger.info("cache hit for pending dcw dump: "+NetUtils.bytesToString(cw,0,cw.length));
 			return true;
 		} else {
 			//EcmRequest either exists in cache or no pending requests have come in.
@@ -126,6 +126,8 @@ public class CardServer {
 	 * @param answer
 	 */
 	private static boolean sendEcmToReader(EcmRequest req) {
+		if(readers.size() == 0)
+			return false;
 		CamSession session = readers.get(readerRoundRobin++ % readers.size());
 		if (session == null){
 			logger.error("no reader found for ecm req: "+req);

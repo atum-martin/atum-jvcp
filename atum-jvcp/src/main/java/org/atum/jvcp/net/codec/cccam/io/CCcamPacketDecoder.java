@@ -167,7 +167,6 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 					dcw);	
 			
 			session.getDecrypter().decrypt( Arrays.copyOf(dcw,16), 16);
-			logger.info("Recieved DCW");
 			
 			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
 			
@@ -244,10 +243,6 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		for(int i = 0; i < nodeCount; i++){
 			long cacheNodeId = payload.readLong();
 		}
-		stats.addValue((nodeCount+1));
-		if((testidx++) % 1000 == 1){
-			logger.info("mean node count: "+stats.getMean());
-		}
 		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		if(!CardServer.handleEcmAnswer(cspHash, cw, cardId, serviceId)){
@@ -260,6 +255,5 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		
 	}
-	private int testidx = 0;
 	
 }

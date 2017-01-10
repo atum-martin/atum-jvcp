@@ -70,7 +70,7 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	}
 
 	public void writeEcmAnswer(byte[] dcw) {
-		logger.info("writing newcamd DCW ecm request answer.");
+		//logger.info("writing newcamd DCW ecm request answer.");
 		NewcamdPacket packet = new NewcamdPacket(MSG_SERVER_2_CLIENT_ECM);
 		packet.setPayload(Unpooled.copiedBuffer(dcw));
 		session.write(packet);
@@ -78,7 +78,7 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	}
 
 	public void writeEcmRequest(EcmRequest req) {
-		logger.info("sending newcamd ecm request.");
+		//logger.info("sending newcamd ecm request.");
 		NewcamdPacket packet = new NewcamdPacket(req.getEcm()[0]);
 		byte[] payload = new byte[req.getEcm().length-3];
 		System.arraycopy(req.getEcm(), 3, payload, 0, payload.length);
