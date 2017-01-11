@@ -22,9 +22,11 @@ public class CamSession {
 	private int packetSize;
 	
 	private long lastPing = System.currentTimeMillis();
+	private CamProtocol protocol;
 	
-	public CamSession(ChannelHandlerContext context) {
+	public CamSession(ChannelHandlerContext context, CamProtocol protocol) {
 		this.context = context;
+		this.protocol = protocol;
 	}
 
 	public PacketSenderInterface getPacketSender(){
@@ -88,6 +90,14 @@ public class CamSession {
 	
 	public Account getAccount(){
 		return this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get();
+	}
+	
+	public String toString(){
+		if (isReader()){
+			return "reader: "+getAccount()+" p: "+protocol;
+		} else {
+			return "client: "+getAccount()+" p: "+protocol;
+		}
 	}
 
 }

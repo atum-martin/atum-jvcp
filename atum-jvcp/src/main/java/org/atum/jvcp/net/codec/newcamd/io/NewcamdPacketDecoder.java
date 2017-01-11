@@ -25,7 +25,6 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 
 	private Logger logger = Logger.getLogger(NewcamdPacketDecoder.class);
-	private static Logger loggerA = Logger.getLogger(NewcamdPacketDecoder.class);
 	
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -77,7 +76,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			
 			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
 			
-			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
+			if(!CardServer.handleEcmAnswer(session, session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
 			}
 			return;

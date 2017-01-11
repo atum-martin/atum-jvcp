@@ -4,6 +4,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
+import org.atum.jvcp.model.CamProtocol;
 import org.atum.jvcp.model.CamSession;
 
 /**
@@ -25,7 +26,7 @@ public class CCcamSession extends CamSession {
 
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
-		super(context);
+		super(context, CamProtocol.CCCAM);
 		this.server = server;
 		this.encrypter = encrypter;
 		this.decrypter = decrypter;

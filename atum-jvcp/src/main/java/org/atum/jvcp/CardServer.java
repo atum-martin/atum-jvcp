@@ -78,7 +78,7 @@ public class CardServer {
 		return pendingEcms;
 	}
 
-	public static boolean handleEcmAnswer(int cspHash, byte[] cw, int cardId, int serviceId) {
+	public static boolean handleEcmAnswer(CamSession session, int cspHash, byte[] cw, int cardId, int serviceId) {
 		//long ecmHash = EcmRequest.computeEcmHash(cspHash);
 		//logger.info("ECM cache entry for: "+cspHash);
 		EcmRequest req = CardServer.getPendingCache().peekCache(cspHash);
@@ -86,9 +86,11 @@ public class CardServer {
 			req.setDcw(cw);
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
+			logger.info("cache hit for "+Integer.toHexString(req.getCardId())+":"+Integer.toHexString(req.getServiceId())+" by "+session+" for "+req.getSessionsStr()+" sessions.");
+
 			req.fireActionListeners();
 			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
-			logger.info("cache hit for pending dcw dump: "+NetUtils.bytesToString(cw,0,cw.length));
+			//logger.info("cache hit for pending dcw dump: "+NetUtils.bytesToString(cw,0,cw.length));
 			return true;
 		} else {
 			//EcmRequest either exists in cache or no pending requests have come in.
@@ -108,12 +110,12 @@ public class CardServer {
 		return false;
 	}
 
-	public static EcmRequest createEcmRequest(int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache){
+	public static EcmRequest createEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache){
 		if(cspHash == 0L){
 			//no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
 		}
-		EcmRequest answer = new EcmRequest(cardId, new Provider(provider), shareId, serviceId, ecm, false);
+		EcmRequest answer = new EcmRequest(session, cardId, new Provider(provider), shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
 		if(!cache){
 			sendEcmToReader(answer);
@@ -145,7 +147,7 @@ public class CardServer {
 			session.setLastRequest(answer);
 			return answer;
 		}
-		answer = createEcmRequest(cardId, provider, shareId, serviceId, ecm, cspHash, false);
+		answer = createEcmRequest(session, cardId, provider, shareId, serviceId, ecm, cspHash, false);
 		session.setLastRequest(answer);
 		answer.addListener(session);
 		return answer;

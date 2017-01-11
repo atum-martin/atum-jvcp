@@ -44,12 +44,14 @@ public class ReaderConfig {
 					continue;
 				}
 				logger.info("loaded reader: " + reader.protocol + "://" + reader.host + ":" + reader.port + " " + reader.username);
-
+				Account acc = new Account(reader.username, reader.password);
+				if(reader.name != null)
+					acc.setName(reader.name);
 				if (reader.protocol.equalsIgnoreCase("cccam")) {
 					CCcamServer server = getCCcamServer(reader.server);
 					if (server == null)
 						continue;
-					CCcamClient.connect(server, reader.host, reader.port, new Account(reader.username, reader.password));
+					CCcamClient.connect(server, reader.host, reader.port, acc);
 				} else if (reader.protocol.equalsIgnoreCase("newcamd")) {
 					NewcamdServer server = getNewcamdServer(reader.server);
 					if (server == null)
@@ -58,7 +60,7 @@ public class ReaderConfig {
 						logger.error("no desKey set for newcamd reader: " + reader.name);
 						continue;
 					}
-					NewcamdClient.connect(server, reader.host, reader.port, new Account(reader.username, reader.password), NetUtils.getBytesValue(reader.desKey));
+					NewcamdClient.connect(server, reader.host, reader.port, acc, NetUtils.getBytesValue(reader.desKey));
 				}
 			}
 		}

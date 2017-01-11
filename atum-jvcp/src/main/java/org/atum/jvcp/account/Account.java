@@ -13,7 +13,7 @@ public class Account {
 	 * Strings representing the username and password of the account. Due to
 	 * poor CCcam implementation this must be kept in plaintext.
 	 */
-	private String username, password;
+	private String username, password, name;
 	/**
 	 * A list of integers that represents the groups this user is apart of.
 	 */
@@ -36,7 +36,9 @@ public class Account {
 	 * Returns a string with the properties of this user account.
 	 */
 	public String toString() {
-		return username;
+		if(name != null)
+			return name;
+		else return username;
 	}
 
 	/**
@@ -53,6 +55,10 @@ public class Account {
 	 */
 	public String getPassword() {
 		return password;
+	}
+	
+	public void setName(String name){
+		this.name = name;
 	}
 	
 }

@@ -25,11 +25,13 @@ public class EcmRequest {
 	private byte[] dcw = null;
 	private int cspHash;
 	private long timestamp;
+	private CamSession session;
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 
-	public EcmRequest(int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
+	public EcmRequest(CamSession session, int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
 		this.setProv(prov);
+		this.session = session;
 		this.setShareId(shareId);
 		this.setServiceId(serviceId);
 		this.setEcm(ecm, computeHash);
@@ -53,6 +55,10 @@ public class EcmRequest {
 
 	public Provider getProv() {
 		return prov;
+	}
+	
+	public CamSession getSessionReq() {
+		return session;
 	}
 
 	public void setProv(Provider prov) {
@@ -164,5 +170,24 @@ public class EcmRequest {
 	public void addListener(CamSession session) {
 		//logger.debug("adding listener for ecm.");
 		sessions.add(session);
+	}
+
+	/**
+	 * @return
+	 */
+	public int getSessionCount() {
+		return sessions.size();
+	}
+
+	/**
+	 * @return
+	 */
+	public String getSessionsStr() {
+		StringBuilder build = new StringBuilder("{");
+		for(CamSession session : sessions){
+			build.append(session.getAccount()+", ");
+		}
+		build.append("}");
+		return build.toString();
 	}
 }

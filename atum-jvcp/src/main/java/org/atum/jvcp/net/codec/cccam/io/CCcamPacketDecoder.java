@@ -168,9 +168,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			
 			session.getDecrypter().decrypt( Arrays.copyOf(dcw,16), 16);
 			
-			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
+			logger.debug("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
 			
-			if(!CardServer.handleEcmAnswer(session.getLastRequest().getCspHash(), dcw, -1, -1)){
+			if(!CardServer.handleEcmAnswer(session,session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
 			}
 			return;
@@ -187,7 +187,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		//NetUtils.readBuffer(payload, ecm, ecm.length, 0);
 		payload.readBytes(ecm);
 		//payload.readBytes(ecm);
-		logger.info("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
+		//logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
 		//logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		/*
@@ -245,9 +245,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		}
 		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
-		if(!CardServer.handleEcmAnswer(cspHash, cw, cardId, serviceId)){
+		if(!CardServer.handleEcmAnswer(session, cspHash, cw, cardId, serviceId)){
 			//answer was not handled. No entry existed in any cache.
-			EcmRequest req = CardServer.createEcmRequest(cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash, true);
+			EcmRequest req = CardServer.createEcmRequest(session, cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash, true);
 			req.setDcw(cw);
 			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
