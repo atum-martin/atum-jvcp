@@ -1,7 +1,9 @@
 [
   {
    "username": "user99",
-   "password": "password789"
+   "password": "password789",
+   "cache": true,
+   "name": "Cache User99"
   },
   {
    "username": "user98",

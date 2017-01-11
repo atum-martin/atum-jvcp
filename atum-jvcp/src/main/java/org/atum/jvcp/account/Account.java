@@ -14,6 +14,8 @@ public class Account {
 	 * poor CCcam implementation this must be kept in plaintext.
 	 */
 	private String username, password, name;
+	private boolean cache = false;
+	
 	/**
 	 * A list of integers that represents the groups this user is apart of.
 	 */
@@ -36,6 +38,8 @@ public class Account {
 	 * Returns a string with the properties of this user account.
 	 */
 	public String toString() {
+		if(cache && name != null)
+			return "Cache/"+name;
 		if(name != null)
 			return name;
 		else return username;
