@@ -22,6 +22,7 @@ import static org.atum.jvcp.net.codec.newcamd.NewcamdConstants.*;
  */
 public class NewcamdPacketSender implements PacketSenderInterface {
 
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(NewcamdPacketSender.class);
 
 	private NewcamdSession session;

@@ -2,6 +2,8 @@ package org.atum.jvcp.account;
 
 import java.util.ArrayList;
 
+import org.atum.jvcp.model.CamSession;
+
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 21 Nov 2016 22:47:32
@@ -19,7 +21,6 @@ public class Account {
 	/**
 	 * A list of integers that represents the groups this user is apart of.
 	 */
-	@SuppressWarnings("unused")
 	private ArrayList<Integer> groups = new ArrayList<Integer>(2);
 
 	/**
@@ -63,6 +64,13 @@ public class Account {
 	
 	public void setName(String name){
 		this.name = name;
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList<Integer> getGroups() {
+		return groups;
 	}
 	
 }

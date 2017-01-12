@@ -5,6 +5,7 @@ package org.atum.jvcp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -15,8 +16,6 @@ import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
-import org.atum.jvcp.net.codec.NetUtils;
-import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
 
 /**
@@ -115,7 +114,12 @@ public class CardServer {
 			//no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
 		}
-		EcmRequest answer = new EcmRequest(session, cardId, new Provider(provider), shareId, serviceId, ecm, false);
+		EcmRequest answer = CardServer.getPendingCache().peekCache(cspHash);
+		if(answer != null && !cache){
+			answer.addGroups(session);
+			return answer;
+		}
+		answer = new EcmRequest(session, cardId, new Provider(provider), shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
 		if(!cache){
 			sendEcmToReader(answer);
@@ -130,7 +134,8 @@ public class CardServer {
 	private static boolean sendEcmToReader(EcmRequest req) {
 		if(readers.size() == 0)
 			return false;
-		CamSession session = readers.get(readerRoundRobin++ % readers.size());
+		List<CamSession> filteredReader = filterReaders(req);
+		CamSession session = filteredReader.get(readerRoundRobin++ % filteredReader.size());
 		if (session == null){
 			logger.error("no reader found for ecm req: "+req);
 			return false;
@@ -138,6 +143,22 @@ public class CardServer {
 		session.setLastRequest(req);
 		session.getPacketSender().writeEcmRequest(req);
 		return true;
+	}
+
+	/**
+	 * @param req
+	 * @return
+	 */
+	private static List<CamSession> filterReaders(EcmRequest req) {
+		ArrayList<CamSession> filtered = new ArrayList<CamSession>();
+		for(CamSession session : readers){
+			for(int group : req.getGroups()){
+				if(session.getGroups().contains(group)){
+					filtered.add(session);
+				}
+			}
+		}
+		return filtered;
 	}
 
 	public static EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {

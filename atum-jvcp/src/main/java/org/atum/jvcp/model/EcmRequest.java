@@ -1,5 +1,6 @@
 package org.atum.jvcp.model;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,8 @@ public class EcmRequest {
 	private long timestamp;
 	private CamSession session;
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
-
+	private List<Integer> groups = new ArrayList<Integer>(3);
+	
 	public EcmRequest(CamSession session, int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
 		this.setProv(prov);
@@ -35,6 +37,9 @@ public class EcmRequest {
 		this.setShareId(shareId);
 		this.setServiceId(serviceId);
 		this.setEcm(ecm, computeHash);
+		//set default to group 1.
+		for(int group : session.getGroups())
+			groups.add(group);
 		updateTimestamp();
 	}
 
@@ -189,5 +194,23 @@ public class EcmRequest {
 		}
 		build.append("}");
 		return build.toString();
+	}
+
+	/**
+	 * @return
+	 */
+	public List<Integer> getGroups() {
+		return groups;
+	}
+
+	/**
+	 * @param session2
+	 */
+	public void addGroups(CamSession session2) {
+		for(int group : session2.getGroups()){
+			if(!groups.contains(group)){
+				groups.add(group);
+			}
+		}
 	}
 }

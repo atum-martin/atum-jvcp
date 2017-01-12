@@ -1,5 +1,7 @@
 package org.atum.jvcp.model;
 
+import java.util.ArrayList;
+
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.Packet;
@@ -98,6 +100,13 @@ public class CamSession {
 		} else {
 			return "client: "+getAccount()+" p: "+protocol;
 		}
+	}
+
+	/**
+	 * @return
+	 */
+	public ArrayList<Integer> getGroups() {
+		return getAccount().getGroups();
 	}
 
 }
