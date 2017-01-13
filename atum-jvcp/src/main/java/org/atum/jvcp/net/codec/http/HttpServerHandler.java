@@ -3,6 +3,9 @@
  */
 package org.atum.jvcp.net.codec.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.atum.jvcp.html.HtmlResource;
 
@@ -13,7 +16,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
-
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
@@ -48,6 +50,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> 
 			if(uri.contains("?")){
 				uri = uri.substring(0, uri.indexOf("?"));
 			}
+			GHttpHandler handler = handlers.get(uri);
+			if(handler != null){
+				handler.handleGetRequest(msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
+				return;
+			}
 			content = (new HtmlResource("web"+uri)).getContent();
 		}
 		FullHttpResponse response = null;
@@ -61,6 +68,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> 
 		ctx.writeAndFlush(response);
 	}
 	
+	public void addMapping(String url, GHttpHandler handler){
+		handlers.put(url, handler);
+	}
+	
+	private Map<String, GHttpHandler> handlers = new HashMap<String, GHttpHandler>();
 	private static HtmlResource header = new HtmlResource("web/header.html");
 	private static HtmlResource footer = new HtmlResource("web/footer.html");
 	private static HtmlResource nav = new HtmlResource("web/navbar.html");
