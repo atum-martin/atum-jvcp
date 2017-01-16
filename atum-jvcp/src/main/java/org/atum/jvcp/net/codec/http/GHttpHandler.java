@@ -3,8 +3,12 @@
  */
 package org.atum.jvcp.net.codec.http;
 
+import java.util.Base64;
+
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
+import org.atum.jvcp.account.Account;
+import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.codec.newcamd.io.NewcamdPacketDecoder;
@@ -34,6 +38,10 @@ public class GHttpHandler {
 			//error usecase invalid url.
 			return;
 		}
+		if(!verifyUserCredentials(req)){
+			
+			return;
+		}
 		String apiCall = req.uri().substring(0, strIndex);
 		//no str switch in java 1.7
 		if (apiCall.equals(API_CACHE_GET)) {
@@ -45,6 +53,30 @@ public class GHttpHandler {
 		} else if (apiCall.equals(API_CAPMT)) {
 			handleCapmtRequest(req, response);
 		}
+	}
+	
+	private boolean verifyUserCredentials(FullHttpRequest req){
+		try {
+			String auth = req.headers().get("authorization");
+			if(auth == null || !auth.toLowerCase().startsWith("basic ")){
+				return false;
+			}
+			auth = auth.substring(6);
+			String authDecoded = new String(Base64.getDecoder().decode(auth));
+			int colon = authDecoded.indexOf(":");// format is user:password
+			if(colon == -1){
+				return false;
+			}
+			String user = authDecoded.substring(0, colon);
+			String pass = authDecoded.substring(colon+1);
+			Account acc = AccountStore.getSingleton().getAccount(user);
+			if(!acc.getPassword().equals(pass)){
+				return false;
+			}
+		} catch(IndexOutOfBoundsException e){
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	/**
@@ -74,7 +106,7 @@ public class GHttpHandler {
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
-			//session.getPacketSender().writeEcmAnswer(answer.getDcw());
+			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}
 
