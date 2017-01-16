@@ -14,8 +14,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import static io.netty.handler.codec.http.HttpHeaderNames.*;
 import static io.netty.handler.codec.http.HttpResponseStatus.*;
 import static io.netty.handler.codec.http.HttpVersion.*;
@@ -24,13 +24,13 @@ import static io.netty.handler.codec.http.HttpVersion.*;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 16 Dec 2016 00:51:35
  */
-public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> implements ChannelHandler {
+public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> implements ChannelHandler {
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(HttpServerHandler.class);
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, HttpRequest msg) throws Exception {
+	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		// parse response for ghttp headers and respond.
 		//logger.info("http request: " + msg + " " + msg.uri());
 		//String CONTENT = "<html><body><table><tr><td>"+CardServer.getCache().size()+"</td><td>"+CardServer.getPendingCache().size()+"</td></tr></table></body></html>";
@@ -52,7 +52,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<HttpRequest> 
 			}
 			GHttpHandler handler = handlers.get(uri);
 			if(handler != null){
-				handler.handleGetRequest(msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
+				handler.handleRequest(msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
 				return;
 			}
 			content = (new HtmlResource("web"+uri)).getContent();
