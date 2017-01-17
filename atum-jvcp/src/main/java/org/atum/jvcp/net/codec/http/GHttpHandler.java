@@ -11,7 +11,6 @@ import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
-import org.atum.jvcp.net.codec.newcamd.io.NewcamdPacketDecoder;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -39,7 +38,6 @@ public class GHttpHandler {
 			return;
 		}
 		if(!verifyUserCredentials(req)){
-			
 			return;
 		}
 		String apiCall = req.uri().substring(0, strIndex);
@@ -57,11 +55,12 @@ public class GHttpHandler {
 	
 	private boolean verifyUserCredentials(FullHttpRequest req){
 		try {
-			String auth = req.headers().get("authorization");
+			
+			String auth = req.headers().get("Authorization");
 			if(auth == null || !auth.toLowerCase().startsWith("basic ")){
 				return false;
 			}
-			auth = auth.substring(6);
+			auth = auth.substring(6);//remove basic from start of string
 			String authDecoded = new String(Base64.getDecoder().decode(auth));
 			int colon = authDecoded.indexOf(":");// format is user:password
 			if(colon == -1){
