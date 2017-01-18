@@ -74,6 +74,7 @@ public class GHttpHandler {
 			}
 		} catch(IndexOutOfBoundsException e){
 			e.printStackTrace();
+			return false;
 		}
 		return true;
 	}
