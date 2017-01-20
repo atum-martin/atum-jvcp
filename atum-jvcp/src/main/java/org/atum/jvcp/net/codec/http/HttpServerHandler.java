@@ -5,6 +5,7 @@ package org.atum.jvcp.net.codec.http;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.html.HtmlResource;
@@ -28,11 +29,11 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(HttpServerHandler.class);
-
+	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		// parse response for ghttp headers and respond.
-		//logger.info("http request: " + msg + " " + msg.uri());
+		logger.info("http request: " + msg + " " + msg.uri());
 		//String CONTENT = "<html><body><table><tr><td>"+CardServer.getCache().size()+"</td><td>"+CardServer.getPendingCache().size()+"</td></tr></table></body></html>";
 		
 		//response.headers().set(CONTENT_TYPE, "text/html");
@@ -50,7 +51,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 			if(uri.contains("?")){
 				uri = uri.substring(0, uri.indexOf("?"));
 			}
-			GHttpHandler handler = handlers.get(uri);
+			GHttpHandler handler = getUriHandler(uri);
 			if(handler != null){
 				handler.handleRequest(msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
 				return;
@@ -68,13 +69,31 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 		ctx.writeAndFlush(response);
 	}
 	
-	public void addMapping(String url, GHttpHandler handler){
+	/**
+	 * @param uri
+	 * @return
+	 */
+	private GHttpHandler getUriHandler(String uri) {
+		for(Entry<String,GHttpHandler> e : handlers.entrySet()){
+			if(uri.startsWith(e.getKey())){
+				return e.getValue();
+			}
+		}
+		return null;
+	}
+
+	public static void addMapping(String url, GHttpHandler handler){
 		handlers.put(url, handler);
 	}
 	
-	private Map<String, GHttpHandler> handlers = new HashMap<String, GHttpHandler>();
+	private static Map<String, GHttpHandler> handlers = new HashMap<String, GHttpHandler>();
 	private static HtmlResource header = new HtmlResource("web/header.html");
 	private static HtmlResource footer = new HtmlResource("web/footer.html");
 	private static HtmlResource nav = new HtmlResource("web/navbar.html");
-
+	
+	static {
+		for(Entry<String,GHttpHandler> entry : GHttpHandler.getUrlMappings().entrySet()){
+			handlers.put(entry.getKey(), entry.getValue());
+		}
+	}
 }

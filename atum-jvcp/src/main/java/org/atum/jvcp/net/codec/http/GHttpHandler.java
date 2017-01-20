@@ -4,6 +4,8 @@
 package org.atum.jvcp.net.codec.http;
 
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
@@ -11,6 +13,7 @@ import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
+import org.atum.jvcp.net.codec.NetUtils;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
@@ -32,8 +35,9 @@ public class GHttpHandler {
 	private Logger logger = Logger.getLogger(GHttpHandler.class);
 
 	public void handleRequest(FullHttpRequest req, HttpResponse response) {
-		int strIndex = ordinalIndexOf(req.uri(), "/", 3);
-		if(strIndex == -1){
+		int strIndex = ordinalIndexOf(req.uri(), "/", 3)+1;
+		
+		if(strIndex == 0){
 			//error usecase invalid url.
 			return;
 		}
@@ -41,6 +45,7 @@ public class GHttpHandler {
 			return;
 		}
 		String apiCall = req.uri().substring(0, strIndex);
+		logger.info("ghttp handler: "+req.uri()+" "+apiCall);
 		//no str switch in java 1.7
 		if (apiCall.equals(API_CACHE_GET)) {
 
@@ -54,6 +59,7 @@ public class GHttpHandler {
 	}
 	
 	private boolean verifyUserCredentials(FullHttpRequest req){
+		String authDecoded = null;
 		try {
 			
 			String auth = req.headers().get("Authorization");
@@ -61,7 +67,7 @@ public class GHttpHandler {
 				return false;
 			}
 			auth = auth.substring(6);//remove basic from start of string
-			String authDecoded = new String(Base64.getDecoder().decode(auth));
+			authDecoded = new String(Base64.getDecoder().decode(auth));
 			int colon = authDecoded.indexOf(":");// format is user:password
 			if(colon == -1){
 				return false;
@@ -76,6 +82,7 @@ public class GHttpHandler {
 			e.printStackTrace();
 			return false;
 		}
+		logger.info("user verified: "+authDecoded);
 		return true;
 	}
 
@@ -102,7 +109,7 @@ public class GHttpHandler {
 			provider = Integer.parseInt(parts[offset++], 16);
 		
 		byte[] ecm = req.content().array();
-		
+		logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
 			logger.info("handled client ECM: "+answer.getCspHash());
@@ -136,5 +143,18 @@ public class GHttpHandler {
 		if (parts.length > offset)
 			namespace = Long.parseLong(parts[offset], 16);
 
+	}
+
+	/**
+	 * @return
+	 */
+	public static Map<String,GHttpHandler> getUrlMappings() {
+		HashMap<String,GHttpHandler> urlMap = new HashMap<String,GHttpHandler>();
+		GHttpHandler handler = new GHttpHandler();
+		urlMap.put(API_CACHE_GET, handler);
+		urlMap.put(API_ECM_POST, handler);
+		urlMap.put(API_FEEDER_POST, handler);
+		urlMap.put(API_CAPMT, handler);
+		return urlMap;
 	}
 }
