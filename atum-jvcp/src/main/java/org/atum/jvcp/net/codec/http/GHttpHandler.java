@@ -18,6 +18,7 @@ import org.atum.jvcp.net.codec.NetUtils;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpUtil;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -108,7 +109,9 @@ public class GHttpHandler {
 		if (parts.length > offset)
 			provider = Integer.parseInt(parts[offset++], 16);
 		
-		byte[] ecm = req.content().array();
+		int contentLength = (int) HttpUtil.getContentLength(req);
+		byte[] ecm = new byte[contentLength];
+		req.content().readBytes(ecm);
 		logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
 		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
