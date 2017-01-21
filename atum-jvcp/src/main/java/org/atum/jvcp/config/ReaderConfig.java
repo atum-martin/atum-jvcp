@@ -45,6 +45,7 @@ public class ReaderConfig {
 				}
 				logger.info("loaded reader: " + reader.protocol + "://" + reader.host + ":" + reader.port + " " + reader.username);
 				Account acc = new Account(reader.username, reader.password);
+				acc.setGroups(reader.groups);
 				if(reader.name != null)
 					acc.setName(reader.name);
 				if (reader.protocol.equalsIgnoreCase("cccam")) {
@@ -133,6 +134,11 @@ public class ReaderConfig {
 		private String host;
 		private String server = null;
 		private int port;
+		
+		/**
+		 * A list of integers that represents the groups this user is apart of.
+		 */
+		private ArrayList<Integer> groups = new ArrayList<Integer>(2);
 
 		/** protocol specific settings: */
 		private String desKey = null;

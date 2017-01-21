@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.html.HtmlResource;
+import org.atum.jvcp.net.codec.http.ghttp.GHttpHandler;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -53,7 +54,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 			}
 			GHttpHandler handler = getUriHandler(uri);
 			if(handler != null){
-				handler.handleRequest(msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
+				handler.handleRequest(ctx, msg, new DefaultFullHttpResponse(HTTP_1_1, OK, Unpooled.buffer()));
 				return;
 			}
 			content = (new HtmlResource("web"+uri)).getContent();

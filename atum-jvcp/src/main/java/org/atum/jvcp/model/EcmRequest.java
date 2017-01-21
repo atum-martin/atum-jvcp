@@ -38,6 +38,7 @@ public class EcmRequest {
 		this.setServiceId(serviceId);
 		this.setEcm(ecm, computeHash);
 		//set default to group 1.
+		
 		for(int group : session.getGroups())
 			groups.add(group);
 		updateTimestamp();

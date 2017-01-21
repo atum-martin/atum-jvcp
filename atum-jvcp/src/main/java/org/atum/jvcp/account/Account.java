@@ -72,5 +72,12 @@ public class Account {
 	public ArrayList<Integer> getGroups() {
 		return groups;
 	}
+
+	/**
+	 * @param groups
+	 */
+	public void setGroups(ArrayList<Integer> groups) {
+		this.groups = groups;
+	}
 	
 }

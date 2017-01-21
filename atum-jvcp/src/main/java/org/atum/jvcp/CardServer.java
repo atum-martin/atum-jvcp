@@ -122,7 +122,9 @@ public class CardServer {
 		answer = new EcmRequest(session, cardId, new Provider(provider), shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
 		if(!cache){
-			sendEcmToReader(answer);
+			if(!sendEcmToReader(answer)){
+				logger.error("no reader found for ecm req: "+answer);
+			}		
 			getPendingCache().addEntry(cspHash, answer);
 		}
 		return answer;
@@ -135,11 +137,9 @@ public class CardServer {
 		if(readers.size() == 0)
 			return false;
 		List<CamSession> filteredReader = filterReaders(req);
-		CamSession session = filteredReader.get(readerRoundRobin++ % filteredReader.size());
-		if (session == null){
-			logger.error("no reader found for ecm req: "+req);
+		if(filteredReader.size() == 0)
 			return false;
-		}
+		CamSession session = filteredReader.get(readerRoundRobin++ % filteredReader.size());
 		session.setLastRequest(req);
 		session.getPacketSender().writeEcmRequest(req);
 		return true;
@@ -153,12 +153,28 @@ public class CardServer {
 		ArrayList<CamSession> filtered = new ArrayList<CamSession>();
 		for(CamSession session : readers){
 			for(int group : req.getGroups()){
+				logger.debug("filterReaders: attempting match: "+group+" "+listToStr(session.getGroups()));
 				if(session.getGroups().contains(group)){
+					logger.debug("filterReaders: found match: "+group);
 					filtered.add(session);
 				}
 			}
 		}
 		return filtered;
+	}
+
+	/**
+	 * @param groups
+	 * @return
+	 */
+	private static String listToStr(ArrayList<Integer> groups) {
+		StringBuilder build = new StringBuilder("[");
+		for(int group : groups){
+			build.append(group);
+			build.append(", ");
+		}
+		build.append("]");
+		return build.toString();
 	}
 
 	public static EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {

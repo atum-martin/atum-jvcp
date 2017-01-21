@@ -1,12 +1,13 @@
 /**
  * 
  */
-package org.atum.jvcp.net.codec.http;
+package org.atum.jvcp.net.codec.http.ghttp;
 
 import org.atum.jvcp.model.CamProtocol;
 import org.atum.jvcp.model.CamSession;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.FullHttpResponse;
 
 
 /**
@@ -15,9 +16,13 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class GHttpSession extends CamSession {
 
-	
-	public GHttpSession(ChannelHandlerContext context){
+	public GHttpSession(ChannelHandlerContext context, FullHttpResponse response){
 		super(context, CamProtocol.GHTTP);
+		setPacketSender(new GHttpPacketSender(this, response));
+	}
+
+	public void writeAndFlush(FullHttpResponse response) {
+		getCtx().writeAndFlush(response);
 	}
 
 }

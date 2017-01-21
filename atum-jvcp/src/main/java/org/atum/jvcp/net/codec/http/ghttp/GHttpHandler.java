@@ -1,7 +1,7 @@
 /**
  * 
  */
-package org.atum.jvcp.net.codec.http;
+package org.atum.jvcp.net.codec.http.ghttp;
 
 import java.util.Base64;
 import java.util.HashMap;
@@ -13,9 +13,12 @@ import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
+import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.HttpUtil;
@@ -35,23 +38,26 @@ public class GHttpHandler {
 	
 	private Logger logger = Logger.getLogger(GHttpHandler.class);
 
-	public void handleRequest(FullHttpRequest req, HttpResponse response) {
+	public void handleRequest(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse response) {
 		int strIndex = ordinalIndexOf(req.uri(), "/", 3)+1;
 		
 		if(strIndex == 0){
 			//error usecase invalid url.
 			return;
 		}
-		if(!verifyUserCredentials(req)){
+		if(!verifyUserCredentials(ctx, req)){
 			return;
 		}
+		CamSession session = new GHttpSession(ctx, response);
+		
+		
 		String apiCall = req.uri().substring(0, strIndex);
 		logger.info("ghttp handler: "+req.uri()+" "+apiCall);
 		//no str switch in java 1.7
 		if (apiCall.equals(API_CACHE_GET)) {
-
+			handleCachePull(session, req, response);
 		} else if (apiCall.equals(API_ECM_POST)) {
-			handleEcmPost(req, response);
+			handleEcmPost(session, req, response);
 		} else if (apiCall.equals(API_FEEDER_POST)) {
 
 		} else if (apiCall.equals(API_CAPMT)) {
@@ -59,7 +65,25 @@ public class GHttpHandler {
 		}
 	}
 	
-	private boolean verifyUserCredentials(FullHttpRequest req){
+	/**
+	 * @param session
+	 * @param req
+	 * @param response
+	 */
+	private void handleCachePull(CamSession session, FullHttpRequest req, FullHttpResponse response) {
+		String[] parts = req.uri().split("/");
+		int offset = (parts[3].length() >= 6) ? 4 : 3;
+		int ecm0 = Integer.parseInt(parts[offset++], 16) & 0xFF;
+		int cspHash = (int)Long.parseLong(parts[offset++], 16);
+		EcmRequest ecm = (EcmRequest) CardServer.getCache().get(cspHash);
+		if(ecm == null){
+			session.getPacketSender().writeFailedEcm();
+			return;
+		}
+		session.getPacketSender().writeEcmAnswer(ecm.getDcw());
+	}
+
+	private boolean verifyUserCredentials(ChannelHandlerContext ctx, FullHttpRequest req){
 		String authDecoded = null;
 		try {
 			
@@ -79,6 +103,7 @@ public class GHttpHandler {
 			if(!acc.getPassword().equals(pass)){
 				return false;
 			}
+			ctx.channel().attr(NetworkConstants.ACCOUNT).set(acc);
 		} catch(IndexOutOfBoundsException e){
 			e.printStackTrace();
 			return false;
@@ -88,17 +113,17 @@ public class GHttpHandler {
 	}
 
 	/**
+	 * @param session 
 	 * @param req
 	 * @param response
 	 */
-	private void handleEcmPost(FullHttpRequest req, HttpResponse response) {
+	@SuppressWarnings("unused")
+	private void handleEcmPost(CamSession session, FullHttpRequest req, FullHttpResponse response) {
 		if(!req.method().equals(HttpMethod.POST)){
 			//throw error.
 			return;
 		}
 		String[] parts = req.uri().split("/");
-		
-		CamSession session = null;
 		int offset = (parts[3].length() >= 6) ? 4 : 3;
 		int networkId = Integer.parseInt(parts[offset++], 16);
 		int tid = Integer.parseInt(parts[offset++], 16);
@@ -131,6 +156,7 @@ public class GHttpHandler {
 		return pos;
 	}
 
+	@SuppressWarnings("unused")
 	public void handleCapmtRequest(FullHttpRequest req, HttpResponse response) {
 		String[] parts = req.uri().split("/");
 		int offset = (parts[3].length() >= 6) ? 4 : 3;

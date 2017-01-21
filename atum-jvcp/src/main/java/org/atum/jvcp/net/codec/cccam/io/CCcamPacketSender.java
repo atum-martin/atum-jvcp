@@ -112,4 +112,12 @@ public class CCcamPacketSender implements PacketSenderInterface {
 		});
 	}
 
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.model.PacketSenderInterface#writeFailedEcm()
+	 */
+	public void writeFailedEcm() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
