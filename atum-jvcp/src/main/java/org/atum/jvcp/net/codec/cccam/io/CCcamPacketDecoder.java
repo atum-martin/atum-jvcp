@@ -198,12 +198,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
 		long cspHash = EcmRequest.computeEcmHash(ecm);
 		//logger.info("requested client ECM: "+cspHash);
-		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
-		if(answer != null && answer.hasAnswer()){
-			logger.info("handled client ECM: "+answer.getCspHash());
-			logger.info("dcw dump: "+NetUtils.bytesToString(answer.getDcw(),0,answer.getDcw().length));
-			session.getPacketSender().writeEcmAnswer(answer.getDcw());
-		}
+		CardServer.handleClientEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
+
 	}
 	
 	/*

@@ -12,7 +12,8 @@ public enum CamProtocol {
 	CCCAM("CCcam"),
 	NEWCAMD("Newcamd"),
 	CCCAM_CACHE("CCcam/Cache"),
-	NEWCAMD_CACHE("Newcamd/Cache");
+	NEWCAMD_CACHE("Newcamd/Cache"), 
+	GHTTP("GHttp");
 	
 	private String proto;
 	

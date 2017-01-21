@@ -33,7 +33,7 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
 		// parse response for ghttp headers and respond.
-		logger.info("http request: " + msg + " " + msg.uri());
+		//logger.info("http request: " + msg + " " + msg.uri());
 		//String CONTENT = "<html><body><table><tr><td>"+CardServer.getCache().size()+"</td><td>"+CardServer.getPendingCache().size()+"</td></tr></table></body></html>";
 		
 		//response.headers().set(CONTENT_TYPE, "text/html");

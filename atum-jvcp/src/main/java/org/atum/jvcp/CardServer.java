@@ -174,4 +174,20 @@ public class CardServer {
 		return answer;
 	}
 
+	/**
+	 * @param session
+	 * @param cardId
+	 * @param provider
+	 * @param i
+	 * @param serviceId
+	 * @param ecm
+	 */
+	public static void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
+		EcmRequest answer = handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
+		if(answer != null && answer.hasAnswer()){
+			logger.info("handled client ECM: "+answer.getCspHash());
+			session.getPacketSender().writeEcmAnswer(answer.getDcw());
+		}
+	}
+
 }

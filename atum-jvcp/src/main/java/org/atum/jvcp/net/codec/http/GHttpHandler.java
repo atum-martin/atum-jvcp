@@ -113,11 +113,7 @@ public class GHttpHandler {
 		byte[] ecm = new byte[contentLength];
 		req.content().readBytes(ecm);
 		logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
-		EcmRequest answer = CardServer.handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
-		if(answer != null && answer.hasAnswer()){
-			logger.info("handled client ECM: "+answer.getCspHash());
-			session.getPacketSender().writeEcmAnswer(answer.getDcw());
-		}
+		CardServer.handleClientEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 	}
 
 	/**
