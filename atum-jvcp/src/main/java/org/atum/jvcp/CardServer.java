@@ -3,14 +3,21 @@
  */
 package org.atum.jvcp;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
+import org.atum.jvcp.config.ChannelList;
 import org.atum.jvcp.config.ReaderConfig;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
@@ -44,6 +51,9 @@ public class CardServer {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
+		Logger.getRootLogger().setLevel(Level.INFO);
+		
+		ChannelList.getSingleton();
 		AccountStore.getSingleton();
 		CCcamServer server1 = new CCcamServer("cccam-server1", 12000);
 		NewcamdServer server2 = new NewcamdServer("newcamd-server1", 12001);
@@ -85,7 +95,7 @@ public class CardServer {
 			req.setDcw(cw);
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
-			logger.info("cache hit for "+Integer.toHexString(req.getCardId())+":"+Integer.toHexString(req.getServiceId())+" by "+session+" for "+req.getSessionsStr()+" sessions.");
+			logger.info("ecm answer for "+ChannelList.getSingleton().getChannelName(req.getCardId(), req.getServiceId())+" by "+session+" for "+req.getSessionsStr()+" sessions.");
 
 			req.fireActionListeners();
 			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
@@ -201,7 +211,7 @@ public class CardServer {
 	public static void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
 		EcmRequest answer = handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
-			logger.info("handled client ECM: "+answer.getCspHash());
+			logger.info("cache hit for "+session+" "+ChannelList.getSingleton().getChannelName(cardId, serviceId));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}

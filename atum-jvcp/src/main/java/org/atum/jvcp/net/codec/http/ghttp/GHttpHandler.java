@@ -52,7 +52,7 @@ public class GHttpHandler {
 		
 		
 		String apiCall = req.uri().substring(0, strIndex);
-		logger.info("ghttp handler: "+req.uri()+" "+apiCall);
+		logger.debug("ghttp handler: "+req.uri()+" "+apiCall);
 		//no str switch in java 1.7
 		if (apiCall.equals(API_CACHE_GET)) {
 			handleCachePull(session, req, response);
@@ -109,7 +109,7 @@ public class GHttpHandler {
 			e.printStackTrace();
 			return false;
 		}
-		logger.info("user verified: "+authDecoded);
+		logger.debug("user verified: "+authDecoded);
 		return true;
 	}
 
