@@ -75,8 +75,9 @@ public class GHttpHandler {
 		int offset = (parts[3].length() >= 6) ? 4 : 3;
 		int ecm0 = Integer.parseInt(parts[offset++], 16) & 0xFF;
 		int cspHash = (int)Long.parseLong(parts[offset++], 16);
-		EcmRequest ecm = (EcmRequest) CardServer.getCache().get(cspHash);
+		EcmRequest ecm = CardServer.getCache().peekCache(cspHash);
 		if(ecm == null){
+			logger.debug("no ecm found in cache: "+cspHash);
 			session.getPacketSender().writeFailedEcm();
 			return;
 		}
