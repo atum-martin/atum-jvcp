@@ -95,7 +95,7 @@ public class CardServer {
 			req.setDcw(cw);
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
-			logger.info("ecm answer for "+ChannelList.getSingleton().getChannelName(req.getCardId(), req.getServiceId())+" by "+session+" for "+req.getSessionsStr()+" sessions.");
+			logger.info("ecm answer for "+ChannelList.getChannelName(req.getCardId(), req.getServiceId())+" by "+session+" for "+req.getSessionsStr()+" sessions.");
 
 			req.fireActionListeners();
 			//logger.info("Cache push hit on: "+Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
@@ -211,7 +211,7 @@ public class CardServer {
 	public static void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
 		EcmRequest answer = handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 		if(answer != null && answer.hasAnswer()){
-			logger.info("cache hit for "+session+" "+ChannelList.getSingleton().getChannelName(cardId, serviceId));
+			logger.info("cache hit for "+session+" "+ChannelList.getChannelName(cardId, serviceId));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
 	}

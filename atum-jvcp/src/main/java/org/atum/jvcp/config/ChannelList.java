@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -24,13 +26,14 @@ public class ChannelList {
 	
 	private Logger logger = Logger.getLogger(ChannelList.class);
 	private Map<String, String> channelMap = new HashMap<String, String>();
+	private Map<Integer, List<Integer>> cardMap = new HashMap<Integer, List<Integer>>();
 	private static ChannelList singleton = null;
 	
-	public String getChannelName(int cardId,int serviceId){
+	public static String getChannelName(int cardId,int serviceId){
 		String channelId = Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId);
-		String channelName = channelMap.get(channelId);
+		String channelName = getSingleton().channelMap.get(channelId);
 		if(channelName == null){
-			return Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId);
+			return channelId;
 		}
 		return channelName;
 	}
@@ -50,15 +53,18 @@ public class ChannelList {
 		try {
 			while((line = br.readLine()) != null){
 				String[] parts = line.split("\\|");
-				if(parts.length < 3)
+				if(parts.length < 3){
+					if(line.contains(";")){
+						handleCardMapping(line);
+					}
 					continue;
+				}
 				int cardId = Integer.parseInt(parts[0].split(":")[0], 16);
 				int serviceId = Integer.parseInt(parts[0].split(":")[1], 16);
 				String provider = parts[1];
 				String channelName = parts[2];
-				String channelId = Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId);
-				channelMap.put(channelId, channelName);
-				logger.info(channelId+" "+channelName);
+				
+				addChannelMapping(cardId, serviceId, channelName);
 				lineNo++;
 			}
 		} catch (ArrayIndexOutOfBoundsException e){
@@ -68,5 +74,43 @@ public class ChannelList {
 			logger.error("error parsing channellist on line: "+lineNo);
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @param cardId
+	 * @param serviceId
+	 * @param channelName 
+	 */
+	private void addChannelMapping(int cardId, int serviceId, String channelName) {
+		List<Integer> cardMapping = cardMap.get(cardId);
+		addToMap(cardId, serviceId, channelName);
+		if(cardMapping != null){
+			for(int cardMappedId : cardMapping){
+				addToMap(cardMappedId, serviceId, channelName);
+			}
+		}
+	}
+	
+	public void addToMap(int cardId, int serviceId, String channelName){
+		String channelId = Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId);
+		channelMap.put(channelId, channelName);
+		logger.info(channelId+" "+channelName);
+	}
+
+	/**
+	 * @param line
+	 */
+	private void handleCardMapping(String line) {
+		String[] parts = line.split(";");
+		int masterCardId = Integer.parseInt(parts[0], 16);
+		List<Integer> cardList = cardMap.get(masterCardId);
+		if(cardList == null){
+			cardList = new ArrayList<Integer>();
+			cardMap.put(masterCardId, cardList);
+		}
+		for(int i = 1; i < parts.length; i++){
+			cardList.add(Integer.parseInt(parts[i], 16));
+		}
+		
 	}
 }

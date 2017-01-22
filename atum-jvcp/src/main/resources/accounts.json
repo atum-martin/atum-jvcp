@@ -3,10 +3,12 @@
    "username": "user99",
    "password": "password789",
    "cache": true,
-   "name": "User99"
+   "name": "User99",
+   "groups": [ 1 ]
   },
   {
    "username": "user98",
-   "password": "password789"
+   "password": "password789",
+   "groups": [ 1 ]
   },
 ]
