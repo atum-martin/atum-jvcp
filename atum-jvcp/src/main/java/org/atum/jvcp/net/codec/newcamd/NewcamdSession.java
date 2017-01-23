@@ -45,4 +45,14 @@ public class NewcamdSession extends CamSession {
 		this.cardId = cardId;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.model.CamSession#hasCard(int)
+	 */
+	@Override
+	public boolean hasCard(int cardId) {
+		if(this.cardId == cardId)
+			return true;
+		return false;
+	}
+
 }

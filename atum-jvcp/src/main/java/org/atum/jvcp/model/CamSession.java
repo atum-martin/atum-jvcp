@@ -13,7 +13,7 @@ import io.netty.channel.ChannelHandlerContext;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 13 Dec 2016 23:56:31
  */
-public class CamSession {
+public abstract class CamSession {
 	
 	private PacketSenderInterface packetSender;
 	private boolean isReader = false;
@@ -101,6 +101,8 @@ public class CamSession {
 			return "client: "+getAccount()+" p: "+protocol;
 		}
 	}
+	
+	public abstract boolean hasCard(int cardId);
 
 	/**
 	 * @return

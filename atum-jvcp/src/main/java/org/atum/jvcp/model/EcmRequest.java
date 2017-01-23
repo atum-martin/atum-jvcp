@@ -19,7 +19,7 @@ public class EcmRequest {
 	private static Logger logger = Logger.getLogger(EcmRequest.class);
 	
 	private int cardId;
-	private Provider prov;
+	private int prov;
 	private int shareId;
 	private int serviceId;
 	private byte[] ecm;
@@ -30,7 +30,7 @@ public class EcmRequest {
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 	private List<Integer> groups = new ArrayList<Integer>(3);
 	
-	public EcmRequest(CamSession session, int cardId, Provider prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
+	public EcmRequest(CamSession session, int cardId, int prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
 		this.setProv(prov);
 		this.session = session;
@@ -59,7 +59,7 @@ public class EcmRequest {
 		this.cardId = cardId;
 	}
 
-	public Provider getProv() {
+	public int getProv() {
 		return prov;
 	}
 	
@@ -67,7 +67,7 @@ public class EcmRequest {
 		return session;
 	}
 
-	public void setProv(Provider prov) {
+	public void setProv(int prov) {
 		this.prov = prov;
 	}
 

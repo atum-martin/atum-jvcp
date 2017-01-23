@@ -25,4 +25,12 @@ public class GHttpSession extends CamSession {
 		getCtx().writeAndFlush(response);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.model.CamSession#hasCard(int)
+	 */
+	@Override
+	public boolean hasCard(int cardId) {
+		return true;
+	}
+
 }

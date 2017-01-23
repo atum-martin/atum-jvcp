@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
+import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
@@ -142,9 +143,12 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int hopCount = payload.readByte();
 		int reshare = payload.readByte();
 		long serial = payload.readLong();
-		int providers = payload.readByte();
-		for(int i = 0; i < providers; i++){
+		int providersLen = payload.readByte();
+		
+		int[] providers = new int[providersLen];
+		for(int i = 0; i < providersLen; i++){
 			int providerId = NetUtils.readTriByte(payload);
+			providers[i] = providerId;
 			payload.readInt();
 		}
 		int nodeCount = payload.readByte();
@@ -152,6 +156,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			long nodeShareId = payload.readLong();
 		}
 		
+		Card card = new Card(cardId, shareId, nodeId, providers, hopCount, reshare);
+		session.addCard(card);
 		logger.info("Decoded new caid: 0x"+Integer.toHexString(cardId)+" "+length+" "+providers+" "+nodeCount);
 	}
 

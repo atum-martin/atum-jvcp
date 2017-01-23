@@ -27,6 +27,12 @@ public class Card {
 	 * any one point in time.
 	 */
 	private int cardId;
+	
+	private int[] providers;
+	
+	private int hops = 1;
+	
+	private int reshare = 1;
 
 	/**
 	 * The constructor for a card object. If this is a previously encountered
@@ -38,11 +44,17 @@ public class Card {
 	 *            {@link shareId}
 	 * @param remoteId
 	 *            The nodeId the card belongs to.
+	 * @param reshare 
+	 * @param hopCount 
+	 * @param providers 
 	 */
-	public Card(int cardId, int shareId, int remoteId) {
+	public Card(int cardId, int shareId, int remoteId, int[] providers, int hopCount, int reshare) {
 		this.cardId = cardId;
 		this.shareId = shareId;
 		this.remoteId = remoteId;
+		this.providers = providers;
+		this.hops = hopCount;
+		this.reshare = reshare;
 	}
 
 	/**
@@ -60,7 +72,7 @@ public class Card {
 	 * @return An integer between 0-10
 	 */
 	public int getHops() {
-		return 0;
+		return hops;
 	}
 
 	/**
@@ -87,8 +99,8 @@ public class Card {
 	 * 
 	 * @return An array of providers associated with this card.
 	 */
-	public Provider[] getProviders() {
-		return new Provider[] { new Provider(0), };
+	public int[] getProviders() {
+		return providers;
 	}
 
 	/**
@@ -109,7 +121,11 @@ public class Card {
 	 *         sent to.
 	 */
 	public int getReshare() {
-		return 1;
+		return reshare;
+	}
+	
+	public int hashCode(){
+		return shareId;
 	}
 
 }

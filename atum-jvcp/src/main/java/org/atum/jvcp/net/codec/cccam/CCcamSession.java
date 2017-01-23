@@ -1,11 +1,15 @@
 package org.atum.jvcp.net.codec.cccam;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
 import org.atum.jvcp.model.CamProtocol;
 import org.atum.jvcp.model.CamSession;
+import org.atum.jvcp.model.Card;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -23,6 +27,7 @@ public class CCcamSession extends CamSession {
 
 	private String username;
 	private byte[] nodeId;
+	private List<Card> cards = new LinkedList<Card>();
 
 	
 	public CCcamSession(ChannelHandlerContext context, CCcamServer server, CCcamCipher encrypter, CCcamCipher decrypter) {
@@ -58,5 +63,19 @@ public class CCcamSession extends CamSession {
 	
 	public void setNodeId(byte[] nodeId){
 		this.nodeId = nodeId;
+	}
+
+	@Override
+	public boolean hasCard(int cardId) {
+		return false;
+	}
+	
+	public void addCard(Card card){
+		if(!cards.contains(card))
+			cards.add(card);
+	}
+	
+	public void removeCard(Card card){
+		cards.remove(card);
 	}
 }

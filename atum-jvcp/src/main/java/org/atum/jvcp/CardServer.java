@@ -16,7 +16,6 @@ import org.atum.jvcp.config.ChannelList;
 import org.atum.jvcp.config.ReaderConfig;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
-import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
 
@@ -124,7 +123,7 @@ public class CardServer {
 			answer.addGroups(session);
 			return answer;
 		}
-		answer = new EcmRequest(session, cardId, new Provider(provider), shareId, serviceId, ecm, false);
+		answer = new EcmRequest(session, cardId, provider, shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
 		if(!cache){
 			if(!sendEcmToReader(answer)){

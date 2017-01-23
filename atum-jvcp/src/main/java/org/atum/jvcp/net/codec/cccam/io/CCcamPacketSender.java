@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
-import org.atum.jvcp.model.Provider;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.cccam.CCcamBuilds;
 import org.atum.jvcp.net.codec.cccam.CCcamConstants;
@@ -42,8 +41,8 @@ public class CCcamPacketSender implements PacketSenderInterface {
 		out.writeByte(card.getReshare());
 		out.writeLong(card.getSerial());
 		out.writeByte(card.getProviders().length);
-		for (Provider prov : card.getProviders()) {
-			NetUtils.putTriByte(out, prov.getProviderId());
+		for (int prov : card.getProviders()) {
+			NetUtils.putTriByte(out, prov);
 			out.writeInt(0);
 		}
 		//node count
@@ -87,7 +86,7 @@ public class CCcamPacketSender implements PacketSenderInterface {
 	public void writeEcmRequest(EcmRequest req) {
 		ByteBuf out = Unpooled.buffer(req.getEcm().length + 13);
 		out.writeShort(req.getCardId());
-		out.writeInt(req.getProv().getProviderId());
+		out.writeInt(req.getProv());
 		out.writeInt(req.getShareId());
 		out.writeShort(req.getServiceId());
 		out.writeByte(req.getEcm().length);

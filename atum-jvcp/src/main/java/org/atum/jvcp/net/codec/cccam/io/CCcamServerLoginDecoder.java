@@ -180,7 +180,7 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		sender.writeSrvData();
 		Random ra = new Random();
 		for (int i = 0 ; i < 5; i++)
-			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt()));
+			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt(),new int[]{0,}, 0, 1));
 		
 		
 		
