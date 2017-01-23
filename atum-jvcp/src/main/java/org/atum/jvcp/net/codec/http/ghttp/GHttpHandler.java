@@ -73,6 +73,7 @@ public class GHttpHandler {
 	private void handleCachePull(CamSession session, FullHttpRequest req, FullHttpResponse response) {
 		String[] parts = req.uri().split("/");
 		int offset = (parts[3].length() >= 6) ? 4 : 3;
+		@SuppressWarnings("unused")
 		int ecm0 = Integer.parseInt(parts[offset++], 16) & 0xFF;
 		int cspHash = (int)Long.parseLong(parts[offset++], 16);
 		EcmRequest ecm = CardServer.getCache().peekCache(cspHash);

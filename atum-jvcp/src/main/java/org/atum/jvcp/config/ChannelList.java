@@ -61,6 +61,7 @@ public class ChannelList {
 				}
 				int cardId = Integer.parseInt(parts[0].split(":")[0], 16);
 				int serviceId = Integer.parseInt(parts[0].split(":")[1], 16);
+				@SuppressWarnings("unused")
 				String provider = parts[1];
 				String channelName = parts[2];
 				

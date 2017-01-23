@@ -5,7 +5,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
 import org.atum.jvcp.crypto.DESUtil;
-import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.PacketState;

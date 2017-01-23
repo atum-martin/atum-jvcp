@@ -3,18 +3,13 @@
  */
 package org.atum.jvcp;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Properties;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.config.ChannelList;

@@ -2,8 +2,6 @@ package org.atum.jvcp.account;
 
 import java.util.ArrayList;
 
-import org.atum.jvcp.model.CamSession;
-
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 21 Nov 2016 22:47:32
