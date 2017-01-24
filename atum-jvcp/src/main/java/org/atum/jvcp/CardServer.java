@@ -156,6 +156,10 @@ public class CardServer {
 	private static List<CamSession> filterReaders(EcmRequest req) {
 		ArrayList<CamSession> filtered = new ArrayList<CamSession>();
 		for(CamSession session : readers){
+			//Remove readers that do not support that cardId.
+			if(!session.hasCard(req.getCardId())){
+				continue;
+			}
 			for(int group : req.getGroups()){
 				logger.debug("filterReaders: attempting match: "+group+" "+listToStr(session.getGroups()));
 				if(session.getGroups().contains(group)){
