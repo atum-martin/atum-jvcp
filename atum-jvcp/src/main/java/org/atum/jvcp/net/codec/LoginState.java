@@ -7,6 +7,9 @@ package org.atum.jvcp.net.codec;
 
 public enum LoginState {
 
+	/**
+	 * An enum to represent the state of the login decoder for various protocols: CCcam, Newcamd.
+	 */
 	HANDSHAKE,
 	HEADER,
 	LOGIN_BLOCK_HEADER,
