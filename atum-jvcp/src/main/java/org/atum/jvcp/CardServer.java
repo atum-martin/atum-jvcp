@@ -3,22 +3,32 @@
  */
 package org.atum.jvcp;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.config.ChannelList;
 import org.atum.jvcp.config.ReaderConfig;
 import org.atum.jvcp.model.CamSession;
+import org.atum.jvcp.model.CardProfile;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.http.HttpPipeline;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -36,6 +46,8 @@ public class CardServer {
 	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
 	private static int readerRoundRobin = 0;
 
+	private static Map<Integer,CardProfile> profiles;
+
 	private static final boolean DCW_CHECKING = true;
 
 	/**
@@ -51,6 +63,8 @@ public class CardServer {
 
 		ChannelList.getSingleton();
 		AccountStore.getSingleton();
+		CardServer server = new CardServer();
+		profiles = server.loadProfiles();
 		CCcamServer server1 = new CCcamServer("cccam-server1", 12000);
 		NewcamdServer server2 = new NewcamdServer("newcamd-server1", 12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(), 8080);
@@ -136,16 +150,38 @@ public class CardServer {
 			for (Object o : pendingEcms.entrySet()) {
 				Entry<Long, EcmRequest> e = (Entry) o;
 				EcmRequest req = e.getValue();
-				if (now - req.getTimestamp() < 150) {
+				if(req.wasSentToReaders()){
+					continue;
+				}
+				CardProfile profile = profiles.get(req.getCardId());
+				int cacheWait = Integer.MAX_VALUE;
+				if(profile != null)
+					cacheWait = profile.getCacheWaitTime();
+				long timeDiff = now - req.getTimestamp();
+				if (timeDiff < cacheWait) {
 					// map is ordered no entry after this point will have
 					// expired
 					break;
 				}
+				logger.info("cache wait timeout: "+timeDiff+"ms "+req);
 				if (!sendEcmToReader(req)) {
 					logger.error("no reader found for ecm req: " + req);
 				}
 			}
 		}
+	}
+	
+	public Map<Integer,CardProfile> loadProfiles(){
+		Gson gson = new GsonBuilder().create();
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream("profiles.json");
+		CardProfile[] profiles = gson.fromJson(new InputStreamReader(is), CardProfile[].class);
+		HashMap<Integer,CardProfile> profileMap = new HashMap<Integer,CardProfile>();
+		for(CardProfile profile : profiles){
+			if(profile != null){
+				profileMap.put(profile.getCardId(), profile);
+			}
+		}
+		return profileMap;
 	}
 
 	public static EcmRequest createEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache) {
@@ -161,8 +197,9 @@ public class CardServer {
 		answer = new EcmRequest(session, cardId, provider, shareId, serviceId, ecm, false);
 		answer.setCspHash(cspHash);
 		if (!cache) {
-
 			getPendingCache().addEntry(cspHash, answer);
+		} else {
+			answer.setSentToReaders();
 		}
 		return answer;
 	}
@@ -176,6 +213,7 @@ public class CardServer {
 		List<CamSession> filteredReader = filterReaders(req);
 		if (filteredReader.size() == 0)
 			return false;
+		req.setSentToReaders();
 		CamSession session = filteredReader.get(readerRoundRobin++ % filteredReader.size());
 		session.setLastRequest(req);
 		session.getPacketSender().writeEcmRequest(req);

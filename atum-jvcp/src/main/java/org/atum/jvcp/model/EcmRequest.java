@@ -26,6 +26,7 @@ public class EcmRequest {
 	private byte[] dcw = null;
 	private int cspHash;
 	private long timestamp;
+	private boolean sentToReaders = false;
 	private CamSession session;
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 	private List<Integer> groups = new ArrayList<Integer>(3);
@@ -213,5 +214,13 @@ public class EcmRequest {
 				groups.add(group);
 			}
 		}
+	}
+
+	public boolean wasSentToReaders() {
+		return sentToReaders;
+	}
+
+	public void setSentToReaders() {
+		sentToReaders = true;
 	}
 }
