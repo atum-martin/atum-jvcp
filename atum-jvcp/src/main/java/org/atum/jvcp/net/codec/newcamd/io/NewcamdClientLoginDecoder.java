@@ -56,7 +56,6 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 		}
 		ByteBuf random14 = buffer.readBytes(14);
 		NewcamdClient client = (NewcamdClient) context.channel().attr(CAM_SESSION).get();
-		
 		byte[] desKey16 = DESUtil.desKeySpread((DESUtil.xorKey(client.getDesKey(), random14))); // loginKey
 		client.setDesKey(desKey16);
 		client.setPacketSender(new NewcamdPacketSender(client));

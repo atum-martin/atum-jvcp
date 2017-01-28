@@ -72,7 +72,6 @@ public class CCcamClientLoginDecoder extends LoginDecoder {
 		logger.debug("SHA cipher buffer len: "+sha.length);
 
 		CCcamSession session = (CCcamSession) ctx.channel().attr(CAM_SESSION).get();
-		
 		CCcamCipher encrypter = session.getEncrypter();
 		CCcamCipher decrypter = session.getDecrypter();
 		

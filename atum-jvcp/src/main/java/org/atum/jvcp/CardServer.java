@@ -8,9 +8,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
@@ -19,6 +21,7 @@ import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.config.ChannelList;
 import org.atum.jvcp.config.ReaderConfig;
+import org.atum.jvcp.model.CamClient;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.CardProfile;
 import org.atum.jvcp.model.EcmRequest;
@@ -42,6 +45,7 @@ public class CardServer {
 	private static ClusteredCache cache = new ClusteredCache();
 	private static ClusteredCache pendingEcms = new ClusteredCache();
 	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
+	private static Vector<CamClient> disconnectedReaders = new Vector<CamClient>();
 	private static int readerRoundRobin = 0;
 
 	private static Map<Integer,CardProfile> profiles;
@@ -69,7 +73,7 @@ public class CardServer {
 		ReaderConfig config = new ReaderConfig(new CamServer[] { server1, server2, });
 		addAllReaders(server1, readers);
 		addAllReaders(server2, readers);
-		
+		spawnReaderMonitorThread();
 		while(true){
 			try {
 				fireCacheWaitTimeout();
@@ -82,6 +86,35 @@ public class CardServer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static void spawnReaderMonitorThread() {
+		new Thread(){
+			public void run(){
+				List<CamClient> cleanup = new LinkedList<CamClient>();
+				while(true){
+					long time = System.currentTimeMillis();
+					
+					for(CamClient client : disconnectedReaders){
+						if(time - client.getLastDisconnect() > 500){
+							client.connect();
+							if(client.getLastDisconnect() == 0){
+								cleanup.add(client);
+							}
+						}
+					}
+					for(CamClient client : cleanup){
+						disconnectedReaders.remove(client);
+					}
+					disconnectedReaders.clear();
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}.start();	
 	}
 
 	/**
@@ -288,6 +321,12 @@ public class CardServer {
 
 	public static Map<Integer,CardProfile> getProfiles() {
 		return profiles;
+	}
+
+	public static void registerReaderDisconnect(CamClient client) {
+		if(!disconnectedReaders.contains(client)){
+			disconnectedReaders.add(client);
+		}
 	}
 
 }

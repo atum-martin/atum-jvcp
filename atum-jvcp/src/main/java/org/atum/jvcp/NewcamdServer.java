@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
 import org.atum.jvcp.net.codec.newcamd.io.NewcamdServerLoginDecoder;
@@ -110,7 +111,7 @@ public class NewcamdServer extends Thread implements CamServer {
 	 */
 	public void unregister(NewcamdSession session) {
 		if(session.isReader()){
-			return;
+			NewcamdClient client = (NewcamdClient) session;
 		}
 		logger.info("deregistering newcamd client: "+session);
 		synchronized (sessionList){

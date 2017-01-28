@@ -1,10 +1,13 @@
 package org.atum.jvcp.net.codec.newcamd;
 
+import org.apache.log4j.Logger;
+import org.atum.jvcp.CardServer;
 import org.atum.jvcp.NewcamdServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.model.CamClient;
 import org.atum.jvcp.net.ClientConnector;
 import org.atum.jvcp.net.NetworkConstants;
+import org.atum.jvcp.net.codec.cccam.CCcamClient;
 import org.atum.jvcp.net.codec.newcamd.io.NewcamdClientLoginDecoder;
 
 import io.netty.channel.Channel;
@@ -21,6 +24,8 @@ public class NewcamdClient extends NewcamdSession implements CamClient {
 	private int port;
 	private Account account;
 	NewcamdServer server;
+	private long disconnectTime = 0;
+	private Logger logger = Logger.getLogger(NewcamdClient.class);
 	
 	public NewcamdClient(String host, int port, Account account, ChannelHandlerContext context,NewcamdServer server, byte[] desKey) {
 		super(server, context, desKey);
@@ -35,6 +40,9 @@ public class NewcamdClient extends NewcamdSession implements CamClient {
 		NewcamdClient client = new NewcamdClient(host, port, account, ctx, server, desKey);
 		client.setReader(true);
 		client.connect();
+		if(client.getCtx() == null){
+			CardServer.registerReaderDisconnect(client);
+		}
 		return client;
 	}
 	
@@ -43,12 +51,24 @@ public class NewcamdClient extends NewcamdSession implements CamClient {
 	}
 
 	public void connect() {
+		logger.info("Reconnecting Newcamd reader: "+host+":"+port+" "+account);
 		Channel channel = ClientConnector.connect(host, port, account, new NewcamdPipeline(server, NewcamdClientLoginDecoder.class));
 		if(channel != null){
 			this.setCtx(channel.pipeline().firstContext());
+			disconnectTime = 0;
 			channel.attr(NetworkConstants.CAM_SESSION).set(this);
 			server.registerSession(this);
+		} else {
+			disconnect();
 		}
+	}
+
+	public void disconnect() {
+		disconnectTime = System.currentTimeMillis();
+	}
+	
+	public long getLastDisconnect() {
+		return disconnectTime;
 	}
 
 }

@@ -10,4 +10,6 @@ package org.atum.jvcp.model;
 public interface CamClient {
 
 	public void connect();
+	public void disconnect();
+	public long getLastDisconnect();
 }

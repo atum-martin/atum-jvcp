@@ -95,6 +95,15 @@ public abstract class CamSession {
 	}
 	
 	public Account getAccount(){
+		if(this.getCtx() == null){
+			System.out.println("getAccount ctx null");
+		}
+		if(this.getCtx().channel() == null){
+			System.out.println("getAccount channel null");
+		}
+		if(this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get() == null){
+			System.out.println("getAccount acc null");
+		}
 		return this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get();
 	}
 	

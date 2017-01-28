@@ -119,7 +119,7 @@ public class CCcamServer extends Thread implements CamServer {
 	public void unregister(CCcamSession session) {
 		if(session.isReader()){
 			CCcamClient client = (CCcamClient) session;
-			
+			CardServer.registerReaderDisconnect(client);
 		}
 		logger.info("deregistering cccam session: "+session);
 		synchronized (sessionList){
