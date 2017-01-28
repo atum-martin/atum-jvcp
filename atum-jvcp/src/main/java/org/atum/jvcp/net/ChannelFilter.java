@@ -1,10 +1,13 @@
 package org.atum.jvcp.net;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.model.CamSession;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelHandler.Sharable;
+
+import static org.atum.jvcp.net.NetworkConstants.*;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -23,6 +26,8 @@ public class ChannelFilter extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
-		logger.debug("channelUnregistered " + ctx.getClass().getName());
+		logger.info("channelUnregistered " + ctx.getClass().getName());
+		CamSession session = ctx.channel().attr(CAM_SESSION).get();
+		session.unregister();
 	}
 }

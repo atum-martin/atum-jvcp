@@ -79,7 +79,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 
 		NewcamdServer server = (NewcamdServer) camServer;
 		byte[] desKey16 = DESUtil.desKeySpread(DESUtil.xorKey(server.getDesKey(), random));
-		NewcamdSession session = new NewcamdSession(context, desKey16);
+		NewcamdSession session = new NewcamdSession(server, context, desKey16);
 
 		context.channel().attr(NetworkConstants.CAM_SESSION).set(session);
 		context.channel().attr(NetworkConstants.LOGIN_STATE).set(LoginState.HANDSHAKE);

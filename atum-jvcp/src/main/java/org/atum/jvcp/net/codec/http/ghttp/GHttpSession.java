@@ -33,4 +33,9 @@ public class GHttpSession extends CamSession {
 		return true;
 	}
 
+	@Override
+	public void unregister() {
+		
+	}
+
 }

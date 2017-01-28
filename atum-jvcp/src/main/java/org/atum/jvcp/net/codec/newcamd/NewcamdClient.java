@@ -17,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 public class NewcamdClient extends NewcamdSession {
 
 	public NewcamdClient(ChannelHandlerContext context,NewcamdServer server, byte[] desKey) {
-		super(context, desKey);
+		super(server, context, desKey);
 	}
 
 	public static NewcamdClient connect(NewcamdServer server, String host,int port, Account account, byte[] desKey){

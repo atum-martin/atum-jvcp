@@ -103,4 +103,18 @@ public class NewcamdServer extends Thread implements CamServer {
 			}
 		}
 	}
+
+
+	/**
+	 * @param newcamdSession
+	 */
+	public void unregister(NewcamdSession session) {
+		if(session.isReader()){
+			return;
+		}
+		logger.info("deregistering newcamd client: "+session);
+		synchronized (sessionList){
+			sessionList.remove(session);
+		}
+	}
 }

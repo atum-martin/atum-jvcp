@@ -83,4 +83,9 @@ public class CCcamSession extends CamSession {
 	public void removeCard(Card card){
 		cards.remove(card);
 	}
+
+	@Override
+	public void unregister() {
+		server.unregister(this);
+	}
 }

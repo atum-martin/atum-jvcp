@@ -111,4 +111,6 @@ public abstract class CamSession {
 		return getAccount().getGroups();
 	}
 
+	public abstract void unregister();
+
 }

@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,7 +15,6 @@ import java.util.Map.Entry;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.config.ChannelList;
@@ -148,7 +146,8 @@ public class CardServer {
 		long now = System.currentTimeMillis();
 		synchronized (pendingEcms) {
 			for (Object o : pendingEcms.entrySet()) {
-				Entry<Long, EcmRequest> e = (Entry) o;
+				@SuppressWarnings("unchecked")
+				Entry<Long, EcmRequest> e = (Entry<Long, EcmRequest>) o;
 				EcmRequest req = e.getValue();
 				
 				if(req.wasSentToReaders()){

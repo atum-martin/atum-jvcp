@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.net.NettyBootstrap;
+import org.atum.jvcp.net.codec.cccam.CCcamClient;
 import org.atum.jvcp.net.codec.cccam.CCcamPipeline;
 import org.atum.jvcp.net.codec.cccam.CCcamSession;
 import org.atum.jvcp.net.codec.cccam.io.CCcamServerLoginDecoder;
@@ -110,6 +111,20 @@ public class CCcamServer extends Thread implements CamServer {
 				if(session.isReader())
 					readers.add(session);
 			}
+		}
+	}
+
+	/**
+	 * @param session
+	 */
+	public void unregister(CCcamSession session) {
+		if(session.isReader()){
+			CCcamClient client = (CCcamClient) session;
+			return;
+		}
+		logger.info("deregistering cccam client: "+session);
+		synchronized (sessionList){
+			sessionList.remove(session);
 		}
 	}
 

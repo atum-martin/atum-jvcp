@@ -3,6 +3,7 @@
  */
 package org.atum.jvcp.net.codec.newcamd;
 
+import org.atum.jvcp.NewcamdServer;
 import org.atum.jvcp.model.CamProtocol;
 import org.atum.jvcp.model.CamSession;
 
@@ -18,11 +19,13 @@ public class NewcamdSession extends CamSession {
 	private byte[] desKey;
 	private byte[] firstDesKey;
 	private int cardId;
+	private NewcamdServer server;
 	
-	public NewcamdSession(ChannelHandlerContext context, byte[] desKey){
+	public NewcamdSession(NewcamdServer server, ChannelHandlerContext context, byte[] desKey){
 		super(context, CamProtocol.NEWCAMD);
 		this.desKey = desKey;
 		this.firstDesKey = desKey;
+		this.server = server;
 	}
 
 	public byte[] getDesKey() {
@@ -53,6 +56,11 @@ public class NewcamdSession extends CamSession {
 		if(this.cardId == cardId)
 			return true;
 		return false;
+	}
+
+	@Override
+	public void unregister() {
+		server.unregister(this);
 	}
 
 }
