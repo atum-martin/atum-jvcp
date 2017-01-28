@@ -81,6 +81,10 @@ public abstract class CamSession {
 		return context;
 	}
 	
+	public void setCtx(ChannelHandlerContext ctx){
+		this.context = ctx;
+	}
+	
 
 	public EcmRequest getLastRequest() {
 		return lastRequest;

@@ -24,7 +24,6 @@ public class CCcamServer extends Thread implements CamServer {
 	/**
 	 * Instance of log4j logger
 	 */
-	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(CCcamServer.class);
 	
 	/**
@@ -120,9 +119,9 @@ public class CCcamServer extends Thread implements CamServer {
 	public void unregister(CCcamSession session) {
 		if(session.isReader()){
 			CCcamClient client = (CCcamClient) session;
-			return;
+			
 		}
-		logger.info("deregistering cccam client: "+session);
+		logger.info("deregistering cccam session: "+session);
 		synchronized (sessionList){
 			sessionList.remove(session);
 		}

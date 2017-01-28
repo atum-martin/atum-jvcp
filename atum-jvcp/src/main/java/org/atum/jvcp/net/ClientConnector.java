@@ -19,9 +19,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 public class ClientConnector {
 
 	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger(ClientConnector.class);
+	private static Logger logger = Logger.getLogger(ClientConnector.class);
 	
-	public Channel connect(String host, int port, Account account, ChannelInitializer<SocketChannel> pipeline) {
+	public static Channel connect(String host, int port, Account account, ChannelInitializer<SocketChannel> pipeline) {
 		EventLoopGroup group = new NioEventLoopGroup();
 		try {
 			Bootstrap b = new Bootstrap();
