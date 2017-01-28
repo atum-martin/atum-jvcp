@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.CardServer;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 
 /**
@@ -14,6 +15,8 @@ import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
  */
 
 public class EcmRequest {
+
+	private static final CardProfile DEFAULT_PROFILE = new CardProfile();
 
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(EcmRequest.class);
@@ -30,6 +33,7 @@ public class EcmRequest {
 	private CamSession session;
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 	private List<Integer> groups = new ArrayList<Integer>(3);
+	private CardProfile profile = null;
 	
 	public EcmRequest(CamSession session, int cardId, int prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
@@ -58,6 +62,13 @@ public class EcmRequest {
 
 	public void setCardId(int cardId) {
 		this.cardId = cardId;
+		updateCardProfile();
+	}
+	
+	public void updateCardProfile(){
+		profile = CardServer.getProfiles().get(cardId);
+		if(profile == null)
+			profile = DEFAULT_PROFILE;
 	}
 
 	public int getProv() {
@@ -222,5 +233,9 @@ public class EcmRequest {
 
 	public void setSentToReaders() {
 		sentToReaders = true;
+	}
+
+	public CardProfile getProfile() {
+		return profile;
 	}
 }

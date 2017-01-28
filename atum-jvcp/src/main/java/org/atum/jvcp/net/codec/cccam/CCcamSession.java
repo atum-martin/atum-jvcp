@@ -67,6 +67,11 @@ public class CCcamSession extends CamSession {
 
 	@Override
 	public boolean hasCard(int cardId) {
+		for(Card card : cards){
+			if(card.getCardId() == cardId){
+				return true;
+			}
+		}
 		return false;
 	}
 	

@@ -150,13 +150,11 @@ public class CardServer {
 			for (Object o : pendingEcms.entrySet()) {
 				Entry<Long, EcmRequest> e = (Entry) o;
 				EcmRequest req = e.getValue();
+				
 				if(req.wasSentToReaders()){
 					continue;
 				}
-				CardProfile profile = profiles.get(req.getCardId());
-				int cacheWait = Integer.MAX_VALUE;
-				if(profile != null)
-					cacheWait = profile.getCacheWaitTime();
+				int cacheWait = req.getProfile().getCacheWaitTime();
 				long timeDiff = now - req.getTimestamp();
 				if (timeDiff < cacheWait) {
 					// map is ordered no entry after this point will have
@@ -178,7 +176,9 @@ public class CardServer {
 		HashMap<Integer,CardProfile> profileMap = new HashMap<Integer,CardProfile>();
 		for(CardProfile profile : profiles){
 			if(profile != null){
-				profileMap.put(profile.getCardId(), profile);
+				int cardId = Integer.parseInt(profile.getCardId()+"", 16);
+				profile.setCardId(cardId);
+				profileMap.put(cardId, profile);
 			}
 		}
 		return profileMap;
@@ -189,19 +189,21 @@ public class CardServer {
 			// no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
 		}
-		EcmRequest answer = CardServer.getPendingCache().peekCache(cspHash);
-		if (answer != null && !cache) {
-			answer.addGroups(session);
-			return answer;
+		EcmRequest request = CardServer.getPendingCache().peekCache(cspHash);
+		if (request != null && !cache) {
+			request.addGroups(session);
+			return request;
 		}
-		answer = new EcmRequest(session, cardId, provider, shareId, serviceId, ecm, false);
-		answer.setCspHash(cspHash);
+		request = new EcmRequest(session, cardId, provider, shareId, serviceId, ecm, false);
+		request.setCspHash(cspHash);
 		if (!cache) {
-			getPendingCache().addEntry(cspHash, answer);
+			getPendingCache().addEntry(cspHash, request);
+			if(request.getProfile().getCacheWaitTime() <= 0)
+				sendEcmToReader(request);
 		} else {
-			answer.setSentToReaders();
+			request.setSentToReaders();
 		}
-		return answer;
+		return request;
 	}
 
 	/**
@@ -283,6 +285,10 @@ public class CardServer {
 			logger.info("cache hit for " + session + " " + ChannelList.getChannelName(cardId, serviceId));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());
 		}
+	}
+
+	public static Map<Integer,CardProfile> getProfiles() {
+		return profiles;
 	}
 
 }

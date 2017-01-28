@@ -13,6 +13,10 @@ public class CardProfile {
 	private boolean allProviders = true;
 	private int provider = 0;
 	private int cacheWait = 0;
+	
+	public CardProfile(){
+		cardId = 0;
+	}
 
 	public int getCardId() {
 		return cardId;
@@ -20,5 +24,9 @@ public class CardProfile {
 	
 	public int getCacheWaitTime(){
 		return cacheWait;
+	}
+
+	public void setCardId(int cardId) {
+		this.cardId = cardId;
 	}
 }
