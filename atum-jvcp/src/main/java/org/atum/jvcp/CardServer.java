@@ -311,7 +311,7 @@ public class CardServer {
 	 * @param ecm
 	 */
 	public static void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
-		EcmRequest answer = handleEcmRequest(session, cardId, provider, 0, serviceId, ecm);
+		EcmRequest answer = handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 		if (answer != null && answer.hasAnswer()) {
 			logger.info("cache hit for " + session + " " + ChannelList.getChannelName(cardId, serviceId));
 			session.getPacketSender().writeEcmAnswer(answer.getDcw());

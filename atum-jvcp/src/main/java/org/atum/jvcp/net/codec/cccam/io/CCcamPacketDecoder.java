@@ -85,7 +85,10 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			String username = NetUtils.readCCcamString(payload, 20);
 
 			byte[] nodeId = new byte[8];
+			byte[] nodeId2 = new byte[8];
 			payload.readBytes(nodeId);
+			/*for(int i = 0; i < nodeId.length; i++)
+				nodeId2[i] = nodeId[7-i];*/
 			session.setNodeId(nodeId);
 			@SuppressWarnings("unused")
 			int flag = payload.readByte();
@@ -98,12 +101,12 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			}
 			break;
 		case CCcamConstants.MSG_SRV_DATA:
-			nodeId = new byte[8];
-			payload.readBytes(nodeId);
-			session.setNodeId(nodeId);
+			byte[] servNodeId = new byte[8];
+			payload.readBytes(servNodeId);
+			session.setNodeId(servNodeId);
 			version = NetUtils.readCCcamString(payload, 32);
 			build = Integer.parseInt(NetUtils.readCCcamString(payload, 32));
-			logger.info("MSG_SRV_DATA: " + version + " " + build + " " + nodeId);
+			logger.info("MSG_SRV_DATA: " + version + " " + build + " " + servNodeId);
 			break;
 		
 		case CCcamConstants.MSG_CACHE_PUSH:
