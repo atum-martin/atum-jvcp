@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,8 @@ public class CardServer {
 		addAllReaders(server1, readers);
 		addAllReaders(server2, readers);
 		spawnReaderMonitorThread();
+		
+		Thread.currentThread().setName("CacheThread");
 		while(true){
 			try {
 				fireCacheWaitTimeout();
@@ -91,22 +94,18 @@ public class CardServer {
 	private static void spawnReaderMonitorThread() {
 		new Thread(){
 			public void run(){
-				List<CamClient> cleanup = new LinkedList<CamClient>();
 				while(true){
 					long time = System.currentTimeMillis();
-					
-					for(CamClient client : disconnectedReaders){
+
+					for (Iterator<CamClient> iterator = disconnectedReaders.iterator(); iterator.hasNext();) {
+						CamClient client = iterator.next();
 						if(time - client.getLastDisconnect() > 500){
 							client.connect();
 							if(client.getLastDisconnect() == 0){
-								cleanup.add(client);
+								iterator.remove();
 							}
 						}
 					}
-					for(CamClient client : cleanup){
-						disconnectedReaders.remove(client);
-					}
-					cleanup.clear();
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
