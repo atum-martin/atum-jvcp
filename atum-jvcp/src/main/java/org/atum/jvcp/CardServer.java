@@ -106,7 +106,7 @@ public class CardServer {
 					for(CamClient client : cleanup){
 						disconnectedReaders.remove(client);
 					}
-					disconnectedReaders.clear();
+					cleanup.clear();
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
