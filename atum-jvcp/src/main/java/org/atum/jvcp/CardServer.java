@@ -148,7 +148,8 @@ public class CardServer {
 			req.setDcw(cw);
 			getCache().addEntry(cspHash, req);
 			getPendingCache().removeRequest(cspHash);
-			logger.info("ecm answer for " + ChannelList.getChannelName(req.getCardId(), req.getServiceId()) + " by " + session + " for " + req.getSessionsStr()
+			long timeDiff = System.currentTimeMillis()-req.getTimestamp();
+			logger.info("ecm answer for " + ChannelList.getChannelName(req.getCardId(), req.getServiceId()) + " "+timeDiff+"ms by " + session + " for " + req.getSessionsStr()
 					+ " sessions.");
 
 			req.fireActionListeners();

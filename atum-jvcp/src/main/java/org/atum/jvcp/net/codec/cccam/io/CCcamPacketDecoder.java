@@ -45,7 +45,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			synchronized (session) {
 				session.getDecrypter().decrypt(command);
 			}
-			command.readByte();
+			int ecmIdx = command.readByte();
 			int cmdCode = command.readByte() & 0xFF;
 			int size = command.readShort();
 
@@ -193,30 +193,14 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int serviceId = payload.readShort();
 		int ecmLength = payload.readByte() & 0xFF;
 		byte[] ecm = new byte[size - CCCAM_ECM_HEADER_LENGTH];
-		//NetUtils.readBuffer(payload, ecm, ecm.length, 0);
 		payload.readBytes(ecm);
-		//payload.readBytes(ecm);
-		//logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
-		//logger.debug("ecm req: "+Integer.toHexString(ecmLength)+" "+Integer.toHexString(size - CCCAM_ECM_HEADER_LENGTH)+" " +Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
-		/*
-		byte[] dcw = HashCache.getSingleton().readCache(cardId, serviceId, ecm);
-		if(dcw != null){
-			session.getPacketSender().writeEcmAnswer(dcw);
-		}
-		HashCache.getSingleton().addListener(cardId, serviceId, ecm, session);*/
 		long cspHash = EcmRequest.computeEcmHash(ecm);
 		//logger.info("requested client ECM: "+cspHash);
 		CardServer.handleClientEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 
 	}
-	
-	/*
-	#define CSP_HASH_SWAP(n) (((((uint32_t)(n) & 0xFF)) << 24) | \
-            ((((uint32_t)(n) & 0xFF00)) << 8) | \
-            ((((uint32_t)(n) & 0xFF0000)) >> 8) | \
-            ((((uint32_t)(n) & 0xFF000000)) >> 24))
-	*/
+
 	public static int cspHashSwap(long n){
 		return (int) (((n & 0xFFL) << 24L) | ((n & 0xFF00L) << 8L) | ((n & 0xFF0000L) >> 8L) | ((n & 0xFF000000L) >> 24L));
 	}
@@ -248,6 +232,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		for(int i = 0; i < nodeCount; i++){
 			long cacheNodeId = payload.readLong();
 		}
+		
+		testCW(cw);
 		//logger.debug(Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId));
 		
 		if(!CardServer.handleEcmAnswer(session, cspHash, cw, cardId, serviceId)){
@@ -256,9 +242,25 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			req.setDcw(cw);
 			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
-		//HashCache.getSingleton().pushCache(cardId, serviceId, ecmd5, cw);
 		
 		
+	}
+
+	/**
+	 * @param cw
+	 */
+	private void testCW(byte[] cw) {
+		boolean test1 = false;
+		boolean test2 = false;
+		for(int i = 0; i < 8; i++){
+			if(cw[i] != 0)
+				test1 = true;
+			if(cw[8+i] != 0)
+				test2 = true;
+		}
+		boolean failed = (test1 && test2) || (!test1 && !test2);
+		if(failed)
+			logger.info("Bad cache push recieved "+NetUtils.bytesToString(cw, 0, 16));
 	}
 	
 }
