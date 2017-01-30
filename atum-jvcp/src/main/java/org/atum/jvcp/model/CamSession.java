@@ -22,6 +22,7 @@ public abstract class CamSession {
 
 	private int packetCommandCode;
 	private int packetSize;
+	private int ecmIdx;
 	
 	private long lastPing = System.currentTimeMillis();
 	private CamProtocol protocol;
@@ -47,9 +48,10 @@ public abstract class CamSession {
 		this.isReader = isReader;
 	}
 	
-	public void setCurrentPacket(int cmdCode, int size) {
+	public void setCurrentPacket(int cmdCode, int size, int ecmIdx) {
 		this.packetCommandCode = cmdCode;
 		this.packetSize = size;
+		this.ecmIdx = ecmIdx;
 	}
 	
 	public int getPacketCode(){
@@ -122,6 +124,10 @@ public abstract class CamSession {
 	 */
 	public ArrayList<Integer> getGroups() {
 		return getAccount().getGroups();
+	}
+	
+	public int getEcmIdx() {
+		return ecmIdx;
 	}
 
 	public abstract void unregister();

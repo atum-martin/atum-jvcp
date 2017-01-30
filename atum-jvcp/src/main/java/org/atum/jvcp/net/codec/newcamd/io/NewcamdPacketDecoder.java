@@ -101,7 +101,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 				return null;
 			}
 			int size = in.readShort();
-			session.setCurrentPacket(-1, size);
+			session.setCurrentPacket(-1, size, -1);
 
 			if (in.readableBytes() < size) {
 				ctx.channel().attr(NetworkConstants.PACKET_STATE).set(PacketState.PAYLOAD);

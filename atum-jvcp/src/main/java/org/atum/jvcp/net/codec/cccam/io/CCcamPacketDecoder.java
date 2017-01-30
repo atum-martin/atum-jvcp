@@ -50,7 +50,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			int size = command.readShort();
 
 			//logger.info("packet recieved: " + cmdCode + " " + size);
-			session.setCurrentPacket(cmdCode, size);
+			session.setCurrentPacket(cmdCode, size, ecmIdx);
 
 			if (in.readableBytes() < size) {
 				//logger.info("packet payload too small: " + cmdCode + " " + size);
@@ -166,6 +166,9 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 
 	@SuppressWarnings("unused")
 	private void decodeCCcamEcm(CCcamSession session, ByteBuf payload, int size) {
+		
+		//This value needs to be used instead of getLastRequest
+		int ecmIdx = session.getEcmIdx();
 		if(session.isReader()){
 			byte[] dcw = new byte[16];
 			payload.readBytes(dcw);
