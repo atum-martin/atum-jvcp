@@ -24,7 +24,6 @@ public class NewcamdServer extends Thread implements CamServer {
 	/**
 	 * Instance of log4j logger
 	 */
-	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(NewcamdServer.class);
 	
 	/**

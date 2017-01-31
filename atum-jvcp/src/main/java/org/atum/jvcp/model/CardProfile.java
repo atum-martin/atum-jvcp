@@ -29,4 +29,12 @@ public class CardProfile {
 	public void setCardId(int cardId) {
 		this.cardId = cardId;
 	}
+	
+	public int getProvider(){
+		return provider;
+	}
+	
+	public boolean allProviders(){
+		return allProviders;
+	}
 }

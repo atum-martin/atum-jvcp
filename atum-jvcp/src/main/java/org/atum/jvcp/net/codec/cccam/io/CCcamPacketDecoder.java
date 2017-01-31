@@ -85,10 +85,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			String username = NetUtils.readCCcamString(payload, 20);
 
 			byte[] nodeId = new byte[8];
-			byte[] nodeId2 = new byte[8];
 			payload.readBytes(nodeId);
-			/*for(int i = 0; i < nodeId.length; i++)
-				nodeId2[i] = nodeId[7-i];*/
 			session.setNodeId(nodeId);
 			@SuppressWarnings("unused")
 			int flag = payload.readByte();

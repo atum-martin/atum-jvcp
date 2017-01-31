@@ -1,7 +1,7 @@
 [
   {
    "cardId": 963,
-   "allProviders": false,
+   "allProviders": true,
    "cacheWait": 150,
    "provider": 0
   },
