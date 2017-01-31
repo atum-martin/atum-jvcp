@@ -7,7 +7,6 @@ import org.atum.jvcp.account.Account;
 import org.atum.jvcp.model.CamClient;
 import org.atum.jvcp.net.ClientConnector;
 import org.atum.jvcp.net.NetworkConstants;
-import org.atum.jvcp.net.codec.cccam.CCcamClient;
 import org.atum.jvcp.net.codec.newcamd.io.NewcamdClientLoginDecoder;
 
 import io.netty.channel.Channel;

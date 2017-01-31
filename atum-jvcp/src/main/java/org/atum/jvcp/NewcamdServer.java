@@ -112,6 +112,7 @@ public class NewcamdServer extends Thread implements CamServer {
 	public void unregister(NewcamdSession session) {
 		if(session.isReader()){
 			NewcamdClient client = (NewcamdClient) session;
+			CardServer.registerReaderDisconnect(client);
 		}
 		logger.info("deregistering newcamd client: "+session);
 		synchronized (sessionList){
