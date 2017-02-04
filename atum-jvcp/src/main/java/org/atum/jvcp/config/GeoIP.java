@@ -23,7 +23,11 @@ public class GeoIP {
 		String line;
 		try {
 			while ((line = br.readLine()) != null) {
+				if(!line.contains(","))
+					continue;
 				String[] parts = line.replaceAll("\"", "").split(",");
+				if(parts.length < 5)
+					continue;
 				long low = Long.parseLong(parts[2]);
 				long high = Long.parseLong(parts[3]);
 				String countryCode = parts[4];
