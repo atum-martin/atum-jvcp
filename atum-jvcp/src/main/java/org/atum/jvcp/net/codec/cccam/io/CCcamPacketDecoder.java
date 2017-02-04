@@ -158,7 +158,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		Card card = new Card(cardId, shareId, nodeId, providers, hopCount, reshare);
 		session.addCard(card);
-		logger.info("Decoded new caid: 0x"+Integer.toHexString(cardId)+" "+length+" "+providers+" "+nodeCount);
+		logger.info("Decoded new caid: 0x"+Integer.toHexString(cardId)+" "+length+" "+nodeCount+" "+session.getCountryCode());
 	}
 
 	@SuppressWarnings("unused")

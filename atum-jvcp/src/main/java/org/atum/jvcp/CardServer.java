@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.cache.ClusteredCache;
 import org.atum.jvcp.config.ChannelList;
+import org.atum.jvcp.config.GeoIP;
 import org.atum.jvcp.config.ReaderConfig;
 import org.atum.jvcp.model.CamClient;
 import org.atum.jvcp.model.CamSession;
@@ -46,6 +47,7 @@ public class CardServer {
 	private static ClusteredCache pendingEcms = new ClusteredCache();
 	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
 	private static Vector<CamClient> disconnectedReaders = new Vector<CamClient>();
+	private static GeoIP geo = new GeoIP();
 	private static int readerRoundRobin = 0;
 
 	private static Map<Integer,CardProfile> profiles;
@@ -62,7 +64,7 @@ public class CardServer {
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.INFO);
-
+		geo.readDB();
 		ChannelList.getSingleton();
 		AccountStore.getSingleton();
 		CardServer server = new CardServer();
@@ -326,6 +328,10 @@ public class CardServer {
 		if(!disconnectedReaders.contains(client)){
 			disconnectedReaders.add(client);
 		}
+	}
+
+	public static GeoIP getGeoIP() {
+		return geo;
 	}
 
 }

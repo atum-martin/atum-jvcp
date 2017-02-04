@@ -18,4 +18,5 @@ public class NetworkConstants {
 	public static final AttributeKey<CamSession> CAM_SESSION = AttributeKey.newInstance("CAM_SESSION");
 	public static final AttributeKey<PacketState> PACKET_STATE = AttributeKey.newInstance("PACKET_STATE");
 	public static final AttributeKey<Account> ACCOUNT = AttributeKey.newInstance("ACCOUNT");
+	public static final AttributeKey<String> COUNTRY_CODE = AttributeKey.newInstance("COUNTRY_CODE");
 }

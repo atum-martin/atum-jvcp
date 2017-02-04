@@ -1,7 +1,12 @@
 package org.atum.jvcp.model;
 
+import static org.atum.jvcp.net.NetworkConstants.COUNTRY_CODE;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 
+import org.atum.jvcp.CardServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.Packet;
@@ -30,6 +35,9 @@ public abstract class CamSession {
 	public CamSession(ChannelHandlerContext context, CamProtocol protocol) {
 		this.context = context;
 		this.protocol = protocol;
+		if(context != null){
+			updateCountryCode();
+		}
 	}
 
 	public PacketSenderInterface getPacketSender(){
@@ -85,6 +93,9 @@ public abstract class CamSession {
 	
 	public void setCtx(ChannelHandlerContext ctx){
 		this.context = ctx;
+		if(context != null){
+			updateCountryCode();
+		}
 	}
 	
 
@@ -97,16 +108,18 @@ public abstract class CamSession {
 	}
 	
 	public Account getAccount(){
-		if(this.getCtx() == null){
-			System.out.println("getAccount ctx null");
-		}
-		if(this.getCtx().channel() == null){
-			System.out.println("getAccount channel null");
-		}
-		if(this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get() == null){
-			System.out.println("getAccount acc null");
-		}
 		return this.getCtx().channel().attr(NetworkConstants.ACCOUNT).get();
+	}
+	
+	public String getCountryCode(){
+		return this.getCtx().channel().attr(NetworkConstants.COUNTRY_CODE).get();
+	}
+	
+	public void updateCountryCode(){
+		InetSocketAddress socketAddress = (InetSocketAddress) getCtx().channel().remoteAddress();
+	    InetAddress inetaddress = socketAddress.getAddress();
+	    String ip = inetaddress.getHostAddress();
+	    getCtx().channel().attr(COUNTRY_CODE).set(CardServer.getGeoIP().getCountry(ip));
 	}
 	
 	public String toString(){

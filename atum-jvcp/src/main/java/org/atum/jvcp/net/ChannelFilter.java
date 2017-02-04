@@ -21,7 +21,8 @@ public class ChannelFilter extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-		logger.debug("channelRegistered " + ctx.getClass().getName());
+		logger.info("channelRegistered " + ctx.getClass().getName());
+		
 	}
 
 	@Override
