@@ -95,7 +95,7 @@ public class ChannelList {
 	public void addToMap(int cardId, int serviceId, String channelName){
 		String channelId = Integer.toHexString(cardId)+":"+Integer.toHexString(serviceId);
 		channelMap.put(channelId, channelName);
-		logger.info(channelId+" "+channelName);
+		//logger.info(channelId+" "+channelName);
 	}
 
 	/**
