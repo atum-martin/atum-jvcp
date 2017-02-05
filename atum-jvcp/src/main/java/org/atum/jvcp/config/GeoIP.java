@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.LinkedList;
 
 /**
@@ -18,6 +19,7 @@ public class GeoIP {
 	private LinkedList<CountryId> geoIP = new LinkedList<CountryId>();
 
 	public void readDB() {
+		//http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream("geoip.db.csv");
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		String line;
