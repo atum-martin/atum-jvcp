@@ -1,12 +1,6 @@
 package org.atum.jvcp.net;
 
-import static org.atum.jvcp.net.NetworkConstants.COUNTRY_CODE;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
 import org.apache.log4j.Logger;
-import org.atum.jvcp.CardServer;
 import org.atum.jvcp.account.Account;
 
 import io.netty.bootstrap.Bootstrap;
