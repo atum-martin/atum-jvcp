@@ -11,4 +11,9 @@
    "password": "password789",
    "groups": [ 1 ]
   },
+  {
+   "username": "testuser1",
+   "password": "dsu98ds",
+   "groups": [ 2 ]
+  },
 ]
