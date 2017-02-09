@@ -11,4 +11,15 @@
    "desKey": "01 02 03 04 05 06 07 08 09 10 11 12 13 14",
    "groups": [ 1 ]
   },
+  {
+   "name": "testcase-1",
+   "username": "user99",
+   "password": "password789",
+   "protocol": "cccam",
+   "host": "127.0.0.1",
+   "port": 12000,
+   "server": "server1",
+   "desKey": "01 02 03 04 05 06 07 08 09 10 11 12 13 14",
+   "groups": [ 1 ]
+  },
 ]
