@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
 import org.atum.jvcp.net.NettyBootstrap;
 import org.atum.jvcp.net.codec.NetUtils;
+import org.atum.jvcp.net.codec.camd35.Camd35Session;
 import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
 import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
 import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
@@ -29,7 +30,7 @@ public class Camd35Server extends Thread implements CamServer {
 	/**
 	 * A list which contains all open Camd35 readers and clients.
 	 */
-	private ArrayList<CamSession> sessionList = new ArrayList<CamSession>();
+	private ArrayList<Camd35Session> sessionList = new ArrayList<Camd35Session>();
 	
 	/**
 	 * Creates a new NewcamdServer server that will listen on a specified port.
@@ -65,11 +66,11 @@ public class Camd35Server extends Thread implements CamServer {
 	 * If this time exceeds 30 seconds send a keep alive packet. 
 	 */
 	private void sendKeepAlives() {
-		/*for(NewcamdSession session : sessionList){
+		for(Camd35Session session : sessionList){
 			if(session.getLastKeepalive() > 30000){
 				session.keepAlive();
 			}
-		}*/
+		}
 	}
 
 	/* (non-Javadoc)
@@ -77,7 +78,7 @@ public class Camd35Server extends Thread implements CamServer {
 	 */
 	public void registerSession(CamSession session) {
 		/*synchronized(sessionList){
-			sessionList.add((NewcamdSession) session);
+			sessionList.add((Camd35Session) session);
 		}*/
 	}
 
@@ -94,12 +95,12 @@ public class Camd35Server extends Thread implements CamServer {
 	/**
 	 * @param newcamdSession
 	 */
-	/*public void unregister(NewcamdSession session) {
+	/*public void unregister(Camd35Session session) {
 		if(session.isReader()){
-			NewcamdClient client = (NewcamdClient) session;
+			Camd35Session client = (Camd35Session) session;
 			CardServer.registerReaderDisconnect(client);
 		}
-		logger.info("deregistering newcamd client: "+session);
+		logger.info("deregistering Camd35Session client: "+session);
 		synchronized (sessionList){
 			sessionList.remove(session);
 		}
