@@ -7,13 +7,7 @@ import java.util.ArrayList;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.model.CamSession;
-import org.atum.jvcp.net.NettyBootstrap;
-import org.atum.jvcp.net.codec.NetUtils;
 import org.atum.jvcp.net.codec.camd35.Camd35Session;
-import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
-import org.atum.jvcp.net.codec.newcamd.NewcamdPipeline;
-import org.atum.jvcp.net.codec.newcamd.NewcamdSession;
-import org.atum.jvcp.net.codec.newcamd.io.NewcamdServerLoginDecoder;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
