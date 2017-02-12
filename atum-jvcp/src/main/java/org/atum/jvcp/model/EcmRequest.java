@@ -21,6 +21,9 @@ public class EcmRequest {
 	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(EcmRequest.class);
 	
+	/**
+	 * Represents the card Id used by the provider to decode the ecm into a CW.
+	 */
 	private int cardId;
 	private int prov;
 	private int shareId;
