@@ -14,6 +14,8 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public class Camd35Session extends CamSession {
 
+	private boolean udp = true;
+	
 	/**
 	 * @param context
 	 * @param protocol
