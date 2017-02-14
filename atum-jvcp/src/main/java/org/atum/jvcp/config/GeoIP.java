@@ -41,7 +41,7 @@ public class GeoIP {
 
 	public String getCountry(long ip) {
 		for (CountryId geo : geoIP) {
-			if (ip >= geo.low && ip <= geo.high) {
+			if (ip >= geo.ipValLow && ip <= geo.ipValHigh) {
 				return geo.countryCode;
 			}
 		}
@@ -67,12 +67,12 @@ public class GeoIP {
 	}
 
 	private class CountryId {
-		private long low, high;
+		private long ipValLow, ipValHigh;
 		private String countryCode;
 
 		public CountryId(long low, long high, String countryCode) {
-			this.low = low;
-			this.high = high;
+			this.ipValLow = low;
+			this.ipValHigh = high;
 			this.countryCode = countryCode;
 		}
 	}
