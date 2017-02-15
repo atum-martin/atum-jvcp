@@ -16,7 +16,7 @@ public class HtmlResource {
 	private byte[] content;
 	
 	public HtmlResource(String source){
-		System.out.println("loading resource: "+source);
+		//System.out.println("loading resource: "+source);
 		InputStream is = this.getClass().getClassLoader().getResourceAsStream(source);
 		if(is == null){
 			this.content = null;
