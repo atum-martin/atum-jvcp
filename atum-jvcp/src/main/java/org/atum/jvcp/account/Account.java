@@ -14,6 +14,9 @@ public class Account {
 	 * poor CCcam implementation this must be kept in plaintext.
 	 */
 	private String username, password, name;
+	/**
+	* A boolean value representing if this user has access to external / local readers. A value of true indicates they may only access the cache.
+	*/
 	private boolean cache = false;
 	
 	/**
@@ -60,12 +63,16 @@ public class Account {
 		return password;
 	}
 	
+	/**
+	* @param name Sets the nickname which will be associted with this account that appears in UIs and logs.
+	*/
 	public void setName(String name){
 		this.name = name;
 	}
 
 	/**
-	 * @return
+	 * Returns the groups associated with this account.
+	 * @return An ArrayList of groupIds associated with the account.
 	 */
 	public ArrayList<Integer> getGroups() {
 		return groups;
