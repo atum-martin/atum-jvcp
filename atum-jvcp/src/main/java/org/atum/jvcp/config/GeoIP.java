@@ -7,7 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
@@ -15,7 +17,7 @@ import java.util.LinkedList;
  */
 public class GeoIP {
 
-	private LinkedList<CountryId> geoIP = new LinkedList<CountryId>();
+	private ArrayList<CountryId> geoIP = new ArrayList<CountryId>();
 
 	public void readDB() {
 		//http://geolite.maxmind.com/download/geoip/database/GeoIPCountryCSV.zip
@@ -37,15 +39,29 @@ public class GeoIP {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		Collections.sort(geoIP, new Comparator<CountryId>(){
+			public int compare(CountryId c1, CountryId c2) {
+				if(c1.ipValHigh == c2.ipValHigh && c1.ipValLow == c1.ipValLow){
+					return 0;
+				} else if(c1.ipValHigh > c2.ipValHigh){
+					return 1;
+				} else {
+					return -1;
+				}
+			}	
+		});
 	}
 
 	public String getCountry(long ip) {
-		for (CountryId geo : geoIP) {
+		int index = Collections.binarySearch(geoIP, ip);
+		/*for (CountryId geo : geoIP) {
 			if (ip >= geo.ipValLow && ip <= geo.ipValHigh) {
 				return geo.countryCode;
 			}
-		}
-		return null;
+		}*/
+		if(index == -1)
+			return null;
+		return geoIP.get(index).countryCode;
 	}
 
 	public String getCountry(String ip) {
@@ -66,7 +82,7 @@ public class GeoIP {
 		return result;
 	}
 
-	private class CountryId {
+	private class CountryId implements Comparable<Long> {
 		private long ipValLow, ipValHigh;
 		private String countryCode;
 
@@ -74,6 +90,16 @@ public class GeoIP {
 			this.ipValLow = low;
 			this.ipValHigh = high;
 			this.countryCode = countryCode;
+		}
+
+		public int compareTo(Long ip) {
+			if (ip >= ipValLow && ip <= ipValHigh) {
+				return 0;
+			} if(ip < ipValLow){
+				return -1;
+			} else {
+				return 1;
+			}
 		}
 	}
 }
