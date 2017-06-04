@@ -34,7 +34,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		}
 		handlePacket(session, packet);
 		packet.getPayload().release();
-		in.release();
+		packet.getHeaders().release();
 	}
 
 	private void handlePacket(NewcamdSession session, NewcamdPacket packet) {

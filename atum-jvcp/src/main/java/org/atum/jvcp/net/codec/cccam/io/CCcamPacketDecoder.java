@@ -48,7 +48,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			int ecmIdx = command.readByte();
 			int cmdCode = command.readByte() & 0xFF;
 			int size = command.readShort();
-
+			command.release();
 			//logger.info("packet recieved: " + cmdCode + " " + size);
 			session.setCurrentPacket(cmdCode, size, ecmIdx);
 
@@ -74,7 +74,6 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			payload.release();
 			break;
 		}
-		in.release();
 	}
 
 	private void handlePacket(CCcamSession session, int cmdCode, int size, ByteBuf payload) {
