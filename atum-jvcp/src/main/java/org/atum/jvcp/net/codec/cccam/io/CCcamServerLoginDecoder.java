@@ -10,9 +10,11 @@ import io.netty.channel.ChannelHandlerContext;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.CCcamServer;
+import org.atum.jvcp.CardServer;
 import org.atum.jvcp.account.Account;
 import org.atum.jvcp.account.AccountStore;
 import org.atum.jvcp.model.Card;
+import org.atum.jvcp.model.CardProfile;
 import org.atum.jvcp.net.LoginDecoder;
 import org.atum.jvcp.net.NetworkConstants;
 import org.atum.jvcp.net.codec.LoginState;
@@ -178,9 +180,14 @@ public class CCcamServerLoginDecoder extends LoginDecoder {
 		session.setPacketSender(sender);
 		//sender.writeCliData();
 		sender.writeSrvData();
+		
+		for(Card card : CardServer.getCards()){
+			sender.writeCard(card);
+		}
+		/*
 		Random ra = new Random();
 		for (int i = 0 ; i < 1; i++)
-			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt(),new int[]{0,}, 0, 1));
+			sender.writeCard(new Card(0x963,ra.nextInt(),ra.nextInt(),new int[]{0,}, 0, 1));*/
 		
 		
 		

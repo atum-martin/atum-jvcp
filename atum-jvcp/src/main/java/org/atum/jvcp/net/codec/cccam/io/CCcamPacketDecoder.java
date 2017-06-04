@@ -259,8 +259,8 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 				test2 = true;
 		}
 		boolean failed = (test1 && test2) || (!test1 && !test2);
-		if(failed)
-			logger.info("Bad cache push recieved "+NetUtils.bytesToString(cw, 0, 16));
+		//if(failed)
+		//	logger.info("Bad cache push recieved "+NetUtils.bytesToString(cw, 0, 16));
 	}
 	
 }

@@ -10,5 +10,6 @@ public interface PacketSenderInterface {
 	public void writeEcmAnswer(byte[] dcw);
 	public void writeEcmRequest(EcmRequest req);
 	public void writeFailedEcm();
+	public void writeCard(Card card);
 
 }

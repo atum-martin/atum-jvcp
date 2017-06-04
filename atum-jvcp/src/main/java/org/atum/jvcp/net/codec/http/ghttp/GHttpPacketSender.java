@@ -7,6 +7,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import org.apache.log4j.Logger;
+import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.codec.NetUtils;
@@ -64,6 +65,14 @@ public class GHttpPacketSender implements PacketSenderInterface {
 	 */
 	public void writeFailedEcm() {
 		session.writeAndFlush(new DefaultFullHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE));
+	}
+
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.model.PacketSenderInterface#writeCard(org.atum.jvcp.model.Card)
+	 */
+	public void writeCard(Card card) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

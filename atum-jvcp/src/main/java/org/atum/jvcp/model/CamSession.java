@@ -84,7 +84,9 @@ public abstract class CamSession {
 	}
 	
 	public ChannelFuture write(Packet packet){
-		return context.channel().writeAndFlush(packet);
+		synchronized(this){
+			return context.channel().writeAndFlush(packet);
+		}
 	}	
 
 	public ChannelHandlerContext getCtx() {

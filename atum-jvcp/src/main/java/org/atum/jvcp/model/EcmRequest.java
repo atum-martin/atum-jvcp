@@ -70,8 +70,9 @@ public class EcmRequest {
 	
 	public void updateCardProfile(){
 		profile = CardServer.getProfiles().get(cardId);
-		if(profile == null)
+		if(profile == null){
 			profile = DEFAULT_PROFILE;
+		}
 	}
 
 	public int getProv() {
@@ -240,5 +241,9 @@ public class EcmRequest {
 
 	public CardProfile getProfile() {
 		return profile;
+	}
+	
+	public String toString(){
+		return cardId+":"+serviceId;
 	}
 }

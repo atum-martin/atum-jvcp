@@ -5,6 +5,7 @@ package org.atum.jvcp.net.codec.newcamd.io;
 
 import org.apache.log4j.Logger;
 import org.atum.jvcp.crypto.DESUtil;
+import org.atum.jvcp.model.Card;
 import org.atum.jvcp.model.EcmRequest;
 import org.atum.jvcp.model.PacketSenderInterface;
 import org.atum.jvcp.net.codec.newcamd.NewcamdClient;
@@ -92,6 +93,14 @@ public class NewcamdPacketSender implements PacketSenderInterface {
 	 * @see org.atum.jvcp.model.PacketSenderInterface#writeFailedEcm()
 	 */
 	public void writeFailedEcm() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.atum.jvcp.model.PacketSenderInterface#writeCard(org.atum.jvcp.model.Card)
+	 */
+	public void writeCard(Card card) {
 		// TODO Auto-generated method stub
 		
 	}

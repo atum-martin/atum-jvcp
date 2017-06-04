@@ -29,6 +29,7 @@ public class ChannelFilter extends ChannelInboundHandlerAdapter {
 	public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
 		logger.info("channelUnregistered " + ctx.getClass().getName());
 		CamSession session = ctx.channel().attr(CAM_SESSION).get();
-		session.unregister();
+		if(session != null)
+			session.unregister();
 	}
 }
