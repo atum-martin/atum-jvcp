@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.atum.jvcp.CardServer;
 import org.atum.jvcp.net.codec.cccam.io.CCcamPacketDecoder;
 
+import io.netty.buffer.ByteBuf;
+
 /**
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 30 Nov 2016 23:34:34
@@ -29,6 +31,7 @@ public class EcmRequest {
 	private int shareId;
 	private int serviceId;
 	private byte[] ecm;
+	private int ecmLen;
 	private byte[] dcw = null;
 	private int cspHash;
 	private long timestamp;
@@ -37,6 +40,8 @@ public class EcmRequest {
 	private List<CamSession> sessions = Collections.synchronizedList(new LinkedList<CamSession>());
 	private List<Integer> groups = new ArrayList<Integer>(3);
 	private CardProfile profile = null;
+	private byte[] ecmMD5 = null;
+	private int cacheHopCount;
 	
 	public EcmRequest(CamSession session, int cardId, int prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
@@ -245,5 +250,45 @@ public class EcmRequest {
 	
 	public String toString(){
 		return cardId+":"+serviceId;
+	}
+
+	public void setEcmLength(int ecmSize) {
+		ecmLen = ecmSize;
+	}
+
+	/**
+	 * @return
+	 */
+	public int getEcmLength() {
+		//Cache Push contains ecm[0] so length will generally be at least 1.
+		if(ecm != null && ecm.length > 1){
+			return ecm.length;
+		}
+		return ecmLen;
+	}
+
+	/**
+	 * @param ecmMD5
+	 */
+	public void setEcmMD5(byte[] ecmMD5) {
+		this.ecmMD5 = ecmMD5;
+	}
+
+	/**
+	 * @param nodeCount
+	 */
+	public void setCacheNodeCount(int nodeCount) {
+		this.cacheHopCount = nodeCount;
+	}
+
+	/**
+	 * @return
+	 */
+	public byte[] getEcmMD5() {
+		return ecmMD5;
+	}
+
+	public int getCacheNodeCount() {
+		return cacheHopCount;
 	}
 }

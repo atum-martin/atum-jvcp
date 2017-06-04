@@ -207,7 +207,6 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 	
 	DescriptiveStatistics stats = new DescriptiveStatistics();
 
-	@SuppressWarnings("unused")
 	private void decodeCCcamCachePush(CCcamSession session, ByteBuf payload) {
 		int cardId = payload.readShort();
 		int provider = payload.readInt();
@@ -215,6 +214,13 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		int serviceId = payload.readShort();
 		int ecmSize = payload.readShort();
 		int returnCode = payload.readByte();
+		/*
+ECM rc codes:
+#define E_FOUND         0
+#define E_CACHE1        1
+#define E_CACHE2        2
+#define E_CACHEEX       3
+		 */
 		payload.readByte();
 		payload.readByte();
 		payload.readByte();
@@ -238,8 +244,11 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 		
 		if(!CardServer.handleEcmAnswer(session, cspHash, cw, cardId, serviceId)){
 			//answer was not handled. No entry existed in any cache.
-			EcmRequest req = CardServer.createEcmRequest(session, cardId, provider, (int) nodeId, serviceId,  new byte[1], cspHash, true);
+			EcmRequest req = CardServer.createEcmRequest(session, cardId, provider, (int) nodeId, serviceId,  new byte[]{ (byte) ecm0 }, cspHash, true);
 			req.setDcw(cw);
+			req.setEcmLength(ecmSize);
+			req.setEcmMD5(ecmMD5);
+			req.setCacheNodeCount(nodeCount);
 			CardServer.getCache().addEntry(req.getCspHash(), req);
 		}
 		

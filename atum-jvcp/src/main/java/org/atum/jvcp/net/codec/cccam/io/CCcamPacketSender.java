@@ -117,6 +117,30 @@ public class CCcamPacketSender implements PacketSenderInterface {
 			}
 		});
 	}
+	
+	public void writeEcmCachePush(EcmRequest ecm){
+		ByteBuf out = Unpooled.buffer(65+(ecm.getCacheNodeCount()*4));
+		out.writeShort(ecm.getCardId());
+		out.writeInt(ecm.getProv());
+		out.writeInt(0);
+		out.writeShort(ecm.getServiceId());
+		out.writeShort(ecm.getEcmLength());
+		out.writeByte(3);
+		out.writeByte(0);
+		out.writeByte(0);
+		out.writeByte(0);
+		//cycle time
+		out.writeByte(0);
+		out.writeByte(ecm.getEcm()[0]);
+		out.writeBytes(ecm.getEcmMD5());
+		out.writeInt(ecm.getCspHash());
+		out.writeBytes(ecm.getDcw());
+		out.writeByte(ecm.getCacheNodeCount()+1);
+		out.writeBytes(session.getServer().getNodeId());
+		for(int i = 0; i < ecm.getCacheNodeCount(); i++){
+			out.writeLong(0);
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.atum.jvcp.model.PacketSenderInterface#writeFailedEcm()
