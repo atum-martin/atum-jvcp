@@ -100,6 +100,7 @@ public class NewcamdServerLoginDecoder extends LoginDecoder {
 		}
 		String username = loginPacket.readStr();
 		final String cryptedPass = loginPacket.readStr();
+		loginPacket.getPayload().release();
 		logger.info("newcamd login: " + username+" "+cryptedPass);
 		Account acc = AccountStore.getSingleton().getAccount(username);
 		if (acc == null/*

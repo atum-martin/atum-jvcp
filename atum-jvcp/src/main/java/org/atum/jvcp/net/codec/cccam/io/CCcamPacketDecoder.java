@@ -74,6 +74,7 @@ public class CCcamPacketDecoder extends ByteToMessageDecoder {
 			payload.release();
 			break;
 		}
+		in.release();
 	}
 
 	private void handlePacket(CCcamSession session, int cmdCode, int size, ByteBuf payload) {
