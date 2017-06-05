@@ -42,6 +42,8 @@ public class EcmRequest {
 	private CardProfile profile = null;
 	private byte[] ecmMD5 = null;
 	private int cacheHopCount;
+
+	private ByteBuf cachePushBuffer = null;
 	
 	public EcmRequest(CamSession session, int cardId, int prov, int shareId, int serviceId, byte[] ecm, boolean computeHash) {
 		this.setCardId(cardId);
@@ -290,5 +292,16 @@ public class EcmRequest {
 
 	public int getCacheNodeCount() {
 		return cacheHopCount;
+	}
+
+	/**
+	 * @param out
+	 */
+	public void setCachePushBuffer(ByteBuf out) {
+		this.cachePushBuffer  = out;
+	}
+	
+	public ByteBuf getCachePushBuffer() {
+		return cachePushBuffer;
 	}
 }
