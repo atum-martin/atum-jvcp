@@ -76,7 +76,7 @@ public class GHttpHandler {
 		@SuppressWarnings("unused")
 		int ecm0 = Integer.parseInt(parts[offset++], 16) & 0xFF;
 		int cspHash = (int)Long.parseLong(parts[offset++], 16);
-		EcmRequest ecm = CardServer.getCache().peekCache(cspHash);
+		EcmRequest ecm = CardServer.getInstance().getCache().peekCache(cspHash);
 		if(ecm == null){
 			logger.debug("no ecm found in cache: "+cspHash);
 			session.getPacketSender().writeFailedEcm();
@@ -140,7 +140,7 @@ public class GHttpHandler {
 		byte[] ecm = new byte[contentLength];
 		req.content().readBytes(ecm);
 		logger.debug("ecm hex dump: "+NetUtils.bytesToString(ecm,0,ecm.length));
-		CardServer.handleClientEcmRequest(session, cardId, provider, 0, serviceId, ecm);
+		CardServer.getInstance().handleClientEcmRequest(session, cardId, provider, 0, serviceId, ecm);
 	}
 
 	/**

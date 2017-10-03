@@ -40,7 +40,7 @@ public class NewcamdClient extends NewcamdSession implements CamClient {
 		client.setReader(true);
 		client.connect();
 		if(client.getCtx() == null){
-			CardServer.registerReaderDisconnect(client);
+			CardServer.getInstance().registerReaderDisconnect(client);
 		}
 		return client;
 	}

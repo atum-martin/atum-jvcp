@@ -31,12 +31,15 @@ public class CCcamServer extends Thread implements CamServer {
 	 */
 	private ArrayList<CCcamSession> sessionList = new ArrayList<CCcamSession>();
 	
+	private CardServer cardserver;
+	
 	/**
 	 * Creates a new CCcam server that will listen on a specified port.
 	 * 
 	 * @param port The port number the CCcam server will bind to.
 	 */
-	public CCcamServer(String name, int port) {	
+	public CCcamServer(CardServer cardserver, String name, int port) {	
+		this.cardserver = cardserver;
 		this.setName(name);
 		NettyBootstrap.listenTcp(new CCcamPipeline(this, CCcamServerLoginDecoder.class),port);
 		this.start();	
@@ -74,9 +77,9 @@ public class CCcamServer extends Thread implements CamServer {
 	 * Creates a default instance of CCcam server that listens on port 12000.
 	 * @param args Not used.
 	 */
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		new CCcamServer("cccam-server1",12000);
-	}
+	}*/
 
 	/**
 	 * Adds a {@link CCcamSession} to the list of sessions maintained as part of the CCcam server.
@@ -119,7 +122,7 @@ public class CCcamServer extends Thread implements CamServer {
 	public void unregister(CCcamSession session) {
 		if(session.isReader()){
 			CCcamClient client = (CCcamClient) session;
-			CardServer.registerReaderDisconnect(client);
+			cardserver.registerReaderDisconnect(client);
 		}
 		logger.info("deregistering cccam session: "+session);
 		synchronized (sessionList){

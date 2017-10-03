@@ -75,7 +75,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			
 			logger.info("dcw dump: "+NetUtils.bytesToString(dcw,0,dcw.length));
 			
-			if(!CardServer.handleEcmAnswer(session, session.getLastRequest().getCspHash(), dcw, -1, -1)){
+			if(!CardServer.getInstance().handleEcmAnswer(session, session.getLastRequest().getCspHash(), dcw, -1, -1)){
 				//answer was not handled. No entry existed in any cache.
 			}
 			return;
@@ -88,7 +88,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 		packet.getPayload().readBytes(ecm, 3, packet.getSize());
 		
 		//long cspHash = EcmRequest.computeEcmHash(ecm);
-		CardServer.handleClientEcmRequest(session, session.getCardId(), 0, 0, 0, ecm);
+		CardServer.getInstance().handleClientEcmRequest(session, session.getCardId(), 0, 0, 0, ecm);
 	}
 
 	public static NewcamdPacket parseBuffer(ChannelHandlerContext ctx, NewcamdSession session, ByteBuf in) {

@@ -30,13 +30,17 @@ public class NewcamdServer extends Thread implements CamServer {
 	 * A list which contains all open Newcamd readers and clients.
 	 */
 	private ArrayList<NewcamdSession> sessionList = new ArrayList<NewcamdSession>();
+
+	private CardServer cardserver;
 	
 	/**
 	 * Creates a new NewcamdServer server that will listen on a specified port.
+	 * @param cardServer 
 	 * 
 	 * @param port The port number the NewcamdServer server will bind to.
 	 */
-	public NewcamdServer(String name, int port) {	
+	public NewcamdServer(CardServer cardServer, String name, int port) {	
+		this.cardserver = cardserver;
 		this.setName(name);
 		NewcamdPipeline pipe = new NewcamdPipeline(this, NewcamdServerLoginDecoder.class);
 		NettyBootstrap.listenTcp(pipe,port);
@@ -111,7 +115,7 @@ public class NewcamdServer extends Thread implements CamServer {
 	public void unregister(NewcamdSession session) {
 		if(session.isReader()){
 			NewcamdClient client = (NewcamdClient) session;
-			CardServer.registerReaderDisconnect(client);
+			cardserver.registerReaderDisconnect(client);
 		}
 		logger.info("deregistering newcamd client: "+session);
 		synchronized (sessionList){

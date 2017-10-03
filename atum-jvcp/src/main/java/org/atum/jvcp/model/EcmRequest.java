@@ -69,7 +69,7 @@ public class EcmRequest {
 	}
 	
 	public void updateCardProfile(){
-		profile = CardServer.getProfiles().get(cardId);
+		profile = CardServer.getInstance().getProfiles().get(cardId);
 		if(profile == null)
 			profile = DEFAULT_PROFILE;
 	}

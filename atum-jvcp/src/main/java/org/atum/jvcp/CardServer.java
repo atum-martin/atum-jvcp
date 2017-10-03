@@ -36,19 +36,20 @@ import com.google.gson.GsonBuilder;
  * @author <a href="https://github.com/atum-martin">atum-martin</a>
  * @since 8 Dec 2016 23:29:32
  */
-public class CardServer {
+public class CardServer extends Thread {
 
 	/**
 	 * Instance of log4j logger
 	 */
-	private static Logger logger = Logger.getLogger(CardServer.class);
+	private Logger logger = Logger.getLogger(CardServer.class);
 
-	private static ClusteredCache cache = new ClusteredCache();
-	private static ClusteredCache pendingEcms = new ClusteredCache();
-	private static ArrayList<CamSession> readers = new ArrayList<CamSession>();
-	private static Vector<CamClient> disconnectedReaders = new Vector<CamClient>();
+	private ClusteredCache cache = new ClusteredCache();
+	private ClusteredCache pendingEcms = new ClusteredCache();
+	private ArrayList<CamSession> readers = new ArrayList<CamSession>();
+	private Vector<CamClient> disconnectedReaders = new Vector<CamClient>();
 	private static GeoIP geo = new GeoIP();
-	private static int readerRoundRobin = 0;
+	private static CardServer primaryEcmOrchestrator;
+	private int readerRoundRobin = 0;
 
 	private static Map<Integer,CardProfile> profiles;
 
@@ -62,6 +63,11 @@ public class CardServer {
 	 */
 	@SuppressWarnings("unused")
 	public static void main(String[] args) {
+		CardServer server = new CardServer();
+	}
+	
+	public CardServer() {
+		primaryEcmOrchestrator = this;
 		BasicConfigurator.configure();
 		Logger.getRootLogger().setLevel(Level.INFO);
 		geo.readDB();
@@ -69,15 +75,18 @@ public class CardServer {
 		AccountStore.getSingleton();
 		CardServer server = new CardServer();
 		profiles = server.loadProfiles();
-		CCcamServer server1 = new CCcamServer("cccam-server1", 12000);
-		NewcamdServer server2 = new NewcamdServer("newcamd-server1", 12001);
+		CCcamServer server1 = new CCcamServer(this, "cccam-server1", 12000);
+		NewcamdServer server2 = new NewcamdServer(this, "newcamd-server1", 12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(), 8080);
 		ReaderConfig config = new ReaderConfig(new CamServer[] { server1, server2, });
 		addAllReaders(server1, readers);
 		addAllReaders(server2, readers);
 		spawnReaderMonitorThread();
-		
 		Thread.currentThread().setName("CacheThread");
+		this.start();
+	}
+	
+	public void run() {
 		while(true){
 			try {
 				fireCacheWaitTimeout();
@@ -92,7 +101,7 @@ public class CardServer {
 		}
 	}
 
-	private static void spawnReaderMonitorThread() {
+	private void spawnReaderMonitorThread() {
 		new Thread(){
 			public void run(){
 				while(true){
@@ -121,11 +130,11 @@ public class CardServer {
 	 * @param server1
 	 * @param readers2
 	 */
-	private static void addAllReaders(CamServer server1, ArrayList<CamSession> readers2) {
+	private void addAllReaders(CamServer server1, ArrayList<CamSession> readers2) {
 		server1.addReaders(readers);
 	}
 
-	public static ClusteredCache getCache() {
+	public ClusteredCache getCache() {
 		return cache;
 	}
 
@@ -137,14 +146,14 @@ public class CardServer {
 	 *         that were not found in {@link CardServer#cache} when the message
 	 *         was recieved.
 	 */
-	public static ClusteredCache getPendingCache() {
+	public ClusteredCache getPendingCache() {
 		return pendingEcms;
 	}
 
-	public static boolean handleEcmAnswer(CamSession session, int cspHash, byte[] cw, int cardId, int serviceId) {
+	public boolean handleEcmAnswer(CamSession session, int cspHash, byte[] cw, int cardId, int serviceId) {
 		// long ecmHash = EcmRequest.computeEcmHash(cspHash);
 		// logger.info("ECM cache entry for: "+cspHash);
-		EcmRequest req = CardServer.getPendingCache().peekCache(cspHash);
+		EcmRequest req = getPendingCache().peekCache(cspHash);
 		if (req != null) {
 			req.setDcw(cw);
 			getCache().addEntry(cspHash, req);
@@ -161,7 +170,7 @@ public class CardServer {
 			// EcmRequest either exists in cache or no pending requests have
 			// come in.
 			// We want to check does the DCW differ from the cache entry.
-			req = CardServer.getCache().peekCache(cspHash);
+			req = getCache().peekCache(cspHash);
 		}
 
 		if (req != null) {
@@ -176,7 +185,7 @@ public class CardServer {
 		return false;
 	}
 
-	public static void fireCacheWaitTimeout() {
+	public void fireCacheWaitTimeout() {
 		long now = System.currentTimeMillis();
 		synchronized (pendingEcms) {
 			for (Object o : pendingEcms.entrySet()) {
@@ -217,12 +226,12 @@ public class CardServer {
 		return profileMap;
 	}
 
-	public static EcmRequest createEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache) {
+	public EcmRequest createEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm, int cspHash, boolean cache) {
 		if (cspHash == 0L) {
 			// no hash found compute it.
 			cspHash = EcmRequest.computeEcmHash(ecm);
 		}
-		EcmRequest request = CardServer.getPendingCache().peekCache(cspHash);
+		EcmRequest request = getPendingCache().peekCache(cspHash);
 		if (request != null && !cache) {
 			request.addGroups(session);
 			return request;
@@ -242,7 +251,7 @@ public class CardServer {
 	/**
 	 * @param answer
 	 */
-	private static boolean sendEcmToReader(EcmRequest req) {
+	private boolean sendEcmToReader(EcmRequest req) {
 		if (readers.size() == 0)
 			return false;
 		List<CamSession> filteredReader = filterReaders(req);
@@ -259,7 +268,7 @@ public class CardServer {
 	 * @param req
 	 * @return
 	 */
-	private static List<CamSession> filterReaders(EcmRequest req) {
+	private List<CamSession> filterReaders(EcmRequest req) {
 		ArrayList<CamSession> filtered = new ArrayList<CamSession>();
 		for (CamSession session : readers) {
 			// Remove readers that do not support that cardId.
@@ -281,7 +290,7 @@ public class CardServer {
 	 * @param groups
 	 * @return
 	 */
-	private static String listToStr(ArrayList<Integer> groups) {
+	private String listToStr(ArrayList<Integer> groups) {
 		StringBuilder build = new StringBuilder("[");
 		for (int group : groups) {
 			build.append(group);
@@ -291,9 +300,9 @@ public class CardServer {
 		return build.toString();
 	}
 
-	public static EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
+	public EcmRequest handleEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
 		int cspHash = EcmRequest.computeEcmHash(ecm);
-		EcmRequest answer = CardServer.getCache().peekCache(cspHash);
+		EcmRequest answer = getCache().peekCache(cspHash);
 		if (answer != null) {
 			session.setLastRequest(answer);
 			return answer;
@@ -312,7 +321,7 @@ public class CardServer {
 	 * @param serviceId
 	 * @param ecm
 	 */
-	public static void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
+	public void handleClientEcmRequest(CamSession session, int cardId, int provider, int shareId, int serviceId, byte[] ecm) {
 		EcmRequest answer = handleEcmRequest(session, cardId, provider, shareId, serviceId, ecm);
 		if (answer != null && answer.hasAnswer()) {
 			logger.info("cache hit for " + session + " " + ChannelList.getChannelName(cardId, serviceId));
@@ -320,16 +329,20 @@ public class CardServer {
 		}
 	}
 
-	public static Map<Integer,CardProfile> getProfiles() {
+	public  Map<Integer,CardProfile> getProfiles() {
 		return profiles;
 	}
 
-	public static void registerReaderDisconnect(CamClient client) {
+	public void registerReaderDisconnect(CamClient client) {
 		if(!disconnectedReaders.contains(client)){
 			disconnectedReaders.add(client);
 		}
 	}
 
+	public static CardServer getInstance(){
+		return primaryEcmOrchestrator;
+	}
+	
 	public static GeoIP getGeoIP() {
 		return geo;
 	}
