@@ -81,6 +81,9 @@ public class NewcamdClientLoginDecoder extends LoginDecoder {
 			context.channel().close();
 			return;
 		}
+		
+		packet.getPayload().release();
+		packet.getHeaders().release();
 		logger.info("login succeded for newcamd session: "+client);
 		
 		camServer.registerSession(client);

@@ -33,6 +33,8 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			return;
 		}
 		handlePacket(session, packet);
+		packet.getPayload().release();
+		packet.getHeaders().release();
 	}
 
 	private void handlePacket(NewcamdSession session, NewcamdPacket packet) {
@@ -144,6 +146,7 @@ public class NewcamdPacketDecoder extends ByteToMessageDecoder {
 			ByteBuf payload = decryptedPayload.readBytes(dataLength);
 			packet.setPayload(payload);
 		}
+		decryptedPayload.release();
 		return packet;
 	}
 }
