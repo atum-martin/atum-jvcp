@@ -13,3 +13,12 @@ Libraries used:<br />
 •	Gson<br />
 •	Log4j<br />
 <br />
+<br />
+Bulding the project:
+```
+mvn install
+```
+Running the project:
+```
+mvn exec:java -Dexec.mainClass="org.atum.jvcp.CamServer"
+```
