@@ -1,4 +1,6 @@
 # atum-jvcp
+[![Build Status](https://travis-ci.org/atum-martin/atum-jvcp.svg?branch=master)](https://travis-ci.org/atum-martin/atum-jvcp)
+<br />
 java virtual card proxy for sharing of conditional access modules<br />
 <br />
 All current card proxy servers utilized a thread-per client model. This is not only un-effficent but completly unscalable. JVCP is attempting to fill that gap by providing a newcamd / cccam CAM proxy implementation using java NIO.<br />
