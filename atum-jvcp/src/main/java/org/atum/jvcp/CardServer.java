@@ -102,8 +102,7 @@ public class CardServer extends Thread {
 		geo.readDB();
 		ChannelList.getSingleton();
 		AccountStore.getSingleton();
-		CardServer server = new CardServer();
-		profiles = server.loadProfiles();
+		profiles = this.loadProfiles();
 		CCcamServer server1 = new CCcamServer(this, "cccam-server1", 12000);
 		NewcamdServer server2 = new NewcamdServer(this, "newcamd-server1", 12001);
 		NettyBootstrap.listenTcp(new HttpPipeline(), 8080);
